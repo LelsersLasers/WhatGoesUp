@@ -80,8 +80,8 @@ class Hitbox(): # hb
 		return (
 			self.get_pt().get_x() < hb_other.get_pt().get_x() + hb_other.get_w()
 			and hb_other.get_pt().get_x() < self.get_pt().get_x() + self.get_w()
-			and self.get_pt().get_y() < hb_other.get_pt().get_y() + hb_other.get_y()
-			and hb_other.get_pt().get_y() < self.pt.get_y() + self.get_h()
+			and self.get_pt().get_y() < hb_other.get_pt().get_y() + hb_other.get_pt().get_y()
+			and hb_other.get_pt().get_y() < self.get_pt().get_y() + self.get_h()
 		)
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
