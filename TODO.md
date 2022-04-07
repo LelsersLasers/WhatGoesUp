@@ -1,10 +1,15 @@
 # TODO
 Everything
 
+Bugs:
+- checkCollide() gives a false positive when self is below hb_other
+
 - 'clean' main() by breaking into functions
     - Ex: master_draw(), set_Delta()/set_FPS(), etc
 
 - good full screen
+    - hold a 16:9 ratio
+    - scale things based on screen size
 
 - use magic/duner for Vector class?
 

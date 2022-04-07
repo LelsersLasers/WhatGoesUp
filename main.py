@@ -5,8 +5,6 @@ from pygame.locals import * # used for keyboard input (ex: 'K_w')
 
 from classes import Vector, Hitbox # our classes
 
-target_FPS = 60
-
 def createWindow() -> pygame.Surface:
 	pygame.init()
 	# win = pygame.display.set_mode((600, 600), FULLSCREEN)
@@ -18,11 +16,14 @@ def createWindow() -> pygame.Surface:
 
 
 def main():
+
+	target_fps = 60
+
 	win = createWindow()
+	clock = pygame.time.Clock()
+
 	hb1 = Hitbox(Vector(100, 100), 100, 100)
 	hb2 = Hitbox(Vector(400, 400), 100, 100)
-
-	clock = pygame.time.Clock()
 
 	while True:
 		for event in pygame.event.get():
@@ -51,7 +52,8 @@ def main():
 		hb2.draw(win, color)
 
 		pygame.display.flip()
-		clock.tick_busy_loop(target_FPS)
+		clock.tick_busy_loop(target_fps)
+		print(clock.get_fps())
 
 		
 main()
