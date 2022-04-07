@@ -19,6 +19,7 @@ def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: flo
 	time_0 = time.process_time_ns()
 	return calc_average(deltas), time_0, time_1
 
+
 def createWindow() -> pygame.Surface:
 	pygame.init()
 	# win = pygame.display.set_mode((600, 600), FULLSCREEN)
@@ -29,50 +30,63 @@ def createWindow() -> pygame.Surface:
 	return win
 
 
+def handle_events() -> None:
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			pygame.quit()
+			quit()
+
+def handle_keys(keys_down: list[bool], hb1: Hitbox) -> None:
+	if keys_down[K_w]:
+		hb1.get_pt().set_y(hb1.get_pt().get_y() - 4)
+	elif keys_down[K_s]:
+		hb1.get_pt().set_y(hb1.get_pt().get_y() + 4)
+	elif keys_down[K_a]:
+		hb1.get_pt().set_x(hb1.get_pt().get_x() - 4)
+	elif keys_down[K_d]:
+		hb1.get_pt().set_x(hb1.get_pt().get_x() + 4)
+
+def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox) -> None:
+	win.fill("#000000")
+
+	color = "#0000ff"
+	if hb1.checkCollide(hb2):
+		color = "#ff0000"
+
+	hb1.draw(win)
+	hb2.draw(win, color)
+
+	pygame.display.flip()
+
+
 def main():
 
 	target_fps = 60
 	deltas = []
 	delta = 1.0 # relative to target_fps
 
-	win = createWindow()
+	screen = "game"
+
 	clock = pygame.time.Clock()
 	time_0 = time.process_time_ns()
 	time_1 = time.process_time_ns()
-	print(time_0)
+
+	game_status = True
+
+	win = createWindow()
 
 	hb1 = Hitbox(Vector(100, 100), 100, 100)
 	hb2 = Hitbox(Vector(400, 400), 100, 100)
 
-	while True:
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				pygame.quit()
-				quit()
+	while game_status:
+		handle_events()
 
 		keys_down = pygame.key.get_pressed()
-		if keys_down[K_w]:
-			hb1.get_pt().set_y(hb1.get_pt().get_y() - 4)
-		elif keys_down[K_s]:
-			hb1.get_pt().set_y(hb1.get_pt().get_y() + 4)
-		elif keys_down[K_a]:
-			hb1.get_pt().set_x(hb1.get_pt().get_x() - 4)
-		elif keys_down[K_d]:
-			hb1.get_pt().set_x(hb1.get_pt().get_x() + 4)
+		handle_keys(keys_down, hb1)
 
+		if screen == "game": draw_game(win, hb1, hb2)
 
-		win.fill("#000000")
-
-		color = "#0000ff"
-		if hb1.checkCollide(hb2):
-			color = "#ff0000"
-
-		hb1.draw(win)
-		hb2.draw(win, color)
-
-		pygame.display.flip()
 		clock.tick_busy_loop(target_fps)
-
 		delta, time_0, time_1 = set_delta(time_0, time_1, deltas, target_fps)
 		print(delta)
 
