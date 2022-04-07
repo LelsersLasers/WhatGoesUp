@@ -14,5 +14,5 @@ Bugs:
 
 - delta time 
     - can use clock.tick_busy_loop(FPS)
-    - however, tick_busy_loop will make sure actual_fps < FPS
+    - however, tick_busy_loop will make sure actual_fps < FPS and it can only calc ms, not ms.xxx
     - so adding in a delta time to adjust for the slower fps is a good idea
