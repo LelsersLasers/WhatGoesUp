@@ -2,7 +2,6 @@
 Everything
 
 Bugs:
-- checkCollide() gives a false positive when self is below hb_other
 
 - 'clean' main() by breaking into functions
     - Ex: master_draw(), set_Delta()/set_FPS(), etc

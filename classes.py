@@ -77,10 +77,10 @@ class Hitbox(): # hb
 		self.h = h
 
 	def checkCollide(self, hb_other: Hitbox) -> bool:
-		return ( # TODO: this does work
+		return (
 			self.get_pt().get_x() < hb_other.get_pt().get_x() + hb_other.get_w()
 			and hb_other.get_pt().get_x() < self.get_pt().get_x() + self.get_w()
-			and self.get_pt().get_y() < hb_other.get_pt().get_y() + hb_other.get_pt().get_y()
+			and self.get_pt().get_y() < hb_other.get_pt().get_y() + hb_other.get_h()
 			and hb_other.get_pt().get_y() < self.get_pt().get_y() + self.get_h()
 		)
 
