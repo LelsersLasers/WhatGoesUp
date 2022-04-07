@@ -12,8 +12,8 @@ def createWindow() -> pygame.Surface:
 	# win = pygame.display.set_mode((600, 600), FULLSCREEN)
 	win = pygame.display.set_mode((800, 800))
 	x, y = win.get_size()
-	size = (x, y * .8)
-	pygame.display.set_caption("Some game that is subterranean: v0.00")
+	size = (x, y * .8) # WHAT DOES THIS DO???
+	pygame.display.set_caption("TempName: v-0.01")
 	return win
 
 
