@@ -2,6 +2,11 @@
 Everything
 
 Bugs:
+- main.py - set_delta():
+    - last_loop_time is sometimes 0
+    - How to increase timing precision
+    - Temp solution: if last_loop_time == 0, last_delta = 1
+
 
 - 'clean' main() by breaking into functions
     - Ex: master_draw(), set_Delta()/set_FPS(), etc
@@ -11,8 +16,3 @@ Bugs:
     - scale things based on screen size
 
 - use magic/duner for Vector class?
-
-- delta time 
-    - can use clock.tick_busy_loop(FPS)
-    - however, tick_busy_loop will make sure actual_fps < FPS and it can only calc ms, not ms.xxx
-    - so adding in a delta time to adjust for the slower fps is a good idea
