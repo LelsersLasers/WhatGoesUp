@@ -85,4 +85,4 @@ class Hitbox(): # hb
 		)
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
-		pygame.draw.rect(self.get_rect())
+		pygame.draw.rect(win, color, self.get_rect())
