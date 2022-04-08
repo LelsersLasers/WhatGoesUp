@@ -21,9 +21,9 @@ def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: flo
 def createWindow() -> pygame.Surface:
 	pygame.init()
 	flags = pygame.SCALED | pygame.FULLSCREEN
-	win = pygame.display.set_mode((800, 800), flags) # why 800, 800?
-	x, y = win.get_size()
-	size = (x, y * .8) # WHAT DOES THIS DO???
+	win = pygame.display.set_mode((1920, 1080), flags)
+	x, y = win.get_size() # WHAT DOES THIS DO???
+	size = (x, y * .8) # Or this?
 	pygame.display.set_caption("TempName: v-0.01")
 	return win
 
@@ -37,13 +37,13 @@ def handle_events() -> None:
 def handle_keys(keys_down: list[bool], delta: float, hb1: Hitbox) -> None:
 	vec_move = Vector(0, 0)
 	if keys_down[K_w]:
-		vec_move.set_y(-4)
+		vec_move.set_y(-10)
 	elif keys_down[K_s]:
-		vec_move.set_y(4)
+		vec_move.set_y(10)
 	elif keys_down[K_a]:
-		vec_move.set_x(-4)
+		vec_move.set_x(-10)
 	elif keys_down[K_d]:
-		vec_move.set_x(4)
+		vec_move.set_x(10)
 	vec_move = vec_move.scalar(delta)
 	hb1.get_pt().apply(vec_move)
 
@@ -53,7 +53,7 @@ def handle_keys(keys_down: list[bool], delta: float, hb1: Hitbox) -> None:
 
 
 def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox) -> None:
-	win.fill("#000000")
+	win.fill("#fdf6e3")
 
 	hb1.draw(win)
 	hb2.draw(win, "#ff0000" if hb1.checkCollide(hb2) else "#0000ff")
