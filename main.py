@@ -21,7 +21,7 @@ def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: flo
 def createWindow() -> pygame.Surface:
 	pygame.init()
 	flags = pygame.SCALED | pygame.FULLSCREEN
-	win = pygame.display.set_mode((800, 800), flags)
+	win = pygame.display.set_mode((800, 800), flags) # why 800, 800?
 	x, y = win.get_size()
 	size = (x, y * .8) # WHAT DOES THIS DO???
 	pygame.display.set_caption("TempName: v-0.01")

@@ -4,6 +4,10 @@
 SOLVED?: main.py - set_delta()
 - sometimes the value is much too high
 
+# Cleaning
+"Private" variables
+-? Use 'self.__x' which would be "stricter" than 'self._x'
+
 # Bottom Up
 Good full screen
 - hold a 16:9 ratio

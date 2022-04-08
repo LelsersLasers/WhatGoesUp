@@ -4,21 +4,17 @@ import pygame
 
 class Vector(): # vec
 	def __init__(self, x: float, y: float):
-		self.x = x
-		self.y = y
+		self._x = x
+		self._y = y
 
 	def get_x(self) -> float:
-		return self.x
-
-	def get_y(self) -> float:
-		return self.y
-
+		return self._x
 	def set_x(self, x: float):
-		self.x = x
-
+		self._x = x
+	def get_y(self) -> float:
+		return self._y
 	def set_y(self, y: float):
-		self.y = y
-
+		self._y = y
 	def __str__(self):
 		return "<%f, %f>" % (self.get_x(), self.get_y())
 
@@ -45,35 +41,30 @@ class Vector(): # vec
 			print("Cannot scale vector from zero")
 			return Vector(-1, -1)
 
+
 class Hitbox(): # hb
 	def __init__(self, pt: Vector, w: float, h: float):
-		self.pt = pt
-		self.w = w
-		self.h = h
+		self._pt = pt
+		self._w = w
+		self._h = h
 
 	def __str__(self):
 		return "(%s, %f, %f)" % (self.get_pt(), self.get_w(), self.get_h())
 
 	def get_pt(self) -> Vector:
-		return self.pt
-
-	def get_w(self) -> float:
-		return self.w
-
-	def get_h(self) -> float:
-		return self.h
-
-	def get_rect(self) -> pygame.Rect:
-		return pygame.Rect(self.pt.get_x(), self.pt.get_y(), self.w, self.h)
-
+		return self._pt
 	def set_pt(self, pt: Vector) -> None:
-		self.pt = pt
-
+		self._pt = pt
+	def get_w(self) -> float:
+		return self._w
 	def set_w(self, w: float) -> None:
-		self.w = w
-
+		self._w = w
+	def get_h(self) -> float:
+		return self._h
 	def set_h(self, h: float) -> None:
-		self.h = h
+		self._h = h
+	def get_rect(self) -> pygame.Rect:
+		return pygame.Rect(self.get_pt().get_x(), self.get_pt().get_y(), self.get_w(), self.get_h())
 
 	def checkCollide(self, hb_other: Hitbox) -> bool:
 		return (
