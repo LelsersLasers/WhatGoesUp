@@ -53,9 +53,9 @@ def handle_keys(keys_down: list[bool], delta: float, hb1: Hitbox) -> None:
 
 
 def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
-	font = pygame.font.SysFont('Monospace', 30)
+	font = pygame.font.SysFont('Monospace', 60)
 	surf_text = font.render("TEMP NAME", True, "#ff0000")
-	win.blit(surf_text, (30, 30))
+	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 100))
 	hb_mouse.draw(win)
 
 
