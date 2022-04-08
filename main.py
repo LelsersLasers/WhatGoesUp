@@ -52,6 +52,13 @@ def handle_keys(keys_down: list[bool], delta: float, hb1: Hitbox) -> None:
 		quit()
 
 
+def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
+	font = pygame.font.SysFont('Monospace', 30)
+	surf_text = font.render("TEMP NAME", True, "#ff0000")
+	win.blit(surf_text, (30, 30))
+	hb_mouse.draw(win)
+
+
 def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, hb_mouse: Hitbox) -> None:
 	win.fill("#fdf6e3")
 
@@ -59,8 +66,6 @@ def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, hb_mouse: Hitbox) -
 	hb2.draw(win, "#ff0000" if hb1.checkCollide(hb2) else "#0000ff")
 
 	hb_mouse.draw(win)
-
-	pygame.display.flip()
 
 
 def main():
@@ -70,7 +75,7 @@ def main():
 	delta = 1.0 # relative to target_fps
 	frame = 0
 
-	screen = "game"
+	screen = "welcome"
 	game_status = True
 
 	clock = pygame.time.Clock()
@@ -90,7 +95,10 @@ def main():
 
 		hb_mouse.set_pt(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5))
 
+		win.fill("#fdf6e3")
 		if screen == "game": draw_game(win, hb1, hb2, hb_mouse)
+		elif screen == "welcome": draw_welcome(win, hb_mouse)
+		pygame.display.flip()
 
 		clock.tick_busy_loop(target_fps)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, target_fps, frame)
