@@ -52,11 +52,13 @@ def handle_keys(keys_down: list[bool], delta: float, hb1: Hitbox) -> None:
 		quit()
 
 
-def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox) -> None:
+def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, hb_mouse: Hitbox) -> None:
 	win.fill("#fdf6e3")
 
 	hb1.draw(win)
 	hb2.draw(win, "#ff0000" if hb1.checkCollide(hb2) else "#0000ff")
+
+	hb_mouse.draw(win)
 
 	pygame.display.flip()
 
@@ -69,23 +71,26 @@ def main():
 	frame = 0
 
 	screen = "game"
+	game_status = True
 
 	clock = pygame.time.Clock()
 	time_0 = time.perf_counter()
 	time_1 = time.perf_counter()
-
-	game_status = True
 
 	win = create_window()
 
 	hb1 = Hitbox(Vector(100, 100), 100, 100)
 	hb2 = Hitbox(Vector(400, 400), 100, 100)
 
+	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10)
+
 	while game_status:
 		handle_events()
 		handle_keys(pygame.key.get_pressed(), delta, hb1)
 
-		if screen == "game": draw_game(win, hb1, hb2)
+		hb_mouse.set_pt(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5))
+
+		if screen == "game": draw_game(win, hb1, hb2, hb_mouse)
 
 		clock.tick_busy_loop(target_fps)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, target_fps, frame)

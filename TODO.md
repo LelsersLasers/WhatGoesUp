@@ -9,9 +9,6 @@ Some random lines in main.create_window()
 - What do they do?
 
 # Bottom Up
-Good full screen
-- hold a 16:9 ratio
-- scale things based on screen size
 
 - 'screen' = "welcome", "directions", "save", etc
 
