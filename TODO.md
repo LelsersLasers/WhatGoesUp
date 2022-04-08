@@ -12,3 +12,8 @@ Good full screen
 - 'screen' = "welcome", "directions", "save", etc
 
 - use magic/duner for Vector class?
+
+# Notes
+Keys:
+- WASD to move green hb
+- Control + Q to quit

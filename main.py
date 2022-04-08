@@ -20,8 +20,8 @@ def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: flo
 
 def createWindow() -> pygame.Surface:
 	pygame.init()
-	# win = pygame.display.set_mode((600, 600), FULLSCREEN)
-	win = pygame.display.set_mode((800, 800))
+	flags = pygame.SCALED | pygame.FULLSCREEN
+	win = pygame.display.set_mode((800, 800), flags)
 	x, y = win.get_size()
 	size = (x, y * .8) # WHAT DOES THIS DO???
 	pygame.display.set_caption("TempName: v-0.01")
@@ -47,16 +47,16 @@ def handle_keys(keys_down: list[bool], delta: float, hb1: Hitbox) -> None:
 	vec_move = vec_move.scalar(delta)
 	hb1.get_pt().apply(vec_move)
 
+	if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_q]:
+		pygame.quit()
+		quit()
+
 
 def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox) -> None:
 	win.fill("#000000")
 
-	color = "#0000ff"
-	if hb1.checkCollide(hb2):
-		color = "#ff0000"
-
 	hb1.draw(win)
-	hb2.draw(win, color)
+	hb2.draw(win, "#ff0000" if hb1.checkCollide(hb2) else "#0000ff")
 
 	pygame.display.flip()
 
@@ -89,7 +89,6 @@ def main():
 
 		clock.tick_busy_loop(target_fps)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, target_fps, frame)
-		print(delta)
 
 		
 main()
