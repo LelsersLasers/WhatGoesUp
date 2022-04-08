@@ -2,11 +2,11 @@
 Everything
 
 Bugs:
-- main.py - set_delta():
-    - last_loop_time is sometimes 0
-    - How to increase timing precision
-    - Temp solution: if last_loop_time == 0, last_delta = 1
-
+- SOLVES?: main.py - set_delta()
+    - sometimes the value is much too high
+- main.py - handle_keys()
+    - the vector is not corrently applied
+    - issue possibly in classes.py - Vector.apply()
 
 - 'clean' main() by breaking into functions
     - Ex: master_draw(), set_Delta()/set_FPS(), etc

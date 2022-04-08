@@ -7,17 +7,18 @@ from classes import Vector, Hitbox # our classes
 
 
 def calc_average(lst: list[float]) -> float:
+	if len(lst) == 0: return 1
 	return sum(lst) / len(lst)
 
-def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: float) -> tuple[float, int, int]:
-	time_1 = time.process_time_ns()
-	last_loop_time = (time_1 - time_0) / 1_000_000_000 # convert to sec
-	if (last_loop_time == 0): last_loop_time = 1 / target_fps # BUG: solve why it is 0 sometimes
+def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: float, frame: int) -> tuple[float, float, float, int]:
+	time_1 = time.perf_counter()
+	last_loop_time = time_1 - time_0
 	last_fps = 1 / last_loop_time
-	last_delta = last_fps / target_fps
-	deltas.append(last_delta)
-	time_0 = time.process_time_ns()
-	return calc_average(deltas), time_0, time_1
+	last_delta = target_fps / last_fps
+	if (frame > 20): deltas.append(last_delta)
+	frame += 1
+	time_0 = time.perf_counter()
+	return calc_average(deltas), time_0, time_1, frame
 
 
 def createWindow() -> pygame.Surface:
@@ -64,12 +65,13 @@ def main():
 	target_fps = 60
 	deltas = []
 	delta = 1.0 # relative to target_fps
+	frame = 0
 
 	screen = "game"
 
 	clock = pygame.time.Clock()
-	time_0 = time.process_time_ns()
-	time_1 = time.process_time_ns()
+	time_0 = time.perf_counter()
+	time_1 = time.perf_counter()
 
 	game_status = True
 
@@ -80,14 +82,12 @@ def main():
 
 	while game_status:
 		handle_events()
-
-		keys_down = pygame.key.get_pressed()
-		handle_keys(keys_down, hb1)
+		handle_keys(pygame.key.get_pressed(), delta, hb1)
 
 		if screen == "game": draw_game(win, hb1, hb2)
 
 		clock.tick_busy_loop(target_fps)
-		delta, time_0, time_1 = set_delta(time_0, time_1, deltas, target_fps)
+		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, target_fps, frame)
 		print(delta)
 
 		
