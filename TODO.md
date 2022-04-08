@@ -5,8 +5,8 @@ SOLVED?: main.py - set_delta()
 - sometimes the value is much too high
 
 # Cleaning
-"Private" variables
--? Use 'self.__x' which would be "stricter" than 'self._x'
+Some random lines in main.create_window()
+- What do they do?
 
 # Bottom Up
 Good full screen

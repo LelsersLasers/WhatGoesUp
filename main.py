@@ -18,7 +18,7 @@ def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: flo
 	return calc_average(deltas), time_0, time_1, frame
 
 
-def createWindow() -> pygame.Surface:
+def create_window() -> pygame.Surface:
 	pygame.init()
 	flags = pygame.SCALED | pygame.FULLSCREEN
 	win = pygame.display.set_mode((1920, 1080), flags)
@@ -76,7 +76,7 @@ def main():
 
 	game_status = True
 
-	win = createWindow()
+	win = create_window()
 
 	hb1 = Hitbox(Vector(100, 100), 100, 100)
 	hb2 = Hitbox(Vector(400, 400), 100, 100)
