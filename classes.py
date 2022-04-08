@@ -29,9 +29,8 @@ class Vector(): # vec
 		return Vector(self.get_x() + vec_other.get_x(), self.get_y() + vec_other.get_y())
 
 	def apply(self, vec_other: Vector) -> None:
-		# self.set_x(self.get_x() + vec_other.get_x())
-		# self.set_y(self.get_y() + vec_other.get_y())
-		self = self.add(vec_other)
+		self.set_x(self.get_x() + vec_other.get_x())
+		self.set_y(self.get_y() + vec_other.get_y())
 
 	def subtract(self, vec_other: Vector) -> Vector:
 		return Vector(self.get_x() - vec_other.get_x(), self.get_y() - vec_other.get_y())

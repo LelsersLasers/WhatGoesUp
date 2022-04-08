@@ -4,9 +4,6 @@ Everything
 Bugs:
 - SOLVES?: main.py - set_delta()
     - sometimes the value is much too high
-- main.py - handle_keys()
-    - the vector is not corrently applied
-    - issue possibly in classes.py - Vector.apply()
 
 - 'clean' main() by breaking into functions
     - Ex: master_draw(), set_Delta()/set_FPS(), etc
