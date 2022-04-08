@@ -8,14 +8,11 @@ from classes import Vector, Hitbox # our classes
 
 def calc_average(lst: list[float]) -> float:
 	if len(lst) == 0: return 1
-	return sum(lst) / len(lst)
+	return sum(lst)/len(lst)
 
 def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: float, frame: int) -> tuple[float, float, float, int]:
 	time_1 = time.perf_counter()
-	last_loop_time = time_1 - time_0
-	last_fps = 1 / last_loop_time
-	last_delta = target_fps / last_fps
-	if (frame > 20): deltas.append(last_delta)
+	if (frame > 20): deltas.append(target_fps/(1/(time_1 - time_0)))
 	frame += 1
 	time_0 = time.perf_counter()
 	return calc_average(deltas), time_0, time_1, frame
