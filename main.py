@@ -37,15 +37,19 @@ def handle_events() -> None:
 			pygame.quit()
 			quit()
 
-def handle_keys(keys_down: list[bool], hb1: Hitbox) -> None:
+def handle_keys(keys_down: list[bool], delta: float, hb1: Hitbox) -> None:
+	vec_move = Vector(0, 0)
 	if keys_down[K_w]:
-		hb1.get_pt().set_y(hb1.get_pt().get_y() - 4)
+		vec_move.set_y(-4)
 	elif keys_down[K_s]:
-		hb1.get_pt().set_y(hb1.get_pt().get_y() + 4)
+		vec_move.set_y(4)
 	elif keys_down[K_a]:
-		hb1.get_pt().set_x(hb1.get_pt().get_x() - 4)
+		vec_move.set_x(-4)
 	elif keys_down[K_d]:
-		hb1.get_pt().set_x(hb1.get_pt().get_x() + 4)
+		vec_move.set_x(4)
+	vec_move = vec_move.scalar(delta)
+	hb1.get_pt().apply(vec_move)
+
 
 def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox) -> None:
 	win.fill("#000000")
