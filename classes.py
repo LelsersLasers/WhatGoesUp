@@ -99,6 +99,9 @@ class HitboxPart(Hitbox): # hbp
 	def set_vec_offset(self, vec_offset: Vector) -> None:
 		self._vec_offset = vec_offset
 
+	def update_pt_from_master(self, ahb_master: AdvancedHitbox) -> None:
+		self.set_pt(ahb_master.get_pt().add(self.get_vec_offset()))
+
 class AdvancedHitbox(Hitbox): # ahb
 	def __init__(self, pt: Vector, w: float, h: float, color: str = "#ffffff"):
 		super().__init__(pt, w, h, color)
@@ -124,6 +127,10 @@ class AdvancedHitbox(Hitbox): # ahb
 				if hbp_self.check_collide(hbp_other):
 					return True
 		return False
+
+	def update_hbps(self) -> None:
+		for hbp in self.get_hbps():
+			hbp.update_pt_from_master(self)
 
 	def draw(self, win: pygame.Surface) -> None:
 		super().draw(win)

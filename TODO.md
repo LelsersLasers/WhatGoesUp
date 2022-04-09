@@ -8,8 +8,15 @@ SOLVED?: main.py - set_delta()
 
 
 # Bottom Up
-1) Update function for AdvancedHitbox
-    - update all hbps (set hbp x/y = ahb x/y + offset)
+Rooms
+
+
+# To test:
+All of the AdvancedHitbox/HitboxPart code
+- updating functions
+- check_collisions/etc
+- is it 'easy' to use?
+    - Or will it cause writing Enemy/Player classes to be unessicarly complicated
 
 # Notes
 Keys:
