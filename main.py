@@ -7,12 +7,14 @@ from classes import Vector, Hitbox, Player # our classes
 
 
 def calc_average(lst: list[float]) -> float:
-	if len(lst) == 0: return 1
+	if len(lst) == 0:
+		return 1
 	return sum(lst)/len(lst)
 
 def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: float, frame: int) -> tuple[float, float, float, int]:
 	time_1 = time.perf_counter()
-	if (frame > 20): deltas.append(target_fps/(1/(time_1 - time_0)))
+	if (frame > 20):
+		deltas.append(target_fps/(1/(time_1 - time_0)))
 	frame += 1
 	time_0 = time.perf_counter()
 	return calc_average(deltas), time_0, time_1, frame
@@ -88,8 +90,10 @@ def main():
 		hb_mouse.set_pt(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5))
 
 		win.fill("#fdf6e3")
-		if screen == "game": draw_game(win, hb1, hb2, hb_mouse)
-		elif screen == "welcome": draw_welcome(win, hb_mouse)
+		if screen == "game":
+			draw_game(win, hb1, hb2, player, hb_mouse)
+		elif screen == "welcome":
+			draw_welcome(win, hb_mouse)
 		pygame.display.flip()
 
 		clock.tick_busy_loop(target_fps)
