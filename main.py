@@ -34,13 +34,24 @@ def handle_events() -> None:
 			pygame.quit()
 			quit()
 
-def handle_keys(keys_down: list[bool], delta: float, hb1: Hitbox, screen: str) -> str:
+
+def handle_keys(screen: str, player: Player, delta: float) -> str:
+	keys_down = pygame.key.get_pressed()
 	if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_q]:
 		pygame.quit()
 		quit()
-	elif screen == "welcome":
-		if keys_down[K_RETURN]:
-			return "game"
+	elif screen == "welcome" and keys_down[K_RETURN]:
+		return "game"
+	elif screen == "game":
+		player.handle_keys(keys_down, delta)
+	return screen
+
+
+def handle_mouse(screen: str, hb_mouse: Hitbox) -> str:
+	hb_mouse.set_pt(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5))
+	mouse_buttons_down = pygame.mouse.get_pressed()
+	if screen == "welcome" and mouse_buttons_down[0]:
+		return "game"
 	return screen
 
 
@@ -51,11 +62,12 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
 	hb_mouse.draw(win)
 
 
-def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, hb_mouse: Hitbox) -> None:
+def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, player: Player, hb_mouse: Hitbox) -> None:
 	win.fill("#fdf6e3")
 
 	hb1.draw(win)
-	hb2.draw(win, "#ff0000" if hb1.check_collide(hb2) else "#0000ff")
+	hb2.draw(win, "#ff0000" if player.check_collide(hb2) else "#0000ff")
+	player.draw(win)
 
 	hb_mouse.draw(win)
 
@@ -77,17 +89,15 @@ def main():
 	win = create_window()
 
 	hb1 = Hitbox(Vector(100, 100), 100, 100)
-	player = Player()
-	print(player)
 	hb2 = Hitbox(Vector(400, 400), 100, 100)
+	player = Player()
 
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10)
 
 	while game_status:
 		handle_events()
-		screen = handle_keys(pygame.key.get_pressed(), delta, hb1, screen)
-
-		hb_mouse.set_pt(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5))
+		screen = handle_keys(screen, player, delta)
+		screen = handle_mouse(screen, hb_mouse)
 
 		win.fill("#fdf6e3")
 		if screen == "game":
