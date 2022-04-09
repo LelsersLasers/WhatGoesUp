@@ -5,8 +5,9 @@ SOLVED?: main.py - set_delta()
 - sometimes the value is much too high
 
 # Cleaning
-Some random lines in main.create_window()
-- What do they do?
+Classes.py - naming
+- AdvancedHitbox = 'ahb'
+- HitboxPart = 'hbp'
 
 # Bottom Up
 

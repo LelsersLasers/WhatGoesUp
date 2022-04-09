@@ -1,25 +1,28 @@
-from __future__ import annotations
+from __future__ import annotations # for type hints
+import pygame # graphics library
+from pygame.locals import * # for keyboard input (ex: 'K_w')
 import math
-import pygame
+
 
 class Vector(): # vec
 	def __init__(self, x: float, y: float):
-		self._x = x
-		self._y = y
+		self._x: float = x
+		self._y: float = y
+
+	def __str__(self) -> str:
+		return "<%f, %f>" % (self.get_x(), self.get_y())
 
 	def get_x(self) -> float:
 		return self._x
-	def set_x(self, x: float):
+	def set_x(self, x: float) -> None:
 		self._x = x
 	def get_y(self) -> float:
 		return self._y
-	def set_y(self, y: float):
+	def set_y(self, y: float) -> None:
 		self._y = y
-	def __str__(self):
-		return "<%f, %f>" % (self.get_x(), self.get_y())
 
 	def calc_length(self) -> float:
-		return math.sqrt(self.get_x() * self.get_x() + self.get_y() * self.get_y())
+		return math.sqrt(self.get_x() ** 2 + self.get_y() ** 2)
 
 	def add(self, vec_other: Vector) -> Vector:
 		return Vector(self.get_x() + vec_other.get_x(), self.get_y() + vec_other.get_y())
@@ -43,11 +46,11 @@ class Vector(): # vec
 
 class Hitbox(): # hb
 	def __init__(self, pt: Vector, w: float, h: float):
-		self._pt = pt
-		self._w = w
-		self._h = h
+		self._pt: Vector = pt
+		self._w: float = w
+		self._h: float = h
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return "(%s, %f, %f)" % (self.get_pt(), self.get_w(), self.get_h())
 
 	def get_pt(self) -> Vector:
@@ -75,17 +78,19 @@ class Hitbox(): # hb
 			and hb_other.get_pt().get_y() < self.get_pt().get_y() + self.get_h()
 		)
 
-	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
+	def draw(self, win: pygame.Surface, color: str = "#ffffff") -> None:
 		pygame.draw.rect(win, color, self.get_rect())
 
 class HitboxPart(Hitbox):
 	def __init__(self, pt: Vector, vec_offset: Vector, w: float, h: float):
 		super().__init__(pt, w, h)
-		self._vec_offset = vec_offset
+		self._vec_offset: Vector = vec_offset
+
+	def __str__(self) -> str:
+		return "Hitbox Part: %s" % super().__str__()
 
 	def get_vec_offset(self) -> Vector:
 		return self._vec_offset
-
 	def set_vec_offset(self, vec_offset: Vector) -> None:
 		self._vec_offset = vec_offset
 
@@ -94,36 +99,39 @@ class AdvancedHitbox(Hitbox):
 		super().__init__(pt, w, h)
 		self._hbs: list[HitboxPart] = []
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return "Advanced Hitbox: %s" % super().__str__()
 
 	def get_hbs(self) -> list[HitboxPart]:
 		return self._hbs
 	def add_hb(self, hb: HitboxPart) -> None:
 		self.get_hbs().append(hb)
+
 	def check_collisions(self, hb_other: Hitbox) -> bool:
 		for hb in self.get_hbs():
 			if hb.check_collide(hb_other):
 				return True
 		return False
 	def check_advanced_collisions(self, other: AdvancedHitbox) -> bool:
+		if self.check_collide(other):
+			return True
 		for hb_self in self.get_hbs():
 			for hb_other in other.get_hbs():
 				if hb_self.check_collide(hb_other):
 					return True
 		return False
 
-	def draw(self, win: pygame.Surface, color_1: str = "#00ff00", color_2: str = "#ff0000") -> None:
-		pygame.draw.rect(win, color_1, self.get_rect())
+	def draw(self, win: pygame.Surface, color_1: str = "#ff0000", color_2: str = "#ffffff") -> None:
+		super().draw(win, color_2)
 		for hb in self.get_hbs():
-			pygame.draw.rect(win, color_2, hb.get_rect())
+			hb.draw(win, color_2)
 
 class Player(AdvancedHitbox): # p
 	def __init__(self):
 		super().__init__(Vector(0, 0), 40, 40)
-		self._ms = 10
+		self._ms: float = 10
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
 
 	def get_ms(self) -> float:
