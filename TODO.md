@@ -5,17 +5,14 @@ SOLVED?: main.py - set_delta()
 - sometimes the value is much too high
 
 # Cleaning
-Classes.py - naming
-- AdvancedHitbox = 'ahb'
-- HitboxPart = 'hbp'
+
 
 # Bottom Up
-
-- 'screen' = "welcome", "directions", "save", etc
-
-- use magic/duner for Vector class?
+1) Update function for AdvancedHitbox
+    - update all hbps (set hbp x/y = ahb x/y + offset)
 
 # Notes
 Keys:
-- WASD to move green hb
-- Control + Q to quit
+- WASD: move player (green)
+- Control + Q: quit
+- Enter/lmb: change screen from welcome to game

@@ -45,10 +45,11 @@ class Vector(): # vec
 
 
 class Hitbox(): # hb
-	def __init__(self, pt: Vector, w: float, h: float):
+	def __init__(self, pt: Vector, w: float, h: float, color: str = "#ffffff"):
 		self._pt: Vector = pt
 		self._w: float = w
 		self._h: float = h
+		self._color: str = color
 
 	def __str__(self) -> str:
 		return "(%s, %f, %f)" % (self.get_pt(), self.get_w(), self.get_h())
@@ -69,6 +70,10 @@ class Hitbox(): # hb
 		self._h = h
 	def get_rect(self) -> pygame.Rect:
 		return pygame.Rect(self.get_pt().get_x(), self.get_pt().get_y(), self.get_w(), self.get_h())
+	def get_color(self) -> str:
+		return self._color
+	def set_color(self, color: str) -> None:
+		self._color = color
 
 	def check_collide(self, hb_other: Hitbox) -> bool:
 		return (
@@ -78,12 +83,12 @@ class Hitbox(): # hb
 			and hb_other.get_pt().get_y() < self.get_pt().get_y() + self.get_h()
 		)
 
-	def draw(self, win: pygame.Surface, color: str = "#ffffff") -> None:
-		pygame.draw.rect(win, color, self.get_rect())
+	def draw(self, win: pygame.Surface) -> None:
+		pygame.draw.rect(win, self.get_color(), self.get_rect())
 
-class HitboxPart(Hitbox):
-	def __init__(self, pt: Vector, vec_offset: Vector, w: float, h: float):
-		super().__init__(pt, w, h)
+class HitboxPart(Hitbox): # hbp
+	def __init__(self, pt: Vector, vec_offset: Vector, w: float, h: float, color: str = "#ffffff"):
+		super().__init__(pt, w, h, color)
 		self._vec_offset: Vector = vec_offset
 
 	def __str__(self) -> str:
@@ -94,41 +99,40 @@ class HitboxPart(Hitbox):
 	def set_vec_offset(self, vec_offset: Vector) -> None:
 		self._vec_offset = vec_offset
 
-class AdvancedHitbox(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float):
-		super().__init__(pt, w, h)
-		self._hbs: list[HitboxPart] = []
+class AdvancedHitbox(Hitbox): # ahb
+	def __init__(self, pt: Vector, w: float, h: float, color: str = "#ffffff"):
+		super().__init__(pt, w, h, color)
+		self._hbps: list[HitboxPart] = []
 
 	def __str__(self) -> str:
 		return "Advanced Hitbox: %s" % super().__str__()
 
-	def get_hbs(self) -> list[HitboxPart]:
-		return self._hbs
-	def add_hb(self, hb: HitboxPart) -> None:
-		self.get_hbs().append(hb)
+	def get_hbps(self) -> list[HitboxPart]:
+		return self._hbps
+	def add_hbp(self, hbp: HitboxPart) -> None:
+		self.get_hbs().append(hbp)
 
 	def check_collisions(self, hb_other: Hitbox) -> bool:
-		for hb in self.get_hbs():
-			if hb.check_collide(hb_other):
+		for hbp in self.get_hbps():
+			if hbp.check_collide(hb_other):
 				return True
 		return False
-	def check_advanced_collisions(self, other: AdvancedHitbox) -> bool:
-		if self.check_collide(other):
-			return True
-		for hb_self in self.get_hbs():
-			for hb_other in other.get_hbs():
-				if hb_self.check_collide(hb_other):
+
+	def check_advanced_collisions(self, ahb_other: AdvancedHitbox) -> bool:
+		for hbp_self in self.get_hbs():
+			for hbp_other in ahb_other.get_hbs():
+				if hbp_self.check_collide(hbp_other):
 					return True
 		return False
 
-	def draw(self, win: pygame.Surface, color_1: str = "#ff0000", color_2: str = "#ffffff") -> None:
-		super().draw(win, color_2)
-		for hb in self.get_hbs():
-			hb.draw(win, color_2)
+	def draw(self, win: pygame.Surface) -> None:
+		super().draw(win)
+		for hbp in self.get_hbps():
+			hbp.draw(win)
 
 class Player(AdvancedHitbox): # p
 	def __init__(self):
-		super().__init__(Vector(0, 0), 40, 40)
+		super().__init__(Vector(0, 0), 40, 40, "#00ff00")
 		self._ms: float = 10
 
 	def __str__(self) -> str:
@@ -152,5 +156,5 @@ class Player(AdvancedHitbox): # p
 		vec_move = vec_move.scale(self.get_ms() * delta)
 		self.get_pt().apply(vec_move)
 
-	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
-		pygame.draw.rect(win, color, self.get_rect())
+	# def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
+	# 	pygame.draw.rect(win, color, self.get_rect())

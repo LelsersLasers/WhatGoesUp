@@ -50,8 +50,12 @@ def handle_keys(screen: str, player: Player, delta: float) -> str:
 def handle_mouse(screen: str, hb_mouse: Hitbox) -> str:
 	hb_mouse.set_pt(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5))
 	mouse_buttons_down = pygame.mouse.get_pressed()
-	if screen == "welcome" and mouse_buttons_down[0]:
-		return "game"
+	if mouse_buttons_down[0]:
+		hb_mouse.set_color("#ff0000")
+		if screen == "welcome":
+			return "game"
+	else:
+		hb_mouse.set_color("#ff00ff")
 	return screen
 
 
@@ -66,7 +70,8 @@ def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, player: Player, hb_
 	win.fill("#fdf6e3")
 
 	hb1.draw(win)
-	hb2.draw(win, "#ff0000" if player.check_collide(hb2) else "#0000ff")
+	hb2.set_color("#ff0000" if player.check_collide(hb2) else "#0000ff")
+	hb2.draw(win)
 	player.draw(win)
 
 	hb_mouse.draw(win)
@@ -89,10 +94,10 @@ def main():
 	win = create_window()
 
 	hb1 = Hitbox(Vector(100, 100), 100, 100)
-	hb2 = Hitbox(Vector(400, 400), 100, 100)
+	hb2 = Hitbox(Vector(400, 400), 100, 100, "#0000ff")
 	player = Player()
 
-	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10)
+	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 
 	while game_status:
 		handle_events()
