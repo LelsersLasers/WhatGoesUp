@@ -8,10 +8,23 @@ SOLVED?: main.py - set_delta()
 
 
 # Bottom Up
-Rooms
+0) Test stuff
+1) class Enemy(AdvancedHitbox)
+    - set up basic things like vision cones, hp/level/dmg/etc
+2) class BirdEnemy(Enemy) [or some specific type of enemy]
+    - presets, override attack method, etc
+3) basic player attacks
+    - swing sword
+    - basic abilities
+4) rooms
+5) dungeons
+6) menues
+7) go back and make everything good
+8) saving
+9) art
 
 
-# To test:
+# To Test:
 All of the AdvancedHitbox/HitboxPart code
 - updating functions
 - check_collisions/etc
