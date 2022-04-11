@@ -114,6 +114,7 @@ def main():
 			draw_welcome(win, hb_mouse)
 		pygame.display.flip()
 
+
 		clock.tick_busy_loop(target_fps)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, target_fps, frame)
 		print("FPS: %4.2f" % ((1/delta) * target_fps))

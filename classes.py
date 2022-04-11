@@ -122,8 +122,8 @@ class AdvancedHitbox(Hitbox): # ahb
 		return False
 
 	def check_advanced_collisions(self, ahb_other: AdvancedHitbox) -> bool:
-		for hbp_self in self.get_hbs():
-			for hbp_other in ahb_other.get_hbs():
+		for hbp_self in self.get_hbps():
+			for hbp_other in ahb_other.get_hbps():
 				if hbp_self.check_collide(hbp_other):
 					return True
 		return False
@@ -158,11 +158,11 @@ class Player(AdvancedHitbox): # p
 		vec_move = Vector(0, 0)
 		if keys_down[K_w]:
 			vec_move.set_y(-1)
-		elif keys_down[K_s]:
+		if keys_down[K_s]:
 			vec_move.set_y(1)
-		elif keys_down[K_a]:
+		if keys_down[K_a]:
 			vec_move.set_x(-1)
-		elif keys_down[K_d]:
+		if keys_down[K_d]:
 			vec_move.set_x(1)
 		vec_move = vec_move.scale(self.get_ms() * delta)
 		self.get_pt().apply(vec_move)

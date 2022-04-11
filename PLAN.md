@@ -6,7 +6,7 @@ Camera:
 
 Rooms based dungeon
 - Each room is a "level"
-- Many dungeons of varrying difficulty and mechanics
+- Many dungeons of varying difficulty and mechanics
 - Medium sized
 
 Controls:
