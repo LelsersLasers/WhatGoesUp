@@ -3,7 +3,7 @@ import pygame # graphics library
 from pygame.locals import * # for keyboard input (ex: 'K_w')
 import time # for fps/delta
 
-from classes import Vector, Hitbox, Player # our classes
+from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player # our classes
 
 
 def calc_average(lst: list[float]) -> float:
@@ -66,12 +66,14 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
 	hb_mouse.draw(win)
 
 
-def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, player: Player, hb_mouse: Hitbox) -> None:
+def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, ahb: AdvancedHitbox, player: Player, hb_mouse: Hitbox) -> None:
 	win.fill("#fdf6e3")
 
 	hb1.draw(win)
 	hb2.set_color("#ff0000" if player.check_collisions(hb2) else "#0000ff")
 	hb2.draw(win)
+	ahb.set_color("#ff0000" if player.check_collisions(ahb) else "#0000ff")
+	ahb.draw(win)
 	player.draw(win)
 
 	hb_mouse.draw(win)
@@ -95,6 +97,7 @@ def main():
 
 	hb1 = Hitbox(Vector(100, 100), 100, 100)
 	hb2 = Hitbox(Vector(400, 400), 100, 100, "#0000ff")
+	ahb = AdvancedHitbox(Vector(500, 100), 100, 100)
 	player = Player()
 
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
@@ -106,7 +109,7 @@ def main():
 
 		win.fill("#fdf6e3")
 		if screen == "game":
-			draw_game(win, hb1, hb2, player, hb_mouse)
+			draw_game(win, hb1, hb2, ahb, player, hb_mouse)
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse)
 		pygame.display.flip()
