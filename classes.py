@@ -113,7 +113,7 @@ class AdvancedHitbox(Hitbox): # ahb
 	def get_hbps(self) -> list[HitboxPart]:
 		return self._hbps
 	def add_hbp(self, hbp: HitboxPart) -> None:
-		self.get_hbs().append(hbp)
+		self.get_hbps().append(hbp)
 
 	def check_collisions(self, hb_other: Hitbox) -> bool:
 		for hbp in self.get_hbps():
@@ -140,7 +140,11 @@ class AdvancedHitbox(Hitbox): # ahb
 class Player(AdvancedHitbox): # p
 	def __init__(self):
 		super().__init__(Vector(0, 0), 40, 40, "#00ff00")
-		self._ms: float = 10
+		self._ms: float = 5
+		self.add_hbp(HitboxPart(Vector(-10, -10), Vector(-10, -10), 25, 25))
+		self.add_hbp(HitboxPart(Vector(25, -10), Vector(25, -10), 25, 25))
+		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
+		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
@@ -162,6 +166,7 @@ class Player(AdvancedHitbox): # p
 			vec_move.set_x(1)
 		vec_move = vec_move.scale(self.get_ms() * delta)
 		self.get_pt().apply(vec_move)
+		self.update_hbps()
 
 	# def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 	# 	pygame.draw.rect(win, color, self.get_rect())

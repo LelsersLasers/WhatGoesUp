@@ -70,7 +70,7 @@ def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, player: Player, hb_
 	win.fill("#fdf6e3")
 
 	hb1.draw(win)
-	hb2.set_color("#ff0000" if player.check_collide(hb2) else "#0000ff")
+	hb2.set_color("#ff0000" if player.check_collisions(hb2) else "#0000ff")
 	hb2.draw(win)
 	player.draw(win)
 
