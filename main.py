@@ -69,6 +69,7 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
 def draw_game(win: pygame.Surface, player: Player, enemy: Enemy, hb_mouse: Hitbox) -> None:
 	win.fill("#fdf6e3")
 
+	enemy.update()
 	enemy.draw(win)
 	player.draw(win)
 
@@ -92,7 +93,7 @@ def main():
 	win = create_window()
 
 	player = Player()
-	enemy = Enemy(Vector(800, 400), 30, 30, player, 300, 3)
+	enemy = Enemy(Vector(800, 400), 30, 30, player, 300, 1)
 
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 

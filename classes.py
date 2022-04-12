@@ -234,11 +234,18 @@ class Enemy(Combatant): # enemy
 	def set_base_stats(self):
 		self.set_hp(50 + self.get_level() * 10)
 		self.set_damage(5 + self.get_level() * 5)
-		self.set_ms(4 + self.get_level())
+		self.set_ms(3 + self.get_level()/2)
 
 	def check_range(self) -> bool:
 		vec_dif = self.get_target().get_center().subtract(self.get_center())
 		return vec_dif.calc_length() <= self.get_aggro_range()
+
+	def update(self) -> None:
+		if self.check_range():
+			vec_move = self.get_target().get_center().subtract(self.get_center()).scale(self.get_ms())
+			self.get_pt().apply(vec_move)
+			self.set_vision_direction(vec_move.get_angle())
+
 
 	def draw(self, win: pygame.Surface) -> None:
 		color = self.get_color()

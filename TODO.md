@@ -1,7 +1,9 @@
 # Basically Everything
 
 # Bugs
-
+Vector.get_angle()
+    - will only return angles right of 90
+    - (Ex: 90 -> -90 only)
 
 # Cleaning
 
