@@ -22,6 +22,16 @@ class Vector(): # vec
 		self._y = y
 	def get_tuple(self) -> tuple[float, float]:
 		return (self.get_x(), self.get_y())
+	def get_angle(self) -> float:
+		return math.atan(self.get_y()/self.get_x()) * 180/math.pi
+	def set_angle(self, angle: float) -> None:
+		current_length = self.calc_length()
+		self.set_x(math.cos(angle * math.pi/180))
+		self.set_y(math.sin(angle * math.pi/180))
+		self.set_vec(self.scale(current_length))
+	def set_vec(self, vec_other: Vector) -> None:
+		self.set_x(vec_other.get_x())
+		self.set_y(vec_other.get_y())
 
 	def calc_length(self) -> float:
 		return math.sqrt(self.get_x() ** 2 + self.get_y() ** 2)
@@ -30,8 +40,7 @@ class Vector(): # vec
 		return Vector(self.get_x() + vec_other.get_x(), self.get_y() + vec_other.get_y())
 
 	def apply(self, vec_other: Vector) -> None:
-		self.set_x(self.get_x() + vec_other.get_x())
-		self.set_y(self.get_y() + vec_other.get_y())
+		self.set_vec(self.add(vec_other))
 
 	def subtract(self, vec_other: Vector) -> Vector:
 		return Vector(self.get_x() - vec_other.get_x(), self.get_y() - vec_other.get_y())
