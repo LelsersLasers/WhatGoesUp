@@ -97,6 +97,7 @@ class Hitbox(): # hb
 	def draw(self, win: pygame.Surface) -> None:
 		pygame.draw.rect(win, self.get_color(), self.get_rect())
 
+
 class HitboxPart(Hitbox): # hbp
 	def __init__(self, pt: Vector, vec_offset: Vector, w: float, h: float, color: str = "#ffffff"):
 		super().__init__(pt, w, h, color)
@@ -112,6 +113,7 @@ class HitboxPart(Hitbox): # hbp
 
 	def update_pt_from_master(self, ahb_master: AdvancedHitbox) -> None:
 		self.set_pt(ahb_master.get_pt().add(self.get_vec_offset()))
+
 
 class AdvancedHitbox(Hitbox): # ahb
 	def __init__(self, pt: Vector, w: float, h: float, color: str = "#ffffff"):
@@ -148,10 +150,34 @@ class AdvancedHitbox(Hitbox): # ahb
 		for hbp in self.get_hbps():
 			hbp.draw(win)
 
-class Player(AdvancedHitbox): # p
+
+class Combatant(AdvancedHitbox):
+	def __init__(self, pt: Vector, w: float, h: float, hp: float, damage: float, ms: float, color: str = "#ffffff"):
+		super().__init__(pt, w, h, color)
+		self._hp: float = hp
+		self._damage: float = damage
+		self._ms: float = ms
+
+	def __str__(self) -> str:
+		return "Combatant: %s" % super().__str__()
+
+	def get_hp(self) -> float:
+		return self._hp
+	def set_hp(self, hp: float) -> None:
+		self._hp = hp
+	def get_damage(self) -> float:
+		return self._damage
+	def set_damage(self, damage: float) -> None:
+		self._damage = damage
+	def get_ms(self) -> float:
+		return self._ms
+	def set_ms(self, ms: float) -> None:
+		self._ms = ms
+
+
+class Player(Combatant): # p
 	def __init__(self):
-		super().__init__(Vector(0, 0), 40, 40, "#00ff00")
-		self._ms: float = 5
+		super().__init__(Vector(0, 0), 40, 40, 100, 20, 7, "#00ff00")
 		self.add_hbp(HitboxPart(Vector(-10, -10), Vector(-10, -10), 25, 25))
 		self.add_hbp(HitboxPart(Vector(25, -10), Vector(25, -10), 25, 25))
 		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
@@ -159,11 +185,6 @@ class Player(AdvancedHitbox): # p
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
-
-	def get_ms(self) -> float:
-		return self._ms
-	def set_ms(self, ms):
-		self._ms = ms
 
 	def handle_keys(self, keys_down: list[bool], delta: float) -> None:
 		vec_move = Vector(0, 0)
@@ -175,20 +196,22 @@ class Player(AdvancedHitbox): # p
 			vec_move.set_x(-1)
 		if keys_down[K_d]:
 			vec_move.set_x(1)
-		vec_move = vec_move.scale(self.get_ms() * delta)
-		self.get_pt().apply(vec_move)
+		self.get_pt().apply(vec_move.scale(self.get_ms() * delta))
 		self.update_hbps()
 
 	# def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 	# 	pygame.draw.rect(win, color, self.get_rect())
 
-class Enemy(AdvancedHitbox): # enemy
-	def __init__(self, pt: Vector, w: float, h: float, target: Player, aggro_range: float, cone_angle: float, color: str = "#ff0000"):
-		super().__init__(pt, w, h, color)
+
+class Enemy(Combatant): # enemy
+	def __init__(self, pt: Vector, w: float, h: float, target: Player, aggro_range: float, level: int, color: str = "#ff0000"):
+		super().__init__(pt, w, h, -1, -1, -1, color)
 		self._target: Player = target
 		self._aggro_range: float = aggro_range
-		self._cone_angle: float = cone_angle # degrees
+		self._cone_angle: float = 90 # degrees
 		self._vision_direction: float = 0 # degrees
+		self._level = level
+		self.set_base_stats()
 
 	def get_target(self) -> Player:
 		return self._target
@@ -206,6 +229,12 @@ class Enemy(AdvancedHitbox): # enemy
 		return self._vision_direction
 	def set_vision_direction(self, vision_direction: float) -> None:
 		self._vision_direction = vision_direction
+	def get_level(self) -> int:
+		return self._level
+	def set_base_stats(self):
+		self.set_hp(50 + self.get_level() * 10)
+		self.set_damage(5 + self.get_level() * 5)
+		self.set_ms(4 + self.get_level())
 
 	def check_range(self) -> bool:
 		vec_dif = self.get_target().get_center().subtract(self.get_center())
@@ -233,4 +262,3 @@ class Enemy(AdvancedHitbox): # enemy
 		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_end_2.get_tuple(), 3)
 		
 		super().draw(win)
-
