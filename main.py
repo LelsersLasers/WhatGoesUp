@@ -92,7 +92,7 @@ def main():
 	win = create_window()
 
 	player = Player()
-	enemy = Enemy(Vector(800, 400), 30, 30, player, 300)
+	enemy = Enemy(Vector(800, 400), 30, 30, player, 300, 90)
 
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 

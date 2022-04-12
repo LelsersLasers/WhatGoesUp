@@ -1,8 +1,7 @@
 # Basically Everything
 
 # Bugs
-SOLVED?: main.py - set_delta()
-- sometimes the value is much too high
+
 
 # Cleaning
 

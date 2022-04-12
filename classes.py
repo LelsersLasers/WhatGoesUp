@@ -183,19 +183,29 @@ class Player(AdvancedHitbox): # p
 	# 	pygame.draw.rect(win, color, self.get_rect())
 
 class Enemy(AdvancedHitbox): # enemy
-	def __init__(self, pt: Vector, w: float, h: float, target: Player, aggro_range: float, color: str = "#ff0000"):
+	def __init__(self, pt: Vector, w: float, h: float, target: Player, aggro_range: float, cone_angle: float, color: str = "#ff0000"):
 		super().__init__(pt, w, h, color)
-		self._aggro_range: float = aggro_range
 		self._target: Player = target
+		self._aggro_range: float = aggro_range
+		self._cone_angle: float = cone_angle # degrees
+		self._vision_direction: float = 0 # degrees
 
-	def get_aggro_range(self) -> float:
-		return self._aggro_range
-	def set_aggro_range(self, aggro_range: float) -> None:
-		self._aggro_range = aggro_range
 	def get_target(self) -> Player:
 		return self._target
 	def set_target(self, target: Player):
 		self._target = target
+	def get_aggro_range(self) -> float:
+		return self._aggro_range
+	def set_aggro_range(self, aggro_range: float) -> None:
+		self._aggro_range = aggro_range
+	def get_cone_angle(self) -> float:
+		return self._cone_angle
+	def set_cone_angle(self, cone_angle: float) -> None:
+		self._cone_angle = cone_angle
+	def get_vision_direction(self) -> float:
+		return self._vision_direction
+	def set_vision_direction(self, vision_direction: float) -> None:
+		self._vision_direction = vision_direction
 
 	def check_range(self) -> bool:
 		vec_dif = self.get_target().get_center().subtract(self.get_center())
@@ -203,8 +213,24 @@ class Enemy(AdvancedHitbox): # enemy
 
 	def draw(self, win: pygame.Surface) -> None:
 		color = self.get_color()
-		if self.check_range():
+		if self.get_target().check_collisions(self):
+			color = "#0000ff"
+		elif self.check_range():
 			color = "#00ff00"
-		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 2)
+		
+		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 3)
+
+		vec_look_1 = Vector(self.get_aggro_range(), 0)
+		vec_look_1.set_angle(self.get_vision_direction() + self.get_cone_angle()/2)
+
+		vec_look_2 = Vector(self.get_aggro_range(), 1)
+		vec_look_2.set_angle(self.get_vision_direction() - self.get_cone_angle()/2)
+		
+		vec_end_1 = self.get_center().add(vec_look_1)
+		vec_end_2 = self.get_center().add(vec_look_2)
+		
+		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_end_1.get_tuple(), 3)
+		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_end_2.get_tuple(), 3)
+		
 		super().draw(win)
 
