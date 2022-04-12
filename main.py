@@ -66,14 +66,9 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
 	hb_mouse.draw(win)
 
 
-def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, ahb: AdvancedHitbox, player: Player, enemy: Enemy, hb_mouse: Hitbox) -> None:
+def draw_game(win: pygame.Surface, player: Player, enemy: Enemy, hb_mouse: Hitbox) -> None:
 	win.fill("#fdf6e3")
 
-	hb1.draw(win)
-	hb2.set_color("#ff0000" if player.check_collisions(hb2) else "#0000ff")
-	hb2.draw(win)
-	ahb.set_color("#ff0000" if player.check_advanced_collisions(ahb) else "#0000ff")
-	ahb.draw(win)
 	enemy.draw(win)
 	player.draw(win)
 
@@ -96,11 +91,6 @@ def main():
 
 	win = create_window()
 
-	hb1 = Hitbox(Vector(100, 100), 100, 100)
-	hb2 = Hitbox(Vector(400, 400), 100, 100, "#0000ff")
-	ahb = AdvancedHitbox(Vector(600, 600), 100, 100)
-	ahb.add_hbp(HitboxPart(Vector(610, 610), Vector(10, 10), 30, 80))
-	ahb.add_hbp(HitboxPart(Vector(660, 610), Vector(60, 10), 30, 80))
 	player = Player()
 	enemy = Enemy(Vector(800, 400), 30, 30, player, 300)
 
@@ -113,7 +103,7 @@ def main():
 
 		win.fill("#fdf6e3")
 		if screen == "game":
-			draw_game(win, hb1, hb2, ahb, player, enemy, hb_mouse)
+			draw_game(win, player, enemy, hb_mouse)
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse)
 		pygame.display.flip()
