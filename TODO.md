@@ -8,7 +8,6 @@ SOLVED?: main.py - set_delta()
 
 
 # Bottom Up
-0) Test stuff
 1) class Enemy(AdvancedHitbox)
     - set up basic things like vision cones, hp/level/dmg/etc
 2) class BirdEnemy(Enemy) [or some specific type of enemy]
@@ -25,11 +24,7 @@ SOLVED?: main.py - set_delta()
 
 
 # To Test:
-All of the AdvancedHitbox/HitboxPart code
-- updating functions
-- check_collisions/etc
-- is it 'easy' to use?
-    - Or will it cause writing Enemy/Player classes to be unessicarly complicated
+
 
 # Notes
 Keys:

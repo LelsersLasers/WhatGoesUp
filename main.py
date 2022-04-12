@@ -72,7 +72,7 @@ def draw_game(win: pygame.Surface, hb1: Hitbox, hb2: Hitbox, ahb: AdvancedHitbox
 	hb1.draw(win)
 	hb2.set_color("#ff0000" if player.check_collisions(hb2) else "#0000ff")
 	hb2.draw(win)
-	ahb.set_color("#ff0000" if player.check_collisions(ahb) else "#0000ff")
+	ahb.set_color("#ff0000" if player.check_advanced_collisions(ahb) else "#0000ff")
 	ahb.draw(win)
 	player.draw(win)
 
@@ -97,7 +97,9 @@ def main():
 
 	hb1 = Hitbox(Vector(100, 100), 100, 100)
 	hb2 = Hitbox(Vector(400, 400), 100, 100, "#0000ff")
-	ahb = AdvancedHitbox(Vector(500, 100), 100, 100)
+	ahb = AdvancedHitbox(Vector(600, 600), 100, 100)
+	ahb.add_hbp(HitboxPart(Vector(610, 610), Vector(10, 10), 30, 80))
+	ahb.add_hbp(HitboxPart(Vector(660, 610), Vector(60, 10), 30, 80))
 	player = Player()
 
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
