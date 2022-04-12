@@ -20,6 +20,8 @@ class Vector(): # vec
 		return self._y
 	def set_y(self, y: float) -> None:
 		self._y = y
+	def get_tuple(self) -> tuple[float, float]:
+		return (self.get_x(), self.get_y())
 
 	def calc_length(self) -> float:
 		return math.sqrt(self.get_x() ** 2 + self.get_y() ** 2)
@@ -170,3 +172,30 @@ class Player(AdvancedHitbox): # p
 
 	# def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 	# 	pygame.draw.rect(win, color, self.get_rect())
+
+class Enemy(AdvancedHitbox): # enemy
+	def __init__(self, pt: Vector, w: float, h: float, target: Player, aggro_range: float, color: str = "#ff0000"):
+		super().__init__(pt, w, h, color)
+		self._aggro_range: float = aggro_range
+		self._target: Player = target
+
+	def get_aggro_range(self) -> float:
+		return self._aggro_range
+	def set_aggro_range(self, aggro_range: float) -> None:
+		self._aggro_range = aggro_range
+	def get_target(self) -> Player:
+		return self._target
+	def set_target(self, target: Player):
+		self._target = target
+
+	def check_range(self) -> bool:
+		vec_dif = self.get_target().get_center().subtract(self.get_center())
+		return vec_dif.calc_length() <= self.get_aggro_range()
+
+	def draw(self, win: pygame.Surface) -> None:
+		color = self.get_color()
+		if self.check_range():
+			color = "#00ff00"
+		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 2)
+		super().draw(win)
+
