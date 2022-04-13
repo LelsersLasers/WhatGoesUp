@@ -241,14 +241,23 @@ class Enemy(Combatant): # enemy
 		self._vision_direction = vision_direction
 	def get_level(self) -> int:
 		return self._level
+	def get_vec_to_target(self) -> Vector:
+		return self.get_target().get_center().subtract(self.get_center())
 
 	def check_range(self) -> bool:
 		vec_dif = self.get_target().get_center().subtract(self.get_center())
 		return vec_dif.calc_length() <= self.get_aggro_range()
 
+	def check_vision(self) -> bool:
+		vec_to_target = self.get_vec_to_target()
+		angle_to_target = vec_to_target.get_angle()
+		angle_start = self.get_vision_direction() - self.get_cone_angle()/2
+		angle_end = self.get_vision_direction() + self.get_cone_angle()/2
+		return angle_to_target >= angle_start and angle_to_target <= angle_end
+
 	def update(self, delta: float) -> None:
-		if self.check_range():
-			vec_move = self.get_target().get_center().subtract(self.get_center()).scale(self.get_ms() * delta)
+		if self.check_range() and self.check_vision():
+			vec_move = self.get_vec_to_target().scale(self.get_ms() * delta)
 			self.get_pt().apply(vec_move)
 			self.set_vision_direction(vec_move.get_angle())
 
@@ -257,7 +266,7 @@ class Enemy(Combatant): # enemy
 		color = self.get_color()
 		if self.get_target().check_collisions(self):
 			color = "#0000ff"
-		elif self.check_range():
+		elif self.check_range() and self.check_vision():
 			color = "#00ff00"
 		
 		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 3)
@@ -273,5 +282,7 @@ class Enemy(Combatant): # enemy
 		
 		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_end_1.get_tuple(), 3)
 		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_end_2.get_tuple(), 3)
+
+		pygame.draw.line(win, color, self.get_center().get_tuple(), self.get_target().get_center().get_tuple(), 3)
 		
 		super().draw(win)

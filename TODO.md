@@ -1,6 +1,8 @@
 # Basically Everything
 
 # Bugs
+Enemy.check_vision()
+    - False negative
 
 
 # Cleaning
