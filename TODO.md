@@ -1,6 +1,8 @@
 # Basically Everything
 
 # Bugs
+angle = math.atan(self.get_y()/self.get_x()) * 180/math.pi
+- zero division error
 
 # Cleaning
 
