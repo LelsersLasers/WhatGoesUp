@@ -215,6 +215,11 @@ class Enemy(Combatant): # enemy
 		self._level = level
 		self.set_base_stats()
 
+	def set_base_stats(self) -> None:
+		self.set_hp(50 + self.get_level() * 10)
+		self.set_damage(5 + self.get_level() * 5)
+		self.set_ms(3 + self.get_level()/2)
+
 	def get_target(self) -> Player:
 		return self._target
 	def set_target(self, target: Player):
@@ -233,18 +238,14 @@ class Enemy(Combatant): # enemy
 		self._vision_direction = vision_direction
 	def get_level(self) -> int:
 		return self._level
-	def set_base_stats(self):
-		self.set_hp(50 + self.get_level() * 10)
-		self.set_damage(5 + self.get_level() * 5)
-		self.set_ms(3 + self.get_level()/2)
 
 	def check_range(self) -> bool:
 		vec_dif = self.get_target().get_center().subtract(self.get_center())
 		return vec_dif.calc_length() <= self.get_aggro_range()
 
-	def update(self) -> None:
+	def update(self, delta: float) -> None:
 		if self.check_range():
-			vec_move = self.get_target().get_center().subtract(self.get_center()).scale(self.get_ms())
+			vec_move = self.get_target().get_center().subtract(self.get_center()).scale(self.get_ms() * delta)
 			self.get_pt().apply(vec_move)
 			self.set_vision_direction(vec_move.get_angle())
 

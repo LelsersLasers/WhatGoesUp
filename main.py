@@ -66,10 +66,10 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
 	hb_mouse.draw(win)
 
 
-def draw_game(win: pygame.Surface, player: Player, enemy: Enemy, hb_mouse: Hitbox) -> None:
+def draw_game(win: pygame.Surface, player: Player, enemy: Enemy, hb_mouse: Hitbox, delta: float) -> None:
 	win.fill("#fdf6e3")
 
-	enemy.update()
+	enemy.update(delta)
 	enemy.draw(win)
 	player.draw(win)
 
@@ -93,7 +93,7 @@ def main():
 	win = create_window()
 
 	player = Player()
-	enemy = Enemy(Vector(800, 400), 30, 30, player, 300, 1)
+	enemy = Enemy(Vector(800, 400), 30, 30, player, 400, 1)
 
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 
@@ -104,13 +104,13 @@ def main():
 
 		win.fill("#fdf6e3")
 		if screen == "game":
-			draw_game(win, player, enemy, hb_mouse)
+			draw_game(win, player, enemy, hb_mouse, delta)
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse)
 		pygame.display.flip()
 
 
-		clock.tick_busy_loop(target_fps)
+		# clock.tick_busy_loop(target_fps)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, target_fps, frame)
 		print("FPS: %4.2f" % ((1/delta) * target_fps))
 
