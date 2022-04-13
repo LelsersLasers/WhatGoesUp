@@ -15,12 +15,13 @@ angle = math.atan(self.get_y()/self.get_x()) * 180/math.pi
 3) basic player attacks
     - swing sword
     - basic abilities
-4) rooms
-5) dungeons
-6) menues
-7) go back and make everything good
-8) saving
-9) art
+4) walls/obstacles/vision/scene setting
+5) rooms
+6) dungeons
+7) menues
+8) go back and make everything good
+9) saving
+10) art
 
 
 # To Test:
