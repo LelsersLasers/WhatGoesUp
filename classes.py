@@ -23,8 +23,11 @@ class Vector(): # vec
 	def get_tuple(self) -> tuple[float, float]:
 		return (self.get_x(), self.get_y())
 	def get_angle(self) -> float:
-		angle = math.atan(self.get_y()/self.get_x()) * 180/math.pi
-		if self.get_x() < 0: angle += 180
+		try:
+			angle = math.atan(self.get_y()/self.get_x()) * 180/math.pi
+			if self.get_x() < 0: angle += 180
+		except ZeroDivisionError:
+			angle = 90 if self.get_y() > 0 else 270
 		return angle
 	def set_angle(self, angle: float) -> None:
 		current_length = self.calc_length()
