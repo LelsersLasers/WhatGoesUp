@@ -2,7 +2,8 @@
 
 # Bugs
 Enemy.check_vision()
-    - False negative
+    - False negative caused by the fact that angles can be negative
+    - Ex: -10 degress = 350 degrees
 
 
 # Cleaning

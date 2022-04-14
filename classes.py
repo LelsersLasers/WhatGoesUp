@@ -182,7 +182,7 @@ class Combatant(AdvancedHitbox):
 
 class Player(Combatant): # p
 	def __init__(self):
-		super().__init__(Vector(0, 0), 40, 40, 100, 20, 7, "#00ff00")
+		super().__init__(Vector(0, 0), 40, 40, 100, 20, 500, "#00ff00")
 		self.add_hbp(HitboxPart(Vector(-10, -10), Vector(-10, -10), 25, 25))
 		self.add_hbp(HitboxPart(Vector(25, -10), Vector(25, -10), 25, 25))
 		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
@@ -221,7 +221,7 @@ class Enemy(Combatant): # enemy
 	def set_base_stats(self) -> None:
 		self.set_hp(50 + self.get_level() * 10)
 		self.set_damage(5 + self.get_level() * 5)
-		self.set_ms(3 + self.get_level()/2)
+		self.set_ms(350 + self.get_level() * 10)
 
 	def get_target(self) -> Player:
 		return self._target

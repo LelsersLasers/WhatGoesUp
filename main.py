@@ -11,10 +11,10 @@ def calc_average(lst: list[float]) -> float:
 		return 1
 	return sum(lst)/len(lst)
 
-def set_delta(time_0: float, time_1: float, deltas: list[float], target_fps: float, frame: int) -> tuple[float, float, float, int]:
+def set_delta(time_0: float, time_1: float, deltas: list[float], frame: int) -> tuple[float, float, float, int]:
 	time_1 = time.perf_counter()
 	if (frame > 20):
-		deltas.append(target_fps/(1/(time_1 - time_0)))
+		deltas.append(time_1 - time_0)
 	frame += 1
 	time_0 = time.perf_counter()
 	return calc_average(deltas), time_0, time_1, frame
@@ -78,7 +78,6 @@ def draw_game(win: pygame.Surface, player: Player, enemy: Enemy, hb_mouse: Hitbo
 
 def main():
 
-	target_fps = 60
 	deltas = []
 	delta = 1.0 # relative to target_fps
 	frame = 0
@@ -110,8 +109,8 @@ def main():
 		pygame.display.flip()
 
 
-		# clock.tick_busy_loop(target_fps)
-		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, target_fps, frame)
+		# clock.tick_busy_loop(60)
+		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
 		# print("FPS: %4.2f" % ((1/delta) * target_fps))
 
 
