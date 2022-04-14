@@ -253,12 +253,24 @@ class Enemy(Combatant): # enemy
 		return vec_dif.calc_length() <= self.get_aggro_range()
 
 	def check_vision(self) -> bool:
-		vec_to_target = self.get_vec_to_target()
-		angle_to_target = vec_to_target.get_angle()
-		angle_start = self.get_top_of_vision_cone()
-		angle_end = self.get_bottom_of_vision_cone()
-		print(angle_start, angle_end, angle_to_target)
-		return angle_to_target >= angle_start and angle_to_target <= angle_end
+		angle_to_target = self.get_vec_to_target().get_angle()
+
+		# angle_start = self.get_top_of_vision_cone()
+		vec_look_1 = Vector(1, 0)
+		vec_look_1.set_angle(self.get_top_of_vision_cone())
+		angle_start = vec_look_1.get_angle()
+		
+		# angle_end = self.get_bottom_of_vision_cone()
+		vec_look_2 = Vector(1, 0)
+		vec_look_2.set_angle(self.get_bottom_of_vision_cone())
+		angle_end = vec_look_2.get_angle()
+
+		if angle_end < angle_start:
+			angle_end += 360
+		if angle_to_target >= angle_start and angle_to_target <= angle_end:
+			return True
+
+		return angle_to_target >= angle_start - 360 and angle_to_target <= angle_end - 360
 
 	def update(self, delta: float) -> None:
 		if self.check_range() and self.check_vision():
