@@ -28,7 +28,7 @@ class Vector(): # vec
 			if self.get_x() < 0: angle += 180
 		except ZeroDivisionError:
 			angle = 90 if self.get_y() > 0 else 270
-		return angle
+		return angle % 360
 	def set_angle(self, angle: float) -> None:
 		current_length = self.calc_length()
 		self.set_x(math.cos(angle * math.pi/180))
@@ -253,6 +253,7 @@ class Enemy(Combatant): # enemy
 		angle_to_target = vec_to_target.get_angle()
 		angle_start = self.get_vision_direction() - self.get_cone_angle()/2
 		angle_end = self.get_vision_direction() + self.get_cone_angle()/2
+		print(angle_start, angle_end, angle_to_target)
 		return angle_to_target >= angle_start and angle_to_target <= angle_end
 
 	def update(self, delta: float) -> None:
