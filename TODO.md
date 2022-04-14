@@ -11,12 +11,13 @@ Enemy.check_vision()
 
 # Bottom Up
 1) class Enemy(AdvancedHitbox)
-    - set up basic things like vision cones, hp/level/dmg/etc
-2) class BirdEnemy(Enemy) [or some specific type of enemy]
-    - presets, override attack method, etc
-3) basic player attacks
+    - Fix vision cones
+2) basic combat
     - swing sword
-    - basic abilities
+    - basic abilities?
+    - enemy can attack
+3) class BirdEnemy(Enemy) [or some specific type of enemy]
+    - presets, override attack method, etc
 4) walls/obstacles/vision/scene setting
 5) rooms
 6) dungeons

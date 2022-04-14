@@ -282,11 +282,11 @@ class Enemy(Combatant): # enemy
 		vec_look_2 = Vector(self.get_aggro_range(), 1)
 		vec_look_2.set_angle(self.get_bottom_of_vision_cone())
 		
-		vec_end_1 = self.get_center().add(vec_look_1)
-		vec_end_2 = self.get_center().add(vec_look_2)
+		vec_look_1.apply(self.get_center())
+		vec_look_2.apply(self.get_center())
 		
-		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_end_1.get_tuple(), 3)
-		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_end_2.get_tuple(), 3)
+		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_look_1.get_tuple(), 3)
+		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_look_2.get_tuple(), 3)
 
 		pygame.draw.line(win, color, self.get_center().get_tuple(), self.get_target().get_center().get_tuple(), 3)
 		
