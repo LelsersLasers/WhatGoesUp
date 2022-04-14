@@ -243,6 +243,10 @@ class Enemy(Combatant): # enemy
 		return self._level
 	def get_vec_to_target(self) -> Vector:
 		return self.get_target().get_center().subtract(self.get_center())
+	def get_top_of_vision_cone(self) -> float:
+		return self.get_vision_direction() - self.get_cone_angle()/2
+	def get_bottom_of_vision_cone(self) -> float:
+		return self.get_vision_direction() + self.get_cone_angle()/2
 
 	def check_range(self) -> bool:
 		vec_dif = self.get_target().get_center().subtract(self.get_center())
@@ -251,8 +255,8 @@ class Enemy(Combatant): # enemy
 	def check_vision(self) -> bool:
 		vec_to_target = self.get_vec_to_target()
 		angle_to_target = vec_to_target.get_angle()
-		angle_start = self.get_vision_direction() - self.get_cone_angle()/2
-		angle_end = self.get_vision_direction() + self.get_cone_angle()/2
+		angle_start = self.get_top_of_vision_cone()
+		angle_end = self.get_bottom_of_vision_cone()
 		print(angle_start, angle_end, angle_to_target)
 		return angle_to_target >= angle_start and angle_to_target <= angle_end
 
@@ -273,10 +277,10 @@ class Enemy(Combatant): # enemy
 		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 3)
 
 		vec_look_1 = Vector(self.get_aggro_range(), 0)
-		vec_look_1.set_angle(self.get_vision_direction() + self.get_cone_angle()/2)
+		vec_look_1.set_angle(self.get_top_of_vision_cone())
 
 		vec_look_2 = Vector(self.get_aggro_range(), 1)
-		vec_look_2.set_angle(self.get_vision_direction() - self.get_cone_angle()/2)
+		vec_look_2.set_angle(self.get_bottom_of_vision_cone())
 		
 		vec_end_1 = self.get_center().add(vec_look_1)
 		vec_end_2 = self.get_center().add(vec_look_2)
