@@ -209,11 +209,11 @@ class Player(Combatant): # p
 
 
 class Enemy(Combatant): # enemy
-	def __init__(self, pt: Vector, w: float, h: float, target: Player, aggro_range: float, level: int, color: str = "#ff0000"):
+	def __init__(self, pt: Vector, w: float, h: float, target: Player, vision_range: float, level: int, color: str = "#ff0000"):
 		super().__init__(pt, w, h, -1, -1, -1, color)
 		self._target: Player = target
-		self._aggro_range: float = aggro_range
-		self._cone_angle: float = 90 # degrees
+		self._vision_range: float = vision_range
+		self._cone_angle: float = 70 # degrees
 		self._vision_direction: float = 0 # degrees
 		self._level = level
 		self.set_base_stats()
@@ -227,10 +227,12 @@ class Enemy(Combatant): # enemy
 		return self._target
 	def set_target(self, target: Player):
 		self._target = target
+	def get_vision_range(self) -> float:
+		return self._vision_range
+	def set_vision_range(self, vision_range: float) -> None:
+		self._vision_range = vision_range
 	def get_aggro_range(self) -> float:
-		return self._aggro_range
-	def set_aggro_range(self, aggro_range: float) -> None:
-		self._aggro_range = aggro_range
+		return self.get_vision_range()/2
 	def get_cone_angle(self) -> float:
 		return self._cone_angle
 	def set_cone_angle(self, cone_angle: float) -> None:
@@ -244,19 +246,25 @@ class Enemy(Combatant): # enemy
 	def get_vec_to_target(self) -> Vector:
 		return self.get_target().get_center().subtract(self.get_center())
 	def get_top_of_vision_cone(self) -> Vector:
-		vec = Vector(self.get_aggro_range(), 0)
+		vec = Vector(self.get_vision_range(), 0)
 		vec.set_angle(self.get_vision_direction() - self.get_cone_angle()/2)
 		return vec
 	def get_bottom_of_vision_cone(self) -> Vector:
-		vec = Vector(self.get_aggro_range(), 0)
+		vec = Vector(self.get_vision_range(), 0)
 		vec.set_angle(self.get_vision_direction() + self.get_cone_angle()/2)
 		return vec
 
-	def check_range(self) -> bool:
+	def check_vision_range(self) -> bool:
+		vec_dif = self.get_target().get_center().subtract(self.get_center())
+		return vec_dif.calc_length() <= self.get_vision_range()
+
+	def check_aggro_range(self) -> bool:
 		vec_dif = self.get_target().get_center().subtract(self.get_center())
 		return vec_dif.calc_length() <= self.get_aggro_range()
 
 	def check_vision(self) -> bool:
+		if not self.check_vision_range():
+			return False
 		angle_to_target = self.get_vec_to_target().get_angle()
 		angle_start = self.get_top_of_vision_cone().get_angle()
 		angle_end = self.get_bottom_of_vision_cone().get_angle()
@@ -268,7 +276,7 @@ class Enemy(Combatant): # enemy
 		return angle_to_target >= angle_start - 360 and angle_to_target <= angle_end - 360
 
 	def update(self, delta: float) -> None:
-		if self.check_range() and self.check_vision():
+		if self.check_aggro_range() or self.check_vision():
 			vec_move = self.get_vec_to_target().scale(self.get_ms() * delta)
 			self.get_pt().apply(vec_move)
 			self.set_vision_direction(vec_move.get_angle())
@@ -278,7 +286,7 @@ class Enemy(Combatant): # enemy
 		color = self.get_color()
 		if self.get_target().check_collisions(self):
 			color = "#0000ff"
-		elif self.check_range() and self.check_vision():
+		elif self.check_aggro_range() or self.check_vision():
 			color = "#00ff00"
 		
 		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 3)

@@ -11,9 +11,7 @@
 
 # Bottom Up
 1) class Enemy(AdvancedHitbox)
-    - 2 agrro ways
-    - 1) if close enough
-    - 2) if in vision cone
+    - smooth vision
 2) basic combat
     - swing sword
     - basic abilities?
