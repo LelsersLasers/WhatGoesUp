@@ -11,7 +11,9 @@
 
 # Bottom Up
 1) class Enemy(AdvancedHitbox)
-    - Fix vision cones
+    - 2 agrro ways
+    - 1) if close enough
+    - 2) if in vision cone
 2) basic combat
     - swing sword
     - basic abilities?
@@ -20,6 +22,7 @@
     - presets, override attack method, etc
 4) walls/obstacles/vision/scene setting
 5) rooms
+    - enemy idle movement?
 6) dungeons
 7) menues
 8) go back and make everything good

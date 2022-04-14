@@ -243,10 +243,14 @@ class Enemy(Combatant): # enemy
 		return self._level
 	def get_vec_to_target(self) -> Vector:
 		return self.get_target().get_center().subtract(self.get_center())
-	def get_top_of_vision_cone(self) -> float:
-		return self.get_vision_direction() - self.get_cone_angle()/2
-	def get_bottom_of_vision_cone(self) -> float:
-		return self.get_vision_direction() + self.get_cone_angle()/2
+	def get_top_of_vision_cone(self) -> Vector:
+		vec = Vector(self.get_aggro_range(), 0)
+		vec.set_angle(self.get_vision_direction() - self.get_cone_angle()/2)
+		return vec
+	def get_bottom_of_vision_cone(self) -> Vector:
+		vec = Vector(self.get_aggro_range(), 0)
+		vec.set_angle(self.get_vision_direction() + self.get_cone_angle()/2)
+		return vec
 
 	def check_range(self) -> bool:
 		vec_dif = self.get_target().get_center().subtract(self.get_center())
@@ -254,22 +258,13 @@ class Enemy(Combatant): # enemy
 
 	def check_vision(self) -> bool:
 		angle_to_target = self.get_vec_to_target().get_angle()
-
-		# angle_start = self.get_top_of_vision_cone()
-		vec_look_1 = Vector(1, 0)
-		vec_look_1.set_angle(self.get_top_of_vision_cone())
-		angle_start = vec_look_1.get_angle()
-		
-		# angle_end = self.get_bottom_of_vision_cone()
-		vec_look_2 = Vector(1, 0)
-		vec_look_2.set_angle(self.get_bottom_of_vision_cone())
-		angle_end = vec_look_2.get_angle()
+		angle_start = self.get_top_of_vision_cone().get_angle()
+		angle_end = self.get_bottom_of_vision_cone().get_angle()
 
 		if angle_end < angle_start:
 			angle_end += 360
 		if angle_to_target >= angle_start and angle_to_target <= angle_end:
 			return True
-
 		return angle_to_target >= angle_start - 360 and angle_to_target <= angle_end - 360
 
 	def update(self, delta: float) -> None:
@@ -288,13 +283,9 @@ class Enemy(Combatant): # enemy
 		
 		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 3)
 
-		vec_look_1 = Vector(self.get_aggro_range(), 0)
-		vec_look_1.set_angle(self.get_top_of_vision_cone())
-
-		vec_look_2 = Vector(self.get_aggro_range(), 1)
-		vec_look_2.set_angle(self.get_bottom_of_vision_cone())
-		
+		vec_look_1 = self.get_top_of_vision_cone()
 		vec_look_1.apply(self.get_center())
+		vec_look_2 = self.get_bottom_of_vision_cone()
 		vec_look_2.apply(self.get_center())
 		
 		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_look_1.get_tuple(), 3)
