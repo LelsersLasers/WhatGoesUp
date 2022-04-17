@@ -79,7 +79,7 @@ def draw_game(win: pygame.Surface, player: Player, enemy: Enemy, hb_mouse: Hitbo
 def main():
 
 	deltas = []
-	delta = 1.0 # relative to target_fps
+	delta = 0.017 # second since last frame
 	frame = 0
 
 	screen = "welcome"
