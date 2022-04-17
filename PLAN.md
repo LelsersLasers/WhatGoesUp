@@ -17,4 +17,5 @@ Controls:
 tbd
 
 # Everything Else
-tbd
+- Weapons
+  - Durability

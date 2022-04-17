@@ -322,12 +322,22 @@ class Enemy(Combatant): # enemy
 		super().draw(win)
 
 class Item(AdvancedHitbox): # item
-	def __init__(self, player: Player):
+	def __init__(self, player: Player, name: str, description: str, ):
 		super().__init__(player.get_center(), 10, 10, "#0000ff")
 		self._player: Player = player
+		self._name: str = name
+		self._description: str = description
 
 	def get_player(self) -> Player:
 		return self._player
+	def get_name(self) -> str:
+		return self._name
+	def set_name(self, name: str) -> None:
+		self._name = name
+	def get_description(self) -> str:
+		return self._description
+	def set_description(self, description: str) -> None:
+		self._description = description
 
 	def update_pt(self) -> None:
 		self.set_pt(self.get_player().get_center())
