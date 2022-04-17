@@ -188,8 +188,22 @@ class Player(Combatant): # p
 		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
 		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
 
+		self._inventory: list[Item] = [Item(self)]
+		self._active_item_index: int = 0
+
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
+
+	def get_inventory(self) -> list[Item]:
+		return self._inventory
+	def add_item(self, item: Item) -> None:
+		self.get_inventory().append(item)
+	def get_active_item_index(self) -> int:
+		return self._active_item_index
+	def set_active_item_index(self, index: int) -> None:
+		self._active_item_index = index
+	def get_active_item(self) -> Item:
+		return self.get_inventory()[self.get_active_item_index()]
 
 	def handle_keys(self, keys_down: list[bool], delta: float) -> None:
 		vec_move = Vector(0, 0)
@@ -204,8 +218,12 @@ class Player(Combatant): # p
 		self.get_pt().apply(vec_move.scale(self.get_ms() * delta))
 		self.update_hbps()
 
-	# def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
-	# 	pygame.draw.rect(win, color, self.get_rect())
+	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
+		super().draw(win)
+		self.get_active_item().update_pt()
+		self.get_active_item().draw(win)
+
+
 
 
 class Enemy(Combatant): # enemy
@@ -288,17 +306,28 @@ class Enemy(Combatant): # enemy
 			color = "#0000ff"
 		elif self.check_aggro_range() or self.check_vision():
 			color = "#00ff00"
-		
+
 		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 3)
 
 		vec_look_1 = self.get_top_of_vision_cone()
 		vec_look_1.apply(self.get_center())
 		vec_look_2 = self.get_bottom_of_vision_cone()
 		vec_look_2.apply(self.get_center())
-		
+
 		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_look_1.get_tuple(), 3)
 		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_look_2.get_tuple(), 3)
 
 		pygame.draw.line(win, color, self.get_center().get_tuple(), self.get_target().get_center().get_tuple(), 3)
-		
+
 		super().draw(win)
+
+class Item(AdvancedHitbox): # item
+	def __init__(self, player: Player):
+		super().__init__(player.get_center(), 10, 10, "#0000ff")
+		self._player: Player = player
+
+	def get_player(self) -> Player:
+		return self._player
+
+	def update_pt(self) -> None:
+		self.set_pt(self.get_player().get_center())

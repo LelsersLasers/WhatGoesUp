@@ -1,17 +1,12 @@
 # Basically Everything
 
 # Bugs
-- Fixed?: Enemy.check_vision()
-    - False negative caused by the fact that angles can be negative
-    - Ex: -10 degress = 350 degrees
 
 
 # Cleaning
 
 
 # Bottom Up
-1) class Enemy(AdvancedHitbox)
-    - smooth vision
 2) basic combat
     - swing sword
     - basic abilities?
@@ -36,3 +31,9 @@ Keys:
 - WASD: move player (green)
 - Control + Q: quit
 - Enter/lmb: change screen from welcome to game
+
+# Unique thingy majigy ideas
+- Unique  classes
+  - Pet/army control based class
+  - Basic fantasy classes
+  - Unique fantasy/futurist combo classes
