@@ -188,7 +188,7 @@ class Player(Combatant): # p
 		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
 		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
 
-		self._inventory: list[Item] = [Item(self)]
+		self._inventory: list[Item] = [Item(self, "Sword", "It is a sword")]
 		self._active_item_index: int = 0
 
 	def __str__(self) -> str:
@@ -322,7 +322,7 @@ class Enemy(Combatant): # enemy
 		super().draw(win)
 
 class Item(AdvancedHitbox): # item
-	def __init__(self, player: Player, name: str, description: str, ):
+	def __init__(self, player: Player, name: str, description: str):
 		super().__init__(player.get_center(), 10, 10, "#0000ff")
 		self._player: Player = player
 		self._name: str = name
@@ -341,3 +341,27 @@ class Item(AdvancedHitbox): # item
 
 	def update_pt(self) -> None:
 		self.set_pt(self.get_player().get_center())
+
+class Weapon(Item):
+	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
+		super().init(player, name, description)
+		self._damage: float = damage
+		self._fire_rate: float = fire_rate # attacks/sec
+		self._range: float = range
+	
+	def get_damage(self) -> float:
+		return self._damage
+	def set_damage(self, damage: float) -> None:
+		self._damage = damage
+	def get_fire_rate(self) -> float:
+		return self._fire_rate
+	def set_fire_rate(self, fire_rate: float) -> None:
+		self._fire_rate = fire_rate
+	def get_range(self) -> float:
+		return self._range
+	def set_range(self, range: float):
+		self._range = range
+
+class MeleeWeapon(Weapon):
+	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
+		super().__init__(player, name, description, damage, fire_rate, range)

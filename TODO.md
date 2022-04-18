@@ -7,6 +7,9 @@
 
 
 # Bottom Up
+
+remove damage in Combantant
+
 2) basic combat
     - swing sword
     - basic abilities?
