@@ -348,7 +348,7 @@ class Weapon(Item):
 		self._damage: float = damage
 		self._fire_rate: float = fire_rate # attacks/sec
 		self._range: float = range
-	
+
 	def get_damage(self) -> float:
 		return self._damage
 	def set_damage(self, damage: float) -> None:
@@ -363,5 +363,13 @@ class Weapon(Item):
 		self._range = range
 
 class MeleeWeapon(Weapon):
+	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
+		super().__init__(player, name, description, damage, fire_rate, range)
+
+class RangedWeapon(Weapon):
+	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
+		super().__init__(player, name, description, damage, fire_rate, range)
+
+class MagicWeapon(Weapon):
 	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
 		super().__init__(player, name, description, damage, fire_rate, range)
