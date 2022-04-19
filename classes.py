@@ -188,7 +188,7 @@ class Player(Combatant): # p
 		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
 		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
 
-		self._inventory: list[Item] = [Item(self, "Sword", "It is a sword")]
+		self._inventory: list[Item] = [MeleeWeapon(self, "Sword", "Its a sword", 10, 1.0, 5.0)]
 		self._active_item_index: int = 0
 
 	def __str__(self) -> str:
@@ -205,7 +205,7 @@ class Player(Combatant): # p
 	def get_active_item(self) -> Item:
 		return self.get_inventory()[self.get_active_item_index()]
 
-	def handle_keys(self, keys_down: list[bool], delta: float) -> None:
+	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float) -> None:
 		vec_move = Vector(0, 0)
 		if keys_down[K_w]:
 			vec_move.set_y(-1)
@@ -217,6 +217,8 @@ class Player(Combatant): # p
 			vec_move.set_x(1)
 		self.get_pt().apply(vec_move.scale(self.get_ms() * delta))
 		self.update_hbps()
+		if keys_down[K_q]:
+			self.get_active_item().attack(hb_mouse)
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 		super().draw(win)
@@ -344,7 +346,7 @@ class Item(AdvancedHitbox): # item
 
 class Weapon(Item):
 	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
-		super().init(player, name, description)
+		super().__init__(player, name, description)
 		self._damage: float = damage
 		self._fire_rate: float = fire_rate # attacks/sec
 		self._range: float = range
@@ -359,12 +361,18 @@ class Weapon(Item):
 		self._fire_rate = fire_rate
 	def get_range(self) -> float:
 		return self._range
-	def set_range(self, range: float):
+	def set_range(self, range: float) -> None:
 		self._range = range
+
+	def attack(self, hb_mouse: Hitbox):
+		vec = self.get_player().get_center().subtract(hb_mouse.get_center())
+		print(vec)
+
 
 class MeleeWeapon(Weapon):
 	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
 		super().__init__(player, name, description, damage, fire_rate, range)
+
 
 class RangedWeapon(Weapon):
 	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):

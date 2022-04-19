@@ -35,7 +35,7 @@ def handle_events() -> None:
 			quit()
 
 
-def handle_keys(screen: str, player: Player, delta: float) -> str:
+def handle_keys(screen: str, player: Player, hb_mouse, delta: float) -> str:
 	keys_down = pygame.key.get_pressed()
 	if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_q]:
 		pygame.quit()
@@ -43,7 +43,7 @@ def handle_keys(screen: str, player: Player, delta: float) -> str:
 	elif screen == "welcome" and keys_down[K_RETURN]:
 		return "game"
 	elif screen == "game":
-		player.handle_keys(keys_down, delta)
+		player.handle_keys(keys_down, hb_mouse, delta)
 	return screen
 
 
@@ -98,7 +98,7 @@ def main():
 
 	while game_status:
 		handle_events()
-		screen = handle_keys(screen, player, delta)
+		screen = handle_keys(screen, player, hb_mouse, delta)
 		screen = handle_mouse(screen, hb_mouse)
 
 		win.fill("#fdf6e3")
