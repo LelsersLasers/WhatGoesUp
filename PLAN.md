@@ -1,21 +1,16 @@
 # General
-Camera:
-- top down physics
-- side view graphics
-- Camera will show the whole room at once
+Rage game
+- Hard
+- Multi level?
 
-Rooms based dungeon
-- Each room is a "level"
-- Many dungeons of varying difficulty and mechanics
-- Medium sized
+# Movement
+- Quick, high tempo
+- Powered Double jump
+	- Push direction based on wasd
 
-Controls:
-- WASD
-- Mouse aim
+# Camera
 
-# Gameplay
-tbd
 
-# Everything Else
-- Weapons
-  - Durability
+# Flow
+
+
