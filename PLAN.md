@@ -26,8 +26,11 @@ Rage game
 
 # Camera
 - Direct side
-- doesn't follow the player
-	- it only moves to another section of the map when the player goes there
+- soft follow
+	- camera follows the player as it goes up after some delay
+	- delay gets shorter the closer the player gets to the top of the screen
+- camera doesn't follow left/right unless it is specially designed for a level
+
 
 
 # Flow
