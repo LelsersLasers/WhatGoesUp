@@ -8,22 +8,22 @@
 
 # Bottom Up
 
-remove damage in Combantant
-
-2) basic combat
-    - swing sword
-    - basic abilities?
-    - enemy can attack
-3) class BirdEnemy(Enemy) [or some specific type of enemy]
-    - presets, override attack method, etc
-4) walls/obstacles/vision/scene setting
-5) rooms
-    - enemy idle movement?
-6) dungeons
-7) menues
-8) go back and make everything good
-9) saving
-10) art
+1) Make player movement
+2) Make things for player to interact with
+	- Walls
+	- platforms
+	- things that insta kill you and send you back to the start
+3) make a section of a map
+	- like, one screen size
+	- each screen size is like 1/40 of the map (number subject to change)
+	- test to see if the section is doable
+4) menues
+5) go back and make everything good
+6) saving
+7) art
+8) sound effects
+9) multiplayer?
+	- Racing others?
 
 
 # To Test:
@@ -36,7 +36,6 @@ Keys:
 - Enter/lmb: change screen from welcome to game
 
 # Unique thingy majigy ideas
-- Unique  classes
-  - Pet/army control based class
-  - Basic fantasy classes
-  - Unique fantasy/futurist combo classes
+- Unique movement
+	- sliding/double jump
+	- movement changes per map, but not completely

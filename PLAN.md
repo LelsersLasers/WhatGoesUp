@@ -1,16 +1,33 @@
 # General
 Rage game
 - Hard
-- Multi level?
+- Map = one long level
+	- should take about 5-10 ish min to complete if you don't mess up once and basically don't stop moving
+	- should be practically impossible if it is you first time picking up the game
+		- Steep learning curve
+		- takes a lot of time to master or get good at the mechanics but when you do the game isn't too hard
+- multiple maps which are essentially just levels
+	- each map has a unique factor that alters or in some way modifies the movement of the character
+	- each map is a different difficulty
+	- first default map is easy-ish but gets a lot harder
+
 
 # Movement
 - Quick, high tempo
-- Powered Double jump
+- double jump
 	- Push direction based on wasd
+- sliding on certain surfaces to keep momentum.
+	- Not like ice sliding (which we can add if we want to)
+	- is a slide that is cancelable but in certain cases will make the player go faster
+		- On a downhill user picks up speed for example
+- certain surfaces you can stick to
+	- like walls or something
+-
 
 # Camera
+- Direct side
+- doesn't follow the player
+	- it only moves to another section of the map when the player goes there
 
 
 # Flow
-
-

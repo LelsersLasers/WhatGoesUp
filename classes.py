@@ -220,10 +220,11 @@ class Player(Combatant): # p
 		if keys_down[K_q]:
 			self.get_active_item().attack(hb_mouse)
 
-	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
+	def draw(self, win: pygame.Surface, color: str = "#00ff00", hb_mouse) -> None:
 		super().draw(win)
 		self.get_active_item().update_pt()
 		self.get_active_item().draw(win)
+		pygame.draw.line(win, color, hb_mouse.get_center().get_tuple(), self.get_active_item().get_center().get_tuple(), 3)
 
 
 
@@ -320,6 +321,7 @@ class Enemy(Combatant): # enemy
 		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_look_2.get_tuple(), 3)
 
 		pygame.draw.line(win, color, self.get_center().get_tuple(), self.get_target().get_center().get_tuple(), 3)
+
 
 		super().draw(win)
 
