@@ -17,12 +17,16 @@
 	- like, one screen size
 	- each screen size is like 1/40 of the map (number subject to change)
 	- test to see if the section is doable
-4) menues
-5) go back and make everything good
-6) saving
-7) art
-8) sound effects
-9) multiplayer?
+4) Make a full map
+	- winning
+	- starting thingy
+5) Keep a timer of how long it takes
+6) menus
+7) go back and make everything good
+8) saving
+9) art
+10) sound effects
+11) multiplayer?
 	- Racing others?
 
 
