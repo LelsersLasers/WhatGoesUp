@@ -155,57 +155,24 @@ class AdvancedHitbox(Hitbox): # ahb
 		for hbp in self.get_hbps():
 			hbp.draw(win)
 
-
-class Combatant(AdvancedHitbox):
-	def __init__(self, pt: Vector, w: float, h: float, hp: float, damage: float, ms: float, color: str = "#ffffff"):
-		super().__init__(pt, w, h, color)
-		self._hp: float = hp
-		self._damage: float = damage
-		self._ms: float = ms
+class Player(AdvancedHitbox): # p
+	def __init__(self):
+		super().__init__(Vector(0, 0), 40, 40, "#00ff00")
+		self.add_hbp(HitboxPart(Vector(-10, -10), Vector(-10, -10), 25, 25))
+		self.add_hbp(HitboxPart(Vector(25, -10), Vector(25, -10), 25, 25))
+		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
+		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
+		self._ms: float = 200
 
 	def __str__(self) -> str:
-		return "Combatant: %s" % super().__str__()
+		return "Player: %s" % super().__str__()
 
-	def get_hp(self) -> float:
-		return self._hp
-	def set_hp(self, hp: float) -> None:
-		self._hp = hp
-	def get_damage(self) -> float:
-		return self._damage
-	def set_damage(self, damage: float) -> None:
-		self._damage = damage
 	def get_ms(self) -> float:
 		return self._ms
 	def set_ms(self, ms: float) -> None:
 		self._ms = ms
 
-
-class Player(Combatant): # p
-	def __init__(self):
-		super().__init__(Vector(0, 0), 40, 40, 100, 20, 500, "#00ff00")
-		self.add_hbp(HitboxPart(Vector(-10, -10), Vector(-10, -10), 25, 25))
-		self.add_hbp(HitboxPart(Vector(25, -10), Vector(25, -10), 25, 25))
-		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
-		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
-
-		self._inventory: list[Item] = [MeleeWeapon(self, "Sword", "Its a sword", 10, 1.0, 5.0)]
-		self._active_item_index: int = 0
-
-	def __str__(self) -> str:
-		return "Player: %s" % super().__str__()
-
-	def get_inventory(self) -> list[Item]:
-		return self._inventory
-	def add_item(self, item: Item) -> None:
-		self.get_inventory().append(item)
-	def get_active_item_index(self) -> int:
-		return self._active_item_index
-	def set_active_item_index(self, index: int) -> None:
-		self._active_item_index = index
-	def get_active_item(self) -> Item:
-		return self.get_inventory()[self.get_active_item_index()]
-
-	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float) -> None:
+	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		vec_move = Vector(0, 0)
 		if keys_down[K_w]:
 			vec_move.set_y(-1)
@@ -215,171 +182,15 @@ class Player(Combatant): # p
 			vec_move.set_x(-1)
 		if keys_down[K_d]:
 			vec_move.set_x(1)
+		for wall in walls:
+			if self.check_collisions(self, wall):
+				
 		self.get_pt().apply(vec_move.scale(self.get_ms() * delta))
 		self.update_hbps()
-		if keys_down[K_q]:
-			self.get_active_item().attack(hb_mouse)
 
-	def draw(self, win: pygame.Surface, color: str = "#00ff00", hb_mouse) -> None:
-		super().draw(win)
-		self.get_active_item().update_pt()
-		self.get_active_item().draw(win)
-		pygame.draw.line(win, color, hb_mouse.get_center().get_tuple(), self.get_active_item().get_center().get_tuple(), 3)
-
-
-
-
-class Enemy(Combatant): # enemy
-	def __init__(self, pt: Vector, w: float, h: float, target: Player, vision_range: float, level: int, color: str = "#ff0000"):
-		super().__init__(pt, w, h, -1, -1, -1, color)
-		self._target: Player = target
-		self._vision_range: float = vision_range
-		self._cone_angle: float = 70 # degrees
-		self._vision_direction: float = 0 # degrees
-		self._level = level
-		self.set_base_stats()
-
-	def set_base_stats(self) -> None:
-		self.set_hp(50 + self.get_level() * 10)
-		self.set_damage(5 + self.get_level() * 5)
-		self.set_ms(350 + self.get_level() * 10)
-
-	def get_target(self) -> Player:
-		return self._target
-	def set_target(self, target: Player):
-		self._target = target
-	def get_vision_range(self) -> float:
-		return self._vision_range
-	def set_vision_range(self, vision_range: float) -> None:
-		self._vision_range = vision_range
-	def get_aggro_range(self) -> float:
-		return self.get_vision_range()/2
-	def get_cone_angle(self) -> float:
-		return self._cone_angle
-	def set_cone_angle(self, cone_angle: float) -> None:
-		self._cone_angle = cone_angle
-	def get_vision_direction(self) -> float:
-		return self._vision_direction
-	def set_vision_direction(self, vision_direction: float) -> None:
-		self._vision_direction = vision_direction
-	def get_level(self) -> int:
-		return self._level
-	def get_vec_to_target(self) -> Vector:
-		return self.get_target().get_center().subtract(self.get_center())
-	def get_top_of_vision_cone(self) -> Vector:
-		vec = Vector(self.get_vision_range(), 0)
-		vec.set_angle(self.get_vision_direction() - self.get_cone_angle()/2)
-		return vec
-	def get_bottom_of_vision_cone(self) -> Vector:
-		vec = Vector(self.get_vision_range(), 0)
-		vec.set_angle(self.get_vision_direction() + self.get_cone_angle()/2)
-		return vec
-
-	def check_vision_range(self) -> bool:
-		vec_dif = self.get_target().get_center().subtract(self.get_center())
-		return vec_dif.calc_length() <= self.get_vision_range()
-
-	def check_aggro_range(self) -> bool:
-		vec_dif = self.get_target().get_center().subtract(self.get_center())
-		return vec_dif.calc_length() <= self.get_aggro_range()
-
-	def check_vision(self) -> bool:
-		if not self.check_vision_range():
-			return False
-		angle_to_target = self.get_vec_to_target().get_angle()
-		angle_start = self.get_top_of_vision_cone().get_angle()
-		angle_end = self.get_bottom_of_vision_cone().get_angle()
-
-		if angle_end < angle_start:
-			angle_end += 360
-		if angle_to_target >= angle_start and angle_to_target <= angle_end:
-			return True
-		return angle_to_target >= angle_start - 360 and angle_to_target <= angle_end - 360
-
-	def update(self, delta: float) -> None:
-		if self.check_aggro_range() or self.check_vision():
-			vec_move = self.get_vec_to_target().scale(self.get_ms() * delta)
-			self.get_pt().apply(vec_move)
-			self.set_vision_direction(vec_move.get_angle())
-
-
-	def draw(self, win: pygame.Surface) -> None:
-		color = self.get_color()
-		if self.get_target().check_collisions(self):
-			color = "#0000ff"
-		elif self.check_aggro_range() or self.check_vision():
-			color = "#00ff00"
-
-		pygame.draw.circle(win, color, self.get_center().get_tuple(), self.get_aggro_range(), 3)
-
-		vec_look_1 = self.get_top_of_vision_cone()
-		vec_look_1.apply(self.get_center())
-		vec_look_2 = self.get_bottom_of_vision_cone()
-		vec_look_2.apply(self.get_center())
-
-		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_look_1.get_tuple(), 3)
-		pygame.draw.line(win, color, self.get_center().get_tuple(), vec_look_2.get_tuple(), 3)
-
-		pygame.draw.line(win, color, self.get_center().get_tuple(), self.get_target().get_center().get_tuple(), 3)
-
-
+	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 		super().draw(win)
 
-class Item(AdvancedHitbox): # item
-	def __init__(self, player: Player, name: str, description: str):
-		super().__init__(player.get_center(), 10, 10, "#0000ff")
-		self._player: Player = player
-		self._name: str = name
-		self._description: str = description
-
-	def get_player(self) -> Player:
-		return self._player
-	def get_name(self) -> str:
-		return self._name
-	def set_name(self, name: str) -> None:
-		self._name = name
-	def get_description(self) -> str:
-		return self._description
-	def set_description(self, description: str) -> None:
-		self._description = description
-
-	def update_pt(self) -> None:
-		self.set_pt(self.get_player().get_center())
-
-class Weapon(Item):
-	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
-		super().__init__(player, name, description)
-		self._damage: float = damage
-		self._fire_rate: float = fire_rate # attacks/sec
-		self._range: float = range
-
-	def get_damage(self) -> float:
-		return self._damage
-	def set_damage(self, damage: float) -> None:
-		self._damage = damage
-	def get_fire_rate(self) -> float:
-		return self._fire_rate
-	def set_fire_rate(self, fire_rate: float) -> None:
-		self._fire_rate = fire_rate
-	def get_range(self) -> float:
-		return self._range
-	def set_range(self, range: float) -> None:
-		self._range = range
-
-	def attack(self, hb_mouse: Hitbox):
-		vec = self.get_player().get_center().subtract(hb_mouse.get_center())
-		print(vec)
-
-
-class MeleeWeapon(Weapon):
-	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
-		super().__init__(player, name, description, damage, fire_rate, range)
-
-
-class RangedWeapon(Weapon):
-	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
-		super().__init__(player, name, description, damage, fire_rate, range)
-
-class MagicWeapon(Weapon):
-	def __init__(self, player: Player, name: str, description: str, damage: float, fire_rate: float, range: float):
-		super().__init__(player, name, description, damage, fire_rate, range)
+class Surface(Hitbox):
+	def __init__(self, pt: Vector, w: float, h: float, color: str = "#ffffaa"):
+		super().__init__(pt, w, h)

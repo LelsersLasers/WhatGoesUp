@@ -17,7 +17,7 @@
 
 # Map Stats
 - Map 1:
-	- Length: 40 screens
+	- Length: 40 screens ish
 	- Difficulty: Easy
 
 # Map ideas
