@@ -35,7 +35,7 @@ def handle_events() -> None:
 			quit()
 
 
-def handle_keys(screen: str, player: Player, hb_mouse, delta: float) -> str:
+def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls) -> str:
 	keys_down = pygame.key.get_pressed()
 	if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_q]:
 		pygame.quit()
@@ -43,7 +43,7 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float) -> str:
 	elif screen == "welcome" and keys_down[K_RETURN]:
 		return "game"
 	elif screen == "game":
-		player.handle_keys(keys_down, hb_mouse, delta)
+		player.handle_keys(keys_down, hb_mouse, delta, walls)
 	return screen
 
 
@@ -90,12 +90,14 @@ def main():
 	win = create_window()
 
 	player = Player()
-	wall = Surface(Vector(100, 100), 100, 100)
+	walls = []
+	wall = Surface(Vector(100, 100), 100, 100, "#000000")
+	walls.append(wall)
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 
 	while game_status:
 		handle_events()
-		screen = handle_keys(screen, player, hb_mouse, delta)
+		screen = handle_keys(screen, player, hb_mouse, delta, walls)
 		screen = handle_mouse(screen, hb_mouse)
 
 		win.fill("#fdf6e3")

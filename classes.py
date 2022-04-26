@@ -2,6 +2,7 @@ from __future__ import annotations # for type hints
 import pygame # graphics library
 from pygame.locals import * # for keyboard input (ex: 'K_w')
 import math
+import copy
 
 
 class Vector(): # vec
@@ -182,15 +183,23 @@ class Player(AdvancedHitbox): # p
 			vec_move.set_x(-1)
 		if keys_down[K_d]:
 			vec_move.set_x(1)
+
+		p_temp = copy.deepcopy(self)
+
+		p_temp.get_pt().apply(vec_move.scale(self.get_ms() * delta))
+		p_temp.update_hbps()
+		isClear = True
 		for wall in walls:
-			if self.check_collisions(self, wall):
-				
-		self.get_pt().apply(vec_move.scale(self.get_ms() * delta))
-		self.update_hbps()
+			if p_temp.check_collisions(wall):
+				isClear = False
+		if isClear == True:
+			self.get_pt().apply(vec_move.scale(self.get_ms() * delta))
+			self.update_hbps()
+
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 		super().draw(win)
 
 class Surface(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, color: str = "#ffffaa"):
-		super().__init__(pt, w, h)
+	def __init__(self, pt: Vector, w: float, h: float, color: str = "#ffff00"):
+		super().__init__(pt, w, h, color)
