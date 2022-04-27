@@ -92,10 +92,10 @@ def main():
 
 	player = Player()
 	walls = [
-		Surface(Vector(100, 100), 100, 100, "#000000"),
-		Surface(Vector(0, 950), 1920, 300, "#000000"),
-		Surface(Vector(200, 900), 100, 25, "#000000"),
-		Surface(Vector(200, 800), 100, 25, "#000000")
+		Surface(Vector(100, 100), 100, 100, .95, "#000000"),
+		Surface(Vector(0, 950), 1920, 300, .95, "#000000"),
+		Surface(Vector(200, 900), 100, 25, .95, "#000000"),
+		Surface(Vector(200, 800), 100, 25, .95, "#000000")
 	]
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 

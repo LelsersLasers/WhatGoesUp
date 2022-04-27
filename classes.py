@@ -227,30 +227,24 @@ class Player(AdvancedHitbox): # p
 					# print("Yes")
 					# self.get_vec_move().set_x(0)
 					self.set_is_grounded(True)
+					self.get_vec_move().set_x(self.get_vec_move().get_x() * wall.get_friction())
+					if abs(self.get_vec_move().get_x()) < .0000000001:
+						self.get_vec_move().set_x(0)
 				self.get_vec_move().set_y(0)
 				break
 		# print("B", self.get_vec_move(), self.get_is_grounded())
 		self.get_pt().apply(self.get_vec_move())
-		if self.get_is_grounded():
-			self.get_vec_move().set_x(0)
 		self.update_hbps()
-
-	# def check_collide_down(self, hb_other: Hitbox) -> bool:
-	# 	if self.check_collide(hb_other) and self.get_vec_move().get_y() > 0:
-	# 		return
-	# def check_collide_up(self, hb_other: Hitbox) -> bool:
-	# 	if self.check_collide(hb_other) and self.get_vec_move().get_y() < 0:
-	# 		return True
-	# def check_collide_right(self, hb_other: Hitbox) -> bool:
-	# 	if self.check_collide(hb_other) and self.get_vec_move().get_x() > 0:
-	# 		return True
-	# def check_collide_left(self, hb_other: Hitbox) -> bool:
-	# 	if self.check_collide(hb_other) and self.get_vec_move().get_x() < 0:
-	# 		return True
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 		super().draw(win)
 
 class Surface(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, color: str = "#ffff00"):
+	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#ffff00"):
 		super().__init__(pt, w, h, color)
+		self._friction = friction
+
+	def get_friction(self) -> float:
+		return self._friction
+	def set_friction(self, friction: float) -> None:
+		self._friction = friction
