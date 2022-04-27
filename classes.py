@@ -192,18 +192,37 @@ class Player(AdvancedHitbox): # p
 
 		p_temp = copy.deepcopy(self)
 
-		p_temp.get_pt().apply(p_temp.get_vec_move())
+		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x())
 		p_temp.update_hbps()
-		isClear = True
 		for wall in walls:
 			if p_temp.check_collisions(wall):
-				isClear = False
-		if isClear == True:
-			self.get_pt().apply(self.get_vec_move())
-			self.update_hbps()
+				p_temp.get_pt().set_x(p_temp.get_pt().get_x() - p_temp.get_vec_move().get_x())
+				self.get_vec_move().set_x(0)
+				break
 
-	def check_collide_down(self, hb_other: Hitbox) -> bool:
-		if 
+		p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
+		p_temp.update_hbps()
+		for wall in walls:
+			if p_temp.check_collisions(wall):
+				p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
+				self.get_vec_move().set_y(0)
+				break
+
+		self.get_pt().apply(self.get_vec_move())
+		self.update_hbps()
+
+	# def check_collide_down(self, hb_other: Hitbox) -> bool:
+	# 	if self.check_collide(hb_other) and self.get_vec_move().get_y() > 0:
+	# 		return
+	# def check_collide_up(self, hb_other: Hitbox) -> bool:
+	# 	if self.check_collide(hb_other) and self.get_vec_move().get_y() < 0:
+	# 		return True
+	# def check_collide_right(self, hb_other: Hitbox) -> bool:
+	# 	if self.check_collide(hb_other) and self.get_vec_move().get_x() > 0:
+	# 		return True
+	# def check_collide_left(self, hb_other: Hitbox) -> bool:
+	# 	if self.check_collide(hb_other) and self.get_vec_move().get_x() < 0:
+	# 		return True
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 		super().draw(win)
