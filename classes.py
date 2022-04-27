@@ -165,6 +165,7 @@ class Player(AdvancedHitbox): # p
 		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
 		self._ms: float = 200
 		self._vec_move: Vector = Vector(0, 0)
+		self._is_grounded = True
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
@@ -177,6 +178,10 @@ class Player(AdvancedHitbox): # p
 		return self._vec_move
 	def set_vec_move(self, vec_move: Vector) -> None:
 		self._vec_move = vec_move
+	def get_is_grounded(self) -> bool:
+		return self._is_grounded
+	def set_is_grounded(self, is_grounded: bool) -> None:
+		self._is_grounded = is_grounded
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		self.get_vec_move().set_y(self.get_vec_move().get_y() + 1 * delta)
@@ -205,10 +210,14 @@ class Player(AdvancedHitbox): # p
 		for wall in walls:
 			if p_temp.check_collisions(wall):
 				p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
+				if self.get_vec_move().get_y() > 0 and self.get_is_grounded() == False:
+					self.get_vec_move().set_x(0)
+					self.set_is_grounded(True)
 				self.get_vec_move().set_y(0)
 				break
-
 		self.get_pt().apply(self.get_vec_move())
+		if self.get_is_grounded():
+			self.get_vec_move().set_x(0)
 		self.update_hbps()
 
 	# def check_collide_down(self, hb_other: Hitbox) -> bool:
