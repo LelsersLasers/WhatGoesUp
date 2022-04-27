@@ -164,6 +164,7 @@ class Player(AdvancedHitbox): # p
 		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
 		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
 		self._ms: float = 200
+		self._vec_move: Vector = Vector(0, 0)
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
@@ -172,30 +173,37 @@ class Player(AdvancedHitbox): # p
 		return self._ms
 	def set_ms(self, ms: float) -> None:
 		self._ms = ms
+	def get_vec_move(self) -> Vector:
+		return self._vec_move
+	def set_vec_move(self, vec_move: Vector) -> None:
+		self._vec_move = vec_move
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
-		vec_move = Vector(0, 0)
+		self.get_vec_move().set_y(self.get_vec_move().get_y() + 1 * delta)
+
 		if keys_down[K_w]:
-			vec_move.set_y(-1)
+			print("w")
 		if keys_down[K_s]:
-			vec_move.set_y(1)
+			print("s")
 		if keys_down[K_a]:
-			vec_move.set_x(-1)
+			self.get_vec_move().set_x(-self.get_ms() * delta)
 		if keys_down[K_d]:
-			vec_move.set_x(1)
+			self.get_vec_move().set_x(self.get_ms() * delta)
 
 		p_temp = copy.deepcopy(self)
 
-		p_temp.get_pt().apply(vec_move.scale(self.get_ms() * delta))
+		p_temp.get_pt().apply(p_temp.get_vec_move())
 		p_temp.update_hbps()
 		isClear = True
 		for wall in walls:
 			if p_temp.check_collisions(wall):
 				isClear = False
 		if isClear == True:
-			self.get_pt().apply(vec_move.scale(self.get_ms() * delta))
+			self.get_pt().apply(self.get_vec_move())
 			self.update_hbps()
 
+	def check_collide_down(self, hb_other: Hitbox) -> bool:
+		if 
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 		super().draw(win)
