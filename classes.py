@@ -227,8 +227,8 @@ class Player(AdvancedHitbox): # p
 					# print("Yes")
 					# self.get_vec_move().set_x(0)
 					self.set_is_grounded(True)
-					self.get_vec_move().set_y(0)
-					break
+				self.get_vec_move().set_y(0)
+				break
 		# print("B", self.get_vec_move(), self.get_is_grounded())
 		self.get_pt().apply(self.get_vec_move())
 		if self.get_is_grounded():
