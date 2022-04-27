@@ -186,8 +186,9 @@ class Player(AdvancedHitbox): # p
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		self.get_vec_move().set_y(self.get_vec_move().get_y() + 1 * delta)
 
-		if keys_down[K_w]:
-			print("w")
+		if keys_down[K_SPACE] and self.get_is_grounded():
+			self.get_vec_move().set_y(-100 * delta)
+			# print(self.get_vec_move())
 		if keys_down[K_s]:
 			print("s")
 		if keys_down[K_a]:
@@ -206,6 +207,7 @@ class Player(AdvancedHitbox): # p
 				break
 
 		p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
+		# print(p_temp.get_pt())
 		p_temp.update_hbps()
 		for wall in walls:
 			if p_temp.check_collisions(wall):
