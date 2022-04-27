@@ -165,7 +165,7 @@ class Player(AdvancedHitbox): # p
 		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
 		self._ms: float = 200
 		self._vec_move: Vector = Vector(0, 0)
-		self._is_grounded = True
+		self._is_grounded = False
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
@@ -184,17 +184,28 @@ class Player(AdvancedHitbox): # p
 		self._is_grounded = is_grounded
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
-		self.get_vec_move().set_y(self.get_vec_move().get_y() + 1 * delta)
+		self.get_vec_move().set_y(self.get_vec_move().get_y() + 4 * delta)
 
 		if keys_down[K_SPACE] and self.get_is_grounded():
-			self.get_vec_move().set_y(-100 * delta)
+			# print(self.get_is_grounded())
+			self.get_vec_move().set_y(-350 * delta)
+			self.set_is_grounded(False)
 			# print(self.get_vec_move())
 		if keys_down[K_s]:
-			print("s")
+			# print("s")
+			pass
 		if keys_down[K_a]:
-			self.get_vec_move().set_x(-self.get_ms() * delta)
+			move = -self.get_ms() * delta
+			if not self.get_is_grounded():
+				move *= .5
+			self.get_vec_move().set_x(move)
+			# print(self.get_vec_move())
 		if keys_down[K_d]:
-			self.get_vec_move().set_x(self.get_ms() * delta)
+			move = self.get_ms() * delta
+			if not self.get_is_grounded():
+				move *= .5
+			self.get_vec_move().set_x(move)
+		# print("A", self.get_vec_move(), self.get_is_grounded())
 
 		p_temp = copy.deepcopy(self)
 
@@ -212,11 +223,13 @@ class Player(AdvancedHitbox): # p
 		for wall in walls:
 			if p_temp.check_collisions(wall):
 				p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
-				if self.get_vec_move().get_y() > 0 and self.get_is_grounded() == False:
-					self.get_vec_move().set_x(0)
+				if self.get_vec_move().get_y() > 0:
+					# print("Yes")
+					# self.get_vec_move().set_x(0)
 					self.set_is_grounded(True)
-				self.get_vec_move().set_y(0)
-				break
+					self.get_vec_move().set_y(0)
+					break
+		# print("B", self.get_vec_move(), self.get_is_grounded())
 		self.get_pt().apply(self.get_vec_move())
 		if self.get_is_grounded():
 			self.get_vec_move().set_x(0)

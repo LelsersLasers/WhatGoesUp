@@ -66,9 +66,10 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
 	hb_mouse.draw(win)
 
 
-def draw_game(win: pygame.Surface, player: Player, wall: Surface, hb_mouse: Hitbox, delta: float) -> None:
+def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float) -> None:
 	win.fill("#fdf6e3")
-	wall.draw(win)
+	for wall in walls:
+		wall.draw(win)
 	player.draw(win)
 
 	hb_mouse.draw(win)
@@ -90,9 +91,12 @@ def main():
 	win = create_window()
 
 	player = Player()
-	walls = []
-	wall = Surface(Vector(100, 100), 100, 100, "#000000")
-	walls.append(wall)
+	walls = [
+		Surface(Vector(100, 100), 100, 100, "#000000"),
+		Surface(Vector(0, 950), 1920, 300, "#000000"),
+		Surface(Vector(200, 900), 100, 25, "#000000"),
+		Surface(Vector(200, 800), 100, 25, "#000000")
+	]
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 
 	while game_status:
@@ -102,7 +106,7 @@ def main():
 
 		win.fill("#fdf6e3")
 		if screen == "game":
-			draw_game(win, player, wall, hb_mouse, delta)
+			draw_game(win, player, walls, hb_mouse, delta)
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse)
 		pygame.display.flip()
