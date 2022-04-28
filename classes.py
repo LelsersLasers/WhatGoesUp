@@ -166,6 +166,7 @@ class Player(AdvancedHitbox): # p
 		self._ms: float = 200
 		self._vec_move: Vector = Vector(0, 0)
 		self._is_grounded = False
+		self._is_sliding = False
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
@@ -182,6 +183,10 @@ class Player(AdvancedHitbox): # p
 		return self._is_grounded
 	def set_is_grounded(self, is_grounded: bool) -> None:
 		self._is_grounded = is_grounded
+	def get_is_sliding(self) -> bool:
+		return self._is_sliding
+	def set_is_sliding(self, is_sliding: bool) -> None:
+		self._is_sliding = is_sliding
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		self.get_vec_move().set_y(self.get_vec_move().get_y() + 4 * delta)
@@ -190,22 +195,22 @@ class Player(AdvancedHitbox): # p
 			# print(self.get_is_grounded())
 			self.get_vec_move().set_y(-350 * delta)
 			self.set_is_grounded(False)
-			# print(self.get_vec_move())
-		if keys_down[K_s]:
-			# print("s")
-			pass
-		if keys_down[K_a]:
+			# print(self.get_vec_move()
+		if keys_down[K_a] and not self.get_is_sliding():
 			move = -self.get_ms() * delta
 			if not self.get_is_grounded():
 				move *= .5
 			self.get_vec_move().set_x(move)
 			# print(self.get_vec_move())
-		if keys_down[K_d]:
+		if keys_down[K_d] and not self.get_is_sliding():
 			move = self.get_ms() * delta
 			if not self.get_is_grounded():
 				move *= .5
 			self.get_vec_move().set_x(move)
 		# print("A", self.get_vec_move(), self.get_is_grounded())
+		if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
+			self.set_is_sliding(True)
+			self.get_vec_move().set_x((self.get_vec_move().get_x() * 2))
 
 		p_temp = copy.deepcopy(self)
 
@@ -227,9 +232,14 @@ class Player(AdvancedHitbox): # p
 					# print("Yes")
 					# self.get_vec_move().set_x(0)
 					self.set_is_grounded(True)
-					self.get_vec_move().set_x(self.get_vec_move().get_x() * wall.get_friction())
-					if abs(self.get_vec_move().get_x()) < .0000000001:
+					if self.get_is_sliding():
+						friction_reduction = wall.get_friction() * 0.3
+					else:
+						friction_reduction = wall.get_friction()
+					self.get_vec_move().set_x(self.get_vec_move().get_x() * friction_reduction)
+					if abs(self.get_vec_move().get_x()) < .000000000000000001:
 						self.get_vec_move().set_x(0)
+						self.set_is_sliding(False)
 				self.get_vec_move().set_y(0)
 				break
 		# print("B", self.get_vec_move(), self.get_is_grounded())
