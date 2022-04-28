@@ -153,16 +153,15 @@ class AdvancedHitbox(Hitbox): # ahb
 
 	def draw(self, win: pygame.Surface) -> None:
 		super().draw(win)
-		for hbp in self.get_hbps():
-			hbp.draw(win)
+		# for hbp in self.get_hbps():
+		# 	hbp.draw(win)
 
 class Player(AdvancedHitbox): # p
 	def __init__(self):
-		super().__init__(Vector(0, 0), 40, 40, "#00ff00")
-		self.add_hbp(HitboxPart(Vector(-10, -10), Vector(-10, -10), 25, 25))
-		self.add_hbp(HitboxPart(Vector(25, -10), Vector(25, -10), 25, 25))
-		self.add_hbp(HitboxPart(Vector(-10, 25), Vector(-10, 25), 25, 25))
-		self.add_hbp(HitboxPart(Vector(25, 25), Vector(25, 25), 25, 25))
+		super().__init__(Vector(150, 875), 25, 40, "#00ff00")
+		self.add_hbp(HitboxPart(Vector(150, 875), Vector(0, 0), 25, 40))
+		# self.add_hbp(HitboxPart(Vector(150, 855), Vector(0, 10), 25, 25))
+		# self.add_hbp(HitboxPart(Vector(150, 875), Vector(2.5, 35), 20, 10))
 		self._ms: float = 200
 		self._vec_move: Vector = Vector(0, 0)
 		self._is_grounded = False
@@ -208,10 +207,18 @@ class Player(AdvancedHitbox): # p
 				move *= .5
 			self.get_vec_move().set_x(move)
 		# print("A", self.get_vec_move(), self.get_is_grounded())
+		# if keys_down[K_LCTRL]:
 		if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
 			self.set_is_sliding(True)
-			self.get_vec_move().set_x((self.get_vec_move().get_x() * 2))
-
+			self.get_vec_move().set_x(self.get_vec_move().get_x() * 4)
+			self.set_h(25)
+			self.set_w(40)
+			self.get_pt().set_y(self.get_pt().get_y() + self.get_h() / 2)
+			for hb in self.get_hbps():
+				hb.set_h(25)
+				hb.set_w(40)
+				hb.get_pt().set_y(hb.get_pt().get_y() + hb.get_h() / 2)
+		# print(self.get_is_sliding())
 		p_temp = copy.deepcopy(self)
 
 		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x())
@@ -233,11 +240,24 @@ class Player(AdvancedHitbox): # p
 					# self.get_vec_move().set_x(0)
 					self.set_is_grounded(True)
 					if self.get_is_sliding():
-						friction_reduction = wall.get_friction() * 0.3
+						friction_reduction = wall.get_friction() * .95
+						# print(friction_reduction)
 					else:
 						friction_reduction = wall.get_friction()
 					self.get_vec_move().set_x(self.get_vec_move().get_x() * friction_reduction)
-					if abs(self.get_vec_move().get_x()) < .000000000000000001:
+					# print(self.get_vec_move())
+					if abs(self.get_vec_move().get_x()) < .001:
+						if self.get_is_sliding():
+							self.set_h(40)
+							self.set_w(25)
+							self.get_pt().set_y(self.get_pt().get_y() - self.get_h() / 2)
+							for hb in self.get_hbps():
+								hb.set_h(40)
+								hb.set_w(25)
+								hb.get_pt().set_y(hb.get_pt().get_y() - hb.get_h() / 2)
+								if self.get_vec_move().get_x() < 0:
+									self.get_pt().set_x(self.get_pt().get_x() + (self.get_h() - 25))
+									hb.get_pt().set_x(hb.get_pt().get_x() + (hb.get_h() - 25))
 						self.get_vec_move().set_x(0)
 						self.set_is_sliding(False)
 				self.get_vec_move().set_y(0)
