@@ -193,7 +193,7 @@ class Player(AdvancedHitbox): # p
 
 		if keys_down[K_SPACE] and self.get_is_grounded():
 			# print(self.get_is_grounded())
-			self.get_vec_move().set_y(-350 * delta)
+			self.get_vec_move().set_y(self.get_vec_move().get_y() + (-350 * delta))
 			self.set_is_grounded(False)
 			# print(self.get_vec_move()
 		if keys_down[K_a] and not self.get_is_sliding():
