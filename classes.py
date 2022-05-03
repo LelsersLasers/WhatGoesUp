@@ -49,7 +49,7 @@ class Vector(): # vec
 		self.set_vec(self.add(vec_other))
 
 	def subtract(self, vec_other: Vector) -> Vector:
-		return Vector(self.get_x() - vec_other.get_x(), self.get_y() - vec_other.get_y())
+		return self.add(vec.scalar(-1))
 
 	def scalar(self, s: float) -> Vector:
 		return Vector(self.get_x() * s, self.get_y() * s)
