@@ -158,7 +158,7 @@ class AdvancedHitbox(Hitbox): # ahb
 
 class Player(AdvancedHitbox): # p
 	def __init__(self):
-		super().__init__(Vector(150, 875), 25, 40, "#00ff00")
+		super().__init__(Vector(50, 959), 25, 40, "#00ff00")
 		self.add_hbp(HitboxPart(Vector(150, 875), Vector(0, 0), 25, 40))
 		# self.add_hbp(HitboxPart(Vector(150, 855), Vector(0, 10), 25, 25))
 		# self.add_hbp(HitboxPart(Vector(150, 875), Vector(2.5, 35), 20, 10))
@@ -188,11 +188,11 @@ class Player(AdvancedHitbox): # p
 		self._is_sliding = is_sliding
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
-		self.get_vec_move().set_y(self.get_vec_move().get_y() + .1)
+		self.get_vec_move().set_y(self.get_vec_move().get_y() + 11.5 * delta)
 
 		if keys_down[K_SPACE] and self.get_is_grounded():
 			# print(self.get_is_grounded())
-			self.get_vec_move().set_y(self.get_vec_move().get_y() - 5)
+			self.get_vec_move().set_y(self.get_vec_move().get_y() - 550 * delta)
 			self.set_is_grounded(False)
 			# print(self.get_vec_move()
 		if keys_down[K_a] and not self.get_is_sliding():

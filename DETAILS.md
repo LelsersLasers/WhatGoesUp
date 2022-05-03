@@ -1,4 +1,4 @@
-# Player stats
+git# Player stats
 - size:
 - speed:
 - Movement Capabilities (Basic):
@@ -51,3 +51,6 @@
 		- but it is basically a checkpoint
 	- The first path goes straight up to the thing
 	- the second path goes up the first path for a bit, then goes a bit higher then the end point and has to go horizontally back towards the first path, falling would mean that you are put back onto the first path
+- Map 7:
+	- Camera doesn't follow player, it is based on screens
+	- When player goes into other screen, it changes to the other screen
