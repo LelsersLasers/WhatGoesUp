@@ -188,11 +188,11 @@ class Player(AdvancedHitbox): # p
 		self._is_sliding = is_sliding
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
-		self.get_vec_move().set_y(self.get_vec_move().get_y() + 11.5 * (delta ** 2))
+		self.get_vec_move().set_y(self.get_vec_move().get_y() + 800 * (delta ** 2))
 
 		if keys_down[K_SPACE] and self.get_is_grounded():
 			# print(self.get_is_grounded())
-			self.get_vec_move().set_y(self.get_vec_move().get_y() - 40 * delta)
+			self.get_vec_move().set_y(self.get_vec_move().get_y() - 400 * delta)
 			self.set_is_grounded(False)
 			# print(self.get_vec_move()
 		if keys_down[K_a] and not self.get_is_sliding():
