@@ -35,20 +35,20 @@ class Vector(): # vec
 		self.set_x(math.cos(angle * math.pi/180))
 		self.set_y(math.sin(angle * math.pi/180))
 		self.set_vec(self.scale(current_length))
-	def set_vec(self, vec_other: Vector) -> None:
-		self.set_x(vec_other.get_x())
-		self.set_y(vec_other.get_y())
+	def set_vec(self, vec: Vector) -> None:
+		self.set_x(vec.get_x())
+		self.set_y(vec.get_y())
 
 	def calc_length(self) -> float:
 		return math.sqrt(self.get_x() ** 2 + self.get_y() ** 2)
 
-	def add(self, vec_other: Vector) -> Vector:
-		return Vector(self.get_x() + vec_other.get_x(), self.get_y() + vec_other.get_y())
+	def add(self, vec: Vector) -> Vector:
+		return Vector(self.get_x() + vec.get_x(), self.get_y() + vec.get_y())
 
-	def apply(self, vec_other: Vector) -> None:
-		self.set_vec(self.add(vec_other))
+	def apply(self, vec: Vector) -> None:
+		self.set_vec(self.add(vec))
 
-	def subtract(self, vec_other: Vector) -> Vector:
+	def subtract(self, vec: Vector) -> Vector:
 		return self.add(vec.scalar(-1))
 
 	def scalar(self, s: float) -> Vector:
@@ -92,12 +92,12 @@ class Hitbox(): # hb
 	def set_color(self, color: str) -> None:
 		self._color = color
 
-	def check_collide(self, hb_other: Hitbox) -> bool:
+	def check_collide(self, hb: Hitbox) -> bool:
 		return (
-			self.get_pt().get_x() < hb_other.get_pt().get_x() + hb_other.get_w()
-			and hb_other.get_pt().get_x() < self.get_pt().get_x() + self.get_w()
-			and self.get_pt().get_y() < hb_other.get_pt().get_y() + hb_other.get_h()
-			and hb_other.get_pt().get_y() < self.get_pt().get_y() + self.get_h()
+			self.get_pt().get_x() < hb.get_pt().get_x() + hb.get_w()
+			and hb.get_pt().get_x() < self.get_pt().get_x() + self.get_w()
+			and self.get_pt().get_y() < hb.get_pt().get_y() + hb.get_h()
+			and hb.get_pt().get_y() < self.get_pt().get_y() + self.get_h()
 		)
 
 	def draw(self, win: pygame.Surface) -> None:
@@ -134,15 +134,15 @@ class AdvancedHitbox(Hitbox): # ahb
 	def add_hbp(self, hbp: HitboxPart) -> None:
 		self.get_hbps().append(hbp)
 
-	def check_collisions(self, hb_other: Hitbox) -> bool:
+	def check_collisions(self, hb: Hitbox) -> bool:
 		for hbp in self.get_hbps():
-			if hbp.check_collide(hb_other):
+			if hbp.check_collide(hb):
 				return True
 		return False
 
-	def check_advanced_collisions(self, ahb_other: AdvancedHitbox) -> bool:
+	def check_advanced_collisions(self, ahb: AdvancedHitbox) -> bool:
 		for hbp_self in self.get_hbps():
-			for hbp_other in ahb_other.get_hbps():
+			for hbp_other in ahb.get_hbps():
 				if hbp_self.check_collide(hbp_other):
 					return True
 		return False
@@ -153,8 +153,8 @@ class AdvancedHitbox(Hitbox): # ahb
 
 	def draw(self, win: pygame.Surface) -> None:
 		super().draw(win)
-		# for hbp in self.get_hbps():
-		# 	hbp.draw(win)
+		for hbp in self.get_hbps():
+			hbp.draw(win)
 
 class Player(AdvancedHitbox): # p
 	def __init__(self):
