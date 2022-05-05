@@ -255,12 +255,16 @@ class Player(AdvancedHitbox): # p
 			# print(self.get_space_was_down(), "aaaaaaaa")
 			self.set_is_grounded(False)
 			self.set_space_was_down(False)
+			if self.get_is_sliding():
+				self.set_jumped_while_sliding(True)
 			# print(self.get_vec_move()
-		elif keys_down[K_SPACE] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down():
+		elif keys_down[K_SPACE] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down() and not self.get_jumped_while_sliding():
 			self.get_vec_move().set_y(0)
 			self.get_vec_move().set_y(self.get_vec_move().get_y() - 350 * delta)
 			self.set_can_double_jump(False)
 			self.set_space_was_down(False)
+			if self.get_is_sliding():
+				self.set_jumped_while_sliding(True)
 		elif not keys_down[K_SPACE] and not self.get_space_was_down():
 			self.set_space_was_down(True)
 			# print(self.get_space_was_down(), "bbbbbbbbbbb")
@@ -312,6 +316,7 @@ class Player(AdvancedHitbox): # p
 					if abs(self.get_vec_move().get_x()) < .1:
 						self.get_vec_move().set_x(0)
 						self.set_is_sliding(False, walls)
+						self.set_jumped_while_sliding(False)
 				self.get_vec_move().set_y(0)
 				break
 		# print("B", self.get_vec_move(), self.get_is_grounded())
