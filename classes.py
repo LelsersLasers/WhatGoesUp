@@ -166,6 +166,9 @@ class Player(AdvancedHitbox): # p
 		self._vec_move: Vector = Vector(0, 0)
 		self._is_grounded = False
 		self._is_sliding = False
+		self._can_double_jump = True
+		self._space_was_down = False # space bar was down
+		self._jumped_while_sliding = False
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
@@ -182,6 +185,18 @@ class Player(AdvancedHitbox): # p
 		return self._is_grounded
 	def set_is_grounded(self, is_grounded: bool) -> None:
 		self._is_grounded = is_grounded
+	def get_can_double_jump(self) -> bool:
+		return self._can_double_jump
+	def set_can_double_jump(self, double_jump: bool) -> None:
+		self._can_double_jump = double_jump
+	def get_space_was_down(self) -> bool:
+		return self._space_was_down
+	def set_space_was_down(self, space_down: bool) -> None:
+		self._space_was_down = space_down
+	def get_jumped_while_sliding(self) -> bool:
+		return self._jumped_while_sliding
+	def set_jumped_while_sliding(self, jumped_while_sliding: bool) -> None:
+		self._jumped_while_sliding = jumped_while_sliding
 	def get_is_sliding(self) -> bool:
 		return self._is_sliding
 	def set_is_sliding(self, is_sliding: bool, walls: list[Surface]) -> None:
@@ -220,7 +235,7 @@ class Player(AdvancedHitbox): # p
 			for wall in walls:
 				if p_temp.check_collisions(wall):
 					can_stand = False
-					print("Yes")
+					# print("Yes")
 			if can_stand:
 				self.set_h(40)
 				self.set_w(25)
@@ -233,12 +248,22 @@ class Player(AdvancedHitbox): # p
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		self.get_vec_move().set_y(self.get_vec_move().get_y() + 1000 * (delta ** 2))
-
-		if keys_down[K_SPACE] and self.get_is_grounded():
+		# print(self.get_space_was_down())
+		if keys_down[K_SPACE] and self.get_is_grounded() and not self.get_jumped_while_sliding():
 			# print(self.get_is_grounded())
 			self.get_vec_move().set_y(self.get_vec_move().get_y() - 500 * delta)
+			# print(self.get_space_was_down(), "aaaaaaaa")
 			self.set_is_grounded(False)
+			self.set_space_was_down(False)
 			# print(self.get_vec_move()
+		elif keys_down[K_SPACE] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down():
+			self.get_vec_move().set_y(0)
+			self.get_vec_move().set_y(self.get_vec_move().get_y() - 350 * delta)
+			self.set_can_double_jump(False)
+			self.set_space_was_down(False)
+		elif not keys_down[K_SPACE] and not self.get_space_was_down():
+			self.set_space_was_down(True)
+			# print(self.get_space_was_down(), "bbbbbbbbbbb")
 		if keys_down[K_a] and not self.get_is_sliding():
 			move = -self.get_ms() * delta
 			if not self.get_is_grounded():
@@ -284,24 +309,15 @@ class Player(AdvancedHitbox): # p
 						friction_reduction = wall.get_friction()
 					self.get_vec_move().set_x(self.get_vec_move().get_x() * friction_reduction)
 					# print(self.get_vec_move())
-					if abs(self.get_vec_move().get_x()) < .001:
-						# if self.get_is_sliding():
-						# 	self.set_h(40)
-						# 	self.set_w(25)
-						# 	self.get_pt().set_y(self.get_pt().get_y() - self.get_h() / 2)
-						# 	for hb in self.get_hbps():
-						# 		hb.set_h(40)
-						# 		hb.set_w(25)
-						# 		hb.get_pt().set_y(hb.get_pt().get_y() - hb.get_h() / 2)
-						# 		if self.get_vec_move().get_x() < 0:
-						# 			self.get_pt().set_x(self.get_pt().get_x() + (self.get_h() - 25))
-						# 			hb.get_pt().set_x(hb.get_pt().get_x() + (hb.get_h() - 25))
+					if abs(self.get_vec_move().get_x()) < .1:
 						self.get_vec_move().set_x(0)
 						self.set_is_sliding(False, walls)
 				self.get_vec_move().set_y(0)
 				break
 		# print("B", self.get_vec_move(), self.get_is_grounded())
 		self.set_is_grounded(is_grounded)
+		if is_grounded:
+			self.set_can_double_jump(True)
 		self.get_pt().apply(self.get_vec_move())
 		self.update_hbps()
 
