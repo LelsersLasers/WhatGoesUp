@@ -24,9 +24,8 @@ def create_window() -> pygame.Surface:
 	pygame.init()
 	flags = pygame.SCALED | pygame.FULLSCREEN
 	win = pygame.display.set_mode((1920, 1080), flags)
-	pygame.display.set_caption("TempName: v-0.01")
+	pygame.display.set_caption("TempName: v-0.94")
 	return win
-
 
 def handle_events() -> None:
 	for event in pygame.event.get():
