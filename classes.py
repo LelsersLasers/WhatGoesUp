@@ -265,7 +265,7 @@ class Player(AdvancedHitbox): # p
 		if not self.get_can_fly():
 			self.get_vec_move().set_y(self.get_vec_move().get_y() + 1000 * (delta ** 2))
 		# print(self.get_space_was_down())
-			if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_p]:
+			if keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
 			else:
 				if keys_down[K_SPACE] and self.get_is_grounded() and not self.get_jumped_while_sliding():
@@ -298,7 +298,7 @@ class Player(AdvancedHitbox): # p
 				if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
 					self.set_is_sliding(True, walls)
 		else:
-			if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_p]:
+			if keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
 			else:
 				if keys_down[K_SPACE]:
@@ -371,7 +371,7 @@ class Player(AdvancedHitbox): # p
 		super().draw(win)
 
 class Surface(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#ffff00"):
+	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#000000"):
 		super().__init__(pt, w, h, color)
 		self._friction = friction
 

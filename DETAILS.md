@@ -27,6 +27,7 @@ git# Player stats
 
 # Map ideas
 - Map 1: Basic Map
+	- Name: Base Camp
 	- is literally the base map, nothing is special or changes
 - Map 2: Dashing
 	- Removes sliding and double jump from player movement
