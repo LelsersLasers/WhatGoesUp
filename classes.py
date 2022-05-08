@@ -158,7 +158,7 @@ class AdvancedHitbox(Hitbox): # ahb
 
 class Player(AdvancedHitbox): # p
 	def __init__(self):
-		super().__init__(Vector(50, 959), 25, 40, "#00ff00")
+		super().__init__(Vector(50, 540), 25, 40, "#00ff00")
 		self.add_hbp(HitboxPart(Vector(150, 875), Vector(0, 0), 25, 40))
 		# self.add_hbp(HitboxPart(Vector(150, 855), Vector(0, 10), 25, 25))
 		# self.add_hbp(HitboxPart(Vector(150, 875), Vector(2.5, 35), 20, 10))
@@ -201,50 +201,60 @@ class Player(AdvancedHitbox): # p
 		return self._is_sliding
 	def set_is_sliding(self, is_sliding: bool, walls: list[Surface]) -> None:
 		p_temp = copy.deepcopy(self)
-		if is_sliding:
+		if not self._is_sliding and is_sliding:
+			# print(p_temp, "aaaaaaa")
 			p_temp.set_h(25)
 			p_temp.set_w(40)
-			p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_h() / 2)
+			p_temp.get_pt().set_y(p_temp.get_pt().get_y() + (p_temp.get_w() - p_temp.get_h()) - 1)
 			can_slide = True
 			for hb in p_temp.get_hbps():
 				hb.set_h(25)
 				hb.set_w(40)
-				hb.get_pt().set_y(hb.get_pt().get_y() + hb.get_h() / 2)
+				hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()) - 1)
+			# print(p_temp.get_pt().get_y(), p_temp.get_pt().get_x())
+			# print(p_temp, "bb")
 			for wall in walls:
 				if p_temp.check_collisions(wall):
 					can_slide = False
+					# print("no 1")
 			if can_slide:
 				self.set_h(25)
 				self.set_w(40)
-				self.get_pt().set_y(self.get_pt().get_y() + self.get_h() / 2)
+				self.get_pt().set_y(self.get_pt().get_y() + (self.get_w() - self.get_h()))
 				can_slide = True
 				for hb in self.get_hbps():
 					hb.set_h(25)
 					hb.set_w(40)
-					hb.get_pt().set_y(hb.get_pt().get_y() + hb.get_h() / 2)
+					hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()))
+					# print(self.get_pt().get_y(), self.get_pt().get_x(), "ccccc")
+				self.get_vec_move().set_x(self.get_vec_move().get_x() * 4)
 			self._is_sliding = can_slide
 		elif self._is_sliding and not is_sliding:
+			# print(p_temp, "aaaaaaa 222")
 			p_temp.set_h(40)
 			p_temp.set_w(25)
-			p_temp.get_pt().set_y((p_temp.get_pt().get_y() - p_temp.get_h() / 2) + 1)
+			p_temp.get_pt().set_y(p_temp.get_pt().get_y() + (p_temp.get_w() - p_temp.get_h()) - 1)
 			can_stand = True
 			for hb in p_temp.get_hbps():
 				hb.set_h(40)
 				hb.set_w(25)
-				hb.get_pt().set_y((hb.get_pt().get_y() - hb.get_h() / 2) + 1)
+				hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()) - 1)
+			# print(p_temp, "bb 222")
 			for wall in walls:
 				if p_temp.check_collisions(wall):
 					can_stand = False
-					# print("Yes")
+					# print("no 2")
 			if can_stand:
 				self.set_h(40)
 				self.set_w(25)
-				self.get_pt().set_y(self.get_pt().get_y() - self.get_h() / 2)
+				self.get_pt().set_y(self.get_pt().get_y() + (self.get_w() - self.get_h()))
 				for hb in self.get_hbps():
 					hb.set_h(40)
 					hb.set_w(25)
-					hb.get_pt().set_y(hb.get_pt().get_y() - hb.get_h() / 2)
-			self._is_sliding = is_sliding
+					hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()))
+					# print(self.get_pt().get_y(), self.get_pt().get_x(), "ccccc 222")
+			self._is_sliding = not can_stand
+		# print("This doesnt work")
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		self.get_vec_move().set_y(self.get_vec_move().get_y() + 1000 * (delta ** 2))
@@ -257,7 +267,6 @@ class Player(AdvancedHitbox): # p
 			self.set_space_was_down(False)
 			if self.get_is_sliding():
 				self.set_jumped_while_sliding(True)
-			# print(self.get_vec_move()
 		elif keys_down[K_SPACE] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down() and not self.get_jumped_while_sliding():
 			self.get_vec_move().set_y(0)
 			self.get_vec_move().set_y(self.get_vec_move().get_y() - 350 * delta)
@@ -267,26 +276,22 @@ class Player(AdvancedHitbox): # p
 				self.set_jumped_while_sliding(True)
 		elif not keys_down[K_SPACE] and not self.get_space_was_down():
 			self.set_space_was_down(True)
-			# print(self.get_space_was_down(), "bbbbbbbbbbb")
 		if keys_down[K_a] and not self.get_is_sliding():
 			move = -self.get_ms() * delta
 			if not self.get_is_grounded():
 				move *= .5
 			self.get_vec_move().set_x(move)
-			# print(self.get_vec_move())
 		if keys_down[K_d] and not self.get_is_sliding():
 			move = self.get_ms() * delta
 			if not self.get_is_grounded():
 				move *= .5
 			self.get_vec_move().set_x(move)
-		# print("A", self.get_vec_move(), self.get_is_grounded())
-		# if keys_down[K_LCTRL]:
 		if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
 			self.set_is_sliding(True, walls)
-			self.get_vec_move().set_x(self.get_vec_move().get_x() * 4)
+
 		# print(self.get_is_sliding())
 		p_temp = copy.deepcopy(self)
-
+		# print(p_temp)
 		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x())
 		p_temp.update_hbps()
 		for wall in walls:
@@ -301,19 +306,21 @@ class Player(AdvancedHitbox): # p
 		is_grounded = False
 		for wall in walls:
 			if p_temp.check_collisions(wall):
+				print("Yes")
 				p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
 				if self.get_vec_move().get_y() > 0:
 					# print("Yes")
 					# self.get_vec_move().set_x(0)
 					is_grounded = True
 					if self.get_is_sliding():
-						friction_reduction = wall.get_friction() * .95
+						friction_reduction = wall.get_friction() * 1.04
 						# print(friction_reduction)
 					else:
 						friction_reduction = wall.get_friction()
 					self.get_vec_move().set_x(self.get_vec_move().get_x() * friction_reduction)
-					# print(self.get_vec_move())
-					if abs(self.get_vec_move().get_x()) < .1:
+					# print(self.sget_vec_move())
+					if abs(self.get_vec_move().get_x()) < .15:
+						# print("Yes?")
 						self.get_vec_move().set_x(0)
 						self.set_is_sliding(False, walls)
 						self.set_jumped_while_sliding(False)
@@ -323,7 +330,10 @@ class Player(AdvancedHitbox): # p
 		self.set_is_grounded(is_grounded)
 		if is_grounded:
 			self.set_can_double_jump(True)
-		self.get_pt().apply(self.get_vec_move())
+		self.get_pt().set_x(self.get_pt().get_x() + self.get_vec_move().get_x())
+		print(self.get_vec_move())
+		for wall in walls:
+			wall.get_pt().set_y(wall.get_pt().get_y() - self.get_vec_move().get_y())
 		self.update_hbps()
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
