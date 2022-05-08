@@ -158,8 +158,8 @@ class AdvancedHitbox(Hitbox): # ahb
 
 class Player(AdvancedHitbox): # p
 	def __init__(self):
-		super().__init__(Vector(50, 540), 25, 40, "#00ff00")
-		self.add_hbp(HitboxPart(Vector(150, 875), Vector(0, 0), 25, 40))
+		super().__init__(Vector(50, 760), 25, 40, "#00ff00")
+		self.add_hbp(HitboxPart(Vector(50, 760), Vector(0, 0), 25, 40))
 		# self.add_hbp(HitboxPart(Vector(150, 855), Vector(0, 10), 25, 25))
 		# self.add_hbp(HitboxPart(Vector(150, 875), Vector(2.5, 35), 20, 10))
 		self._ms: float = 200
@@ -306,7 +306,7 @@ class Player(AdvancedHitbox): # p
 		is_grounded = False
 		for wall in walls:
 			if p_temp.check_collisions(wall):
-				print("Yes")
+				# print("Yes")
 				p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
 				if self.get_vec_move().get_y() > 0:
 					# print("Yes")
@@ -331,7 +331,7 @@ class Player(AdvancedHitbox): # p
 		if is_grounded:
 			self.set_can_double_jump(True)
 		self.get_pt().set_x(self.get_pt().get_x() + self.get_vec_move().get_x())
-		print(self.get_vec_move())
+		# print(self.get_vec_move())
 		for wall in walls:
 			wall.get_pt().set_y(wall.get_pt().get_y() - self.get_vec_move().get_y())
 		self.update_hbps()
