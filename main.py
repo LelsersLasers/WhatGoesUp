@@ -109,7 +109,8 @@ def main():
 		Surface(Vector(1540, 375), 40, 200, .89, "#000000"),
 		Surface(Vector(1540, 150), 40, 150, .95, "#000000"),
 		Surface(Vector(1560, 300), 20, 75, .95, "#000000"),
-
+		Surface(Vector(1480, 300), 20, 20, .95, "#000000"),
+		Surface(Vector(1350, 300), 50, 20, .95, "#000000"),
 
 	]
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
