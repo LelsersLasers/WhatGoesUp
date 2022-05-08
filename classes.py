@@ -267,56 +267,55 @@ class Player(AdvancedHitbox): # p
 		# print(self.get_space_was_down())
 			if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
-			if keys_down[K_SPACE] and self.get_is_grounded() and not self.get_jumped_while_sliding():
-				# print(self.get_is_grounded())
-				self.get_vec_move().set_y(self.get_vec_move().get_y() - 500 * delta)
-				# print(self.get_space_was_down(), "aaaaaaaa")
-				self.set_is_grounded(False)
-				self.set_space_was_down(False)
-				if self.get_is_sliding():
-					self.set_jumped_while_sliding(True)
-			elif keys_down[K_SPACE] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down() and not self.get_jumped_while_sliding():
-				self.get_vec_move().set_y(0)
-				self.get_vec_move().set_y(self.get_vec_move().get_y() - 350 * delta)
-				self.set_can_double_jump(False)
-				self.set_space_was_down(False)
-				if self.get_is_sliding():
-					self.set_jumped_while_sliding(True)
-			elif not keys_down[K_SPACE] and not self.get_space_was_down():
-				self.set_space_was_down(True)
-			if keys_down[K_a] and not self.get_is_sliding():
-				move = -self.get_ms() * delta
-				if not self.get_is_grounded():
-					move *= .5
-				self.get_vec_move().set_x(move)
-			if keys_down[K_d] and not self.get_is_sliding():
-				move = self.get_ms() * delta
-				if not self.get_is_grounded():
-					move *= .5
-				self.get_vec_move().set_x(move)
-			if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
-				self.set_is_sliding(True, walls)
+			else:
+				if keys_down[K_SPACE] and self.get_is_grounded() and not self.get_jumped_while_sliding():
+					# print(self.get_is_grounded())
+					self.get_vec_move().set_y(self.get_vec_move().get_y() - 500 * delta)
+					# print(self.get_space_was_down(), "aaaaaaaa")
+					self.set_is_grounded(False)
+					self.set_space_was_down(False)
+					if self.get_is_sliding():
+						self.set_jumped_while_sliding(True)
+				elif keys_down[K_SPACE] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down() and not self.get_jumped_while_sliding():
+					self.get_vec_move().set_y(0)
+					self.get_vec_move().set_y(self.get_vec_move().get_y() - 350 * delta)
+					self.set_can_double_jump(False)
+					self.set_space_was_down(False)
+					if self.get_is_sliding():
+						self.set_jumped_while_sliding(True)
+				elif not keys_down[K_SPACE] and not self.get_space_was_down():
+					self.set_space_was_down(True)
+				if keys_down[K_a] and not self.get_is_sliding():
+					move = -self.get_ms() * delta
+					if not self.get_is_grounded():
+						move *= .5
+					self.get_vec_move().set_x(move)
+				if keys_down[K_d] and not self.get_is_sliding():
+					move = self.get_ms() * delta
+					if not self.get_is_grounded():
+						move *= .5
+					self.get_vec_move().set_x(move)
+				if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
+					self.set_is_sliding(True, walls)
 		else:
 			if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
-			if keys_down[K_SPACE]:
-				self.get_vec_move().set_y(self.get_vec_move().get_y() - .01)
-			elif keys_down[K_LCTRL]:
-				self.get_vec_move().set_y(self.get_vec_move().get_y() + .01)
 			else:
-				self.get_vec_move().set_y(0)
-			if keys_down[K_a]:
-				move = -self.get_ms() * delta
-				if not self.get_is_grounded():
-					move *= .5
-				self.get_vec_move().set_x(move)
-			if keys_down[K_d]:
-				move = self.get_ms() * delta
-				if not self.get_is_grounded():
-					move *= .5
-				self.get_vec_move().set_x(move)
-			else:
-				self.get_vec_move().set_x(0)
+				if keys_down[K_SPACE]:
+					self.get_vec_move().set_y(self.get_vec_move().get_y() - .01)
+				elif keys_down[K_LCTRL]:
+					self.get_vec_move().set_y(self.get_vec_move().get_y() + .01)
+				else:
+					self.get_vec_move().set_y(0)
+				if keys_down[K_a]:
+					self.get_vec_move().set_x(self.get_vec_move().get_x() - .01 )
+				elif keys_down[K_d]:
+					move = self.get_ms() * delta
+					if not self.get_is_grounded():
+						move *= .5
+					self.get_vec_move().set_x(self.get_vec_move().get_x() + .01)
+				else:
+					self.get_vec_move().set_x(0)
 
 		# print(self.get_is_sliding())
 		p_temp = copy.deepcopy(self)
