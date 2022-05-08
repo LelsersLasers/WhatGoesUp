@@ -297,7 +297,10 @@ class Player(AdvancedHitbox): # p
 		for wall in walls:
 			if p_temp.check_collisions(wall):
 				p_temp.get_pt().set_x(p_temp.get_pt().get_x() - p_temp.get_vec_move().get_x())
-				self.get_vec_move().set_x(0)
+				if p_temp.get_is_sliding() and not p_temp.get_is_grounded():
+					self.get_vec_move().set_x(-self.get_vec_move().get_x() * .5)
+				else:
+					self.get_vec_move().set_x(0)
 				break
 
 		p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
