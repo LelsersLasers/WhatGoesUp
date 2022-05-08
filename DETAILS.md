@@ -54,3 +54,5 @@ git# Player stats
 - Map 7:
 	- Camera doesn't follow player, it is based on screens
 	- When player goes into other screen, it changes to the other screen
+- Map 8:
+	- Cannot stop jumping (just trying to be really annoying)
