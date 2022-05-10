@@ -179,6 +179,9 @@ class Player(AdvancedHitbox): # p
 		self.add_hbp(HitboxPart(Vector(50, 760), Vector(0, 0), 25, 40))
 		# self.add_hbp(HitboxPart(Vector(150, 855), Vector(0, 10), 25, 25))
 		# self.add_hbp(HitboxPart(Vector(150, 875), Vector(2.5, 35), 20, 10))
+
+		self._mass: float = 10 # kg
+
 		self._ms: float = 200
 		self._vec_move: Vector = Vector(0, 0)
 		self._is_grounded = False
@@ -191,6 +194,10 @@ class Player(AdvancedHitbox): # p
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
 
+	def get_mass(self) -> float:
+		return self._mass
+	def set_ms(self, mass: float) -> None:
+		self._mass = mass
 	def get_ms(self) -> float:
 		return self._ms
 	def set_ms(self, ms: float) -> None:
