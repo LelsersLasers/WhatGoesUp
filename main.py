@@ -19,20 +19,18 @@ def set_delta(time_0: float, time_1: float, deltas: list[float], frame: int) -> 
 	time_0 = time.perf_counter()
 	return calc_average(deltas), time_0, time_1, frame
 
-
 def create_window() -> pygame.Surface:
 	pygame.init()
-	flags = pygame.SCALED | pygame.FULLSCREEN
-	win = pygame.display.set_mode((1920, 1080), flags)
+	win = pygame.display.set_mode((1920, 1080), pygame.SCALED | pygame.FULLSCREEN)
 	pygame.display.set_caption("TempName: v-0.94")
 	return win
+
 
 def handle_events() -> None:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			quit()
-
 
 def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls) -> str:
 	keys_down = pygame.key.get_pressed()
@@ -44,7 +42,6 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls) -> s
 	elif screen == "game":
 		player.handle_keys(keys_down, hb_mouse, delta, walls)
 	return screen
-
 
 def handle_mouse(screen: str, hb_mouse: Hitbox) -> str:
 	hb_mouse.set_pt(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5))
@@ -64,7 +61,6 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
 	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 100))
 	hb_mouse.draw(win)
 
-
 def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float) -> None:
 	win.fill("#fdf6e3")
 	for wall in walls:
@@ -73,6 +69,39 @@ def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mous
 
 	hb_mouse.draw(win)
 
+def load_level(level: int) -> list[Surface]:
+	if level == 1:
+		return [
+			Surface(Vector(0, 800), 1920, 580, .95),
+			Surface(Vector(0, 0), 10, 1080, .95),
+			Surface(Vector(1910, 0), 10, 1080, .95),
+			Surface(Vector(180, 780), 80, 20, .95),
+			Surface(Vector(295, 700), 80, 20, .95),
+			Surface(Vector(410, 670), 80, 20, .95),
+			Surface(Vector(510, 640), 80, 20, .95),
+			Surface(Vector(620, 610), 80, 20, .95),
+			Surface(Vector(730, 520), 80, 20, .95),
+			Surface(Vector(840, 470), 80, 20, .95),
+			Surface(Vector(1145, 570), 65, 20, .95),
+			Surface(Vector(1200, 530), 10, 40, .95),
+			Surface(Vector(1240, 600), 60, 20, .95),
+			Surface(Vector(1340, 560), 60, 20, .95),
+			Surface(Vector(1440, 460), 60, 20, .95),
+			Surface(Vector(1540, 375), 40, 200, .95),
+			Surface(Vector(1540, 150), 40, 150, .95),
+			Surface(Vector(1560, 300), 20, 75, .95),
+			Surface(Vector(1480, 300), 20, 20, .95),
+			Surface(Vector(1270, 200), 50, 20, .95),
+			Surface(Vector(1245, 180), 30, 40, .95),
+			Surface(Vector(1005, 175), 90, 20, .95),
+			Surface(Vector(0, 0), 700, 40, .95),
+			Surface(Vector(800, 0), 1120, 40, .95),
+			Surface(Vector(840, 150), 70, 20, .95),
+			Surface(Vector(800, 0), 100, 75, .95),
+			Surface(Vector(720, 150), 30, 20, .95),
+		]
+	else:
+		return []
 
 def main():
 
@@ -90,37 +119,7 @@ def main():
 	win = create_window()
 
 	player = Player()
-	walls = [
-		# Surface(Vector(0, 0), 0, 0, .95),
-		Surface(Vector(0, 800), 1920, 580, .95),
-		Surface(Vector(0, 0), 10, 1080, .95),
-		Surface(Vector(1910, 0), 10, 1080, .95),
-		Surface(Vector(180, 780), 80, 20, .95),
-		Surface(Vector(295, 700), 80, 20, .95),
-		Surface(Vector(410, 670), 80, 20, .95),
-		Surface(Vector(510, 640), 80, 20, .95),
-		Surface(Vector(620, 610), 80, 20, .95),
-		Surface(Vector(730, 520), 80, 20, .95),
-		Surface(Vector(840, 470), 80, 20, .95),
-		Surface(Vector(1145, 570), 65, 20, .95),
-		Surface(Vector(1200, 530), 10, 40, .95),
-		Surface(Vector(1240, 600), 60, 20, .95),
-		Surface(Vector(1340, 560), 60, 20, .95),
-		Surface(Vector(1440, 460), 60, 20, .95),
-		Surface(Vector(1540, 375), 40, 200, .95),
-		Surface(Vector(1540, 150), 40, 150, .95),
-		Surface(Vector(1560, 300), 20, 75, .95),
-		Surface(Vector(1480, 300), 20, 20, .95),
-		Surface(Vector(1270, 200), 50, 20, .95),
-		Surface(Vector(1245, 180), 30, 40, .95),
-		Surface(Vector(1005, 175), 90, 20, .95),
-		Surface(Vector(0, 0), 700, 40, .95),
-		Surface(Vector(800, 0), 1120, 40, .95),
-		Surface(Vector(840, 150), 70, 20, .95),
-		Surface(Vector(800, 0), 100, 75, .95),
-		Surface(Vector(720, 150), 30, 20, .95),
-
-	]
+	walls = load_level(1)
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 
 	while game_status:
