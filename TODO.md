@@ -4,6 +4,8 @@
 
 
 # Cleaning
+- USE DOWNPRESS CLASS
+- Rework private variable system
 - Rework movement
 - Rework friction system
 	- Sliding
