@@ -4,7 +4,9 @@
 
 
 # Cleaning
-
+- Rework movement
+- Rework friction system
+	- Sliding
 
 # Bottom Up
 
