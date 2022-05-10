@@ -7,19 +7,14 @@ import copy
 
 class DownPress():
 	def __init__(self):
-		self._was_down = False
-
-	def get_was_down(self) -> bool:
-		return self._was_down
-	def set_was_down(self, value) -> None:
-		self._was_down = value
+		self.was_down = False
 
 	def down(self, condition) -> bool:
-		if not self.get_was_down() and condition:
-			self.set_was_down(True)
+		if not self.was_down and condition:
+			self.was_down = True
 			return True
 		elif not condition:
-			self.set_was_down(False)
+			self.was_down = False
 		return False
 
 class Vector(): # vec
