@@ -5,6 +5,23 @@ import math
 import copy
 
 
+class DownPress():
+	def __init__(self):
+		self._was_down = False
+
+	def get_was_down(self) -> bool:
+		return self._was_down
+	def set_was_down(self, value) -> None:
+		self._was_down = value
+
+	def down(self, condition) -> bool:
+		if not self.get_was_down() and condition:
+			self.set_was_down(True)
+			return True
+		elif not condition:
+			self.set_was_down(False)
+		return False
+
 class Vector(): # vec
 	def __init__(self, x: float, y: float):
 		self._x: float = x
