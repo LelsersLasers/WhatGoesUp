@@ -223,62 +223,39 @@ class Player(AdvancedHitbox): # p
 		self._jumped_while_sliding = jumped_while_sliding
 	def get_is_sliding(self) -> bool:
 		return self._is_sliding
-	def set_is_sliding(self, is_sliding: bool, walls: list[Surface]) -> None:
+	def set_is_sliding(self, is_sliding: bool, walls: list[Surface], delta) -> None:
 		p_temp = copy.deepcopy(self)
 		if not self._is_sliding and is_sliding:
-			# print(p_temp, "aaaaaaa")
-			p_temp.set_h(25)
-			p_temp.set_w(40)
-			p_temp.get_pt().set_y(p_temp.get_pt().get_y() + (p_temp.get_w() - p_temp.get_h()) - 1)
+			p_temp.change_dimensions()
 			can_slide = True
-			for hb in p_temp.get_hbps():
-				hb.set_h(25)
-				hb.set_w(40)
-				hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()) - 1)
-			# print(p_temp.get_pt().get_y(), p_temp.get_pt().get_x())
-			# print(p_temp, "bb")
 			for wall in walls:
 				if p_temp.check_collisions(wall):
 					can_slide = False
-					# print("no 1")
 			if can_slide:
-				self.set_h(25)
-				self.set_w(40)
-				self.get_pt().set_y(self.get_pt().get_y() + (self.get_w() - self.get_h()))
-				can_slide = True
-				for hb in self.get_hbps():
-					hb.set_h(25)
-					hb.set_w(40)
-					hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()))
-					# print(self.get_pt().get_y(), self.get_pt().get_x(), "ccccc")
-				self.get_vec_move().set_x(self.get_vec_move().get_x() * 4)
+				self.change_dimensions()
+				self.get_vec_move().set_x(self.get_vec_move().get_x() * 400 * delta)
 			self._is_sliding = can_slide
 		elif self._is_sliding and not is_sliding:
-			# print(p_temp, "aaaaaaa 222")
-			p_temp.set_h(40)
-			p_temp.set_w(25)
-			p_temp.get_pt().set_y(p_temp.get_pt().get_y() + (p_temp.get_w() - p_temp.get_h()) - 1)
+			p_temp.change_dimensions()
 			can_stand = True
-			for hb in p_temp.get_hbps():
-				hb.set_h(40)
-				hb.set_w(25)
-				hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()) - 1)
-			# print(p_temp, "bb 222")
 			for wall in walls:
 				if p_temp.check_collisions(wall):
 					can_stand = False
-					# print("no 2")
 			if can_stand:
-				self.set_h(40)
-				self.set_w(25)
-				self.get_pt().set_y(self.get_pt().get_y() + (self.get_w() - self.get_h()))
-				for hb in self.get_hbps():
-					hb.set_h(40)
-					hb.set_w(25)
-					hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()))
-					# print(self.get_pt().get_y(), self.get_pt().get_x(), "ccccc 222")
+				self.change_dimensions()
 			self._is_sliding = not can_stand
-		# print("This doesnt work")
+
+	def change_dimensions(self) -> None:
+		temp = self.get_h()
+		self.set_h(self.get_w())
+		self.set_w(temp)
+		self.get_pt().set_y(self.get_pt().get_y() + (self.get_w() - self.get_h()))
+		can_slide = True
+		for hb in self.get_hbps():
+			temp = hb.get_h()
+			hb.set_h(hb.get_w())
+			hb.set_w(temp)
+			hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()))
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		if not self.get_can_fly():
@@ -315,7 +292,7 @@ class Player(AdvancedHitbox): # p
 						move *= .5
 					self.get_vec_move().set_x(move)
 				if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
-					self.set_is_sliding(True, walls)
+					self.set_is_sliding(True, walls, delta)
 		else:
 			if keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
@@ -372,7 +349,7 @@ class Player(AdvancedHitbox): # p
 					if abs(self.get_vec_move().get_x()) < .15:
 						# print("Yes?")
 						self.get_vec_move().set_x(0)
-						self.set_is_sliding(False, walls)
+						self.set_is_sliding(False, walls, delta)
 						self.set_jumped_while_sliding(False)
 				self.get_vec_move().set_y(0)
 				break
