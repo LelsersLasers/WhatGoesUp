@@ -99,6 +99,11 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(840, 150), 70, 20, .95),
 			Surface(Vector(800, 0), 100, 75, .95),
 			Surface(Vector(720, 150), 30, 20, .95),
+			# end of first section (no slid jumps yet)
+			Surface(Vector(680, -500), 20, 400, .95),
+			Surface(Vector(680, -40), 20, 40, .95),
+			Surface(Vector(0, -500), 20, 500, .95),
+			Surface(Vector(1900, -500), 20, 500, .95),
 		]
 	else:
 		return []
