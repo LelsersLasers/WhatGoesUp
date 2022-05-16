@@ -176,8 +176,9 @@ class Player(AdvancedHitbox): # p
 		# self.add_hbp(HitboxPart(Vector(150, 875), Vector(2.5, 35), 20, 10))
 
 		self._mass: float = 10 # kg
+		self._F_g: float = 9.81 * self._mass
 
-		self._ms: float = 200
+		self._ms: float = 250
 		self._vec_move: Vector = Vector(0, 0)
 		self._is_grounded = False
 		self._is_sliding = False
@@ -191,6 +192,8 @@ class Player(AdvancedHitbox): # p
 
 	def get_mass(self) -> float:
 		return self._mass
+	def get_F_g(self) -> float:
+		return self._F_g
 	def set_ms(self, mass: float) -> None:
 		self._mass = mass
 	def get_ms(self) -> float:
@@ -233,7 +236,7 @@ class Player(AdvancedHitbox): # p
 					can_slide = False
 			if can_slide:
 				self.change_dimensions()
-				self.get_vec_move().set_x(self.get_vec_move().get_x() * 400 * delta)
+				self.get_vec_move().set_x(self.get_vec_move().get_x() * 425 * delta)
 			self._is_sliding = can_slide
 		elif self._is_sliding and not is_sliding:
 			p_temp.change_dimensions()
@@ -258,15 +261,22 @@ class Player(AdvancedHitbox): # p
 			hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()))
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
+		# print(walls[0])
 		if not self.get_can_fly():
-			self.get_vec_move().set_y(self.get_vec_move().get_y() + 1000 * (delta ** 2))
+			# print(self.get_vec_move().get_y(), "aaaaa")
+			self.get_vec_move().set_y(self.get_vec_move().get_y() + self.get_F_g() * 10 * (delta ** 2))
+			# print(self.get_vec_move().get_y() + self.get_F_g() * 100 * (delta ** 2), "bbbbbb")
 		# print(self.get_space_was_down())
 			if keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
 			else:
 				if keys_down[K_SPACE] and self.get_is_grounded() and not self.get_jumped_while_sliding():
 					# print(self.get_is_grounded())
-					self.get_vec_move().set_y(self.get_vec_move().get_y() - 500 * delta)
+					if self.get_is_sliding():
+						self.get_vec_move().set_y(self.get_vec_move().get_y() - 350 * delta)
+					else:
+						self.get_vec_move().set_y(self.get_vec_move().get_y() - 500 * delta)
+					# print(self.get_vec_move().get_y() - 500 * delta, "cccccc")
 					# print(self.get_space_was_down(), "aaaaaaaa")
 					self.set_is_grounded(False)
 					self.set_space_was_down(False)
@@ -339,13 +349,14 @@ class Player(AdvancedHitbox): # p
 					# print("Yes")
 					# self.get_vec_move().set_x(0)
 					is_grounded = True
+					# print(self.sget_vec_move())
 					if self.get_is_sliding():
-						friction_reduction = wall.get_friction() * 1.04
+						friction_reduction = wall.get_friction_co() * 1.04
 						# print(friction_reduction)
 					else:
-						friction_reduction = wall.get_friction()
+						friction_reduction = wall.get_friction_co()
 					self.get_vec_move().set_x(self.get_vec_move().get_x() * friction_reduction)
-					# print(self.sget_vec_move())
+					# print(self.get_vec_move())
 					if abs(self.get_vec_move().get_x()) < .15:
 						# print("Yes?")
 						self.get_vec_move().set_x(0)
@@ -353,7 +364,6 @@ class Player(AdvancedHitbox): # p
 						self.set_jumped_while_sliding(False)
 				self.get_vec_move().set_y(0)
 				break
-		# print("B", self.get_vec_move(), self.get_is_grounded())
 		self.set_is_grounded(is_grounded)
 		if is_grounded:
 			self.set_can_double_jump(True)
@@ -369,9 +379,73 @@ class Player(AdvancedHitbox): # p
 class Surface(Hitbox):
 	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#000000"):
 		super().__init__(pt, w, h, color)
-		self._friction = friction
+		self._friction_co = friction
 
-	def get_friction(self) -> float:
-		return self._friction
-	def set_friction(self, friction: float) -> None:
-		self._friction = friction
+	def get_friction_co(self) -> float:
+		return self._friction_co
+	def set_friction_co(self, friction: float) -> None:
+		self._friction_co = friction
+
+	def get_friction(self, F_g: float) -> float:
+		return self.get_friction_co() * F_g
+
+class Section():
+	def __init__(self, walls):
+		self._walls = walls
+		self._highest_point = self.calc_highest_point() # This is from start value
+		self._lowest_point = self.calc_lowest_point()
+
+	def get_walls(self) -> list[Surface]:
+		return self._walls
+	def set_walls(self, walls: list[Surface]) -> None:
+		self._walls = walls
+	def get_highest_point(self) -> float:
+		return self._highest_point
+	def set_highest_point(self, highest_point: float) -> None:
+		self._highest_point = highest_point
+	def get_lowest_point(self) -> float:
+		return self._lowest_point
+	def set_lowest_point(self, lowest_point: float) -> None:
+		self._lowest_point = lowest_point
+
+	def calc_lowest_point(self) -> float:
+		"""
+			Uses the highest value of y as the lowest value because y starts at
+			1080 and goes negative until the map is finished. So the lowest is closest to 1080
+		"""
+		high = self.get_walls()[0].get_pt().get_y()
+		for wall in self.get_walls():
+			if wall.get_pt().get_y() > high:
+				high = wall.get_pt().get_y()
+		return high
+	def calc_highest_point(self) -> float:
+		low = self.get_walls()[0].get_pt().get_y()
+		for wall in self.get_walls():
+			if wall.get_pt().get_y() < low:
+				low = wall.get_pt().get_y()
+		return low
+
+class Map():
+	def __init__(self, sections):
+		self._sections = sections
+
+		self._vert_offset = 0
+
+	def get_sections(self) -> list[Section]:
+		return self._sections
+	def set_sections(self, sections: list[Section]) -> None:
+		self._sections = sections
+	def get_vert_offset(self) -> float:
+		return self._vert_offset
+	def set_vert_offset(self, vert_offset: float) -> None:
+		self._vert_offset = vert_offset
+
+	def add_offset(self, offset: float) -> None:
+		self.set_vert_offset(self.get_vert_offset() + offset)
+
+	def load_section(self) -> Section:
+		for section in self.get_sections()
+
+
+
+		return section
