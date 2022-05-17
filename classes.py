@@ -443,9 +443,9 @@ class Map():
 	def add_offset(self, offset: float) -> None:
 		self.set_vert_offset(self.get_vert_offset() + offset)
 
-	# def load_section(self) -> Section:
-	# 	for section in self.get_sections()
-	# 		if self.get_vert_offset()
-	#
-	#
-	# 	return section
+	def load_section(self) -> Section:
+		for section in self.get_sections()
+
+
+
+		return section
