@@ -177,7 +177,7 @@ class Player(AdvancedHitbox): # p
 
 		self._mass: float = 10 # kg
 
-		self._ms: float = 200
+		self._ms: float = 2
 		self._vec_move: Vector = Vector(0, 0)
 		self._is_grounded = False
 		self._is_sliding = False
@@ -233,7 +233,7 @@ class Player(AdvancedHitbox): # p
 					can_slide = False
 			if can_slide:
 				self.change_dimensions()
-				self.get_vec_move().set_x(self.get_vec_move().get_x() * 400 * delta)
+				self.get_vec_move().set_x(self.get_vec_move().get_x() * 4.35)
 			self._is_sliding = can_slide
 		elif self._is_sliding and not is_sliding:
 			p_temp.change_dimensions()
@@ -281,13 +281,13 @@ class Player(AdvancedHitbox): # p
 						self.set_jumped_while_sliding(True)
 				elif not keys_down[K_SPACE] and not self.get_space_was_down():
 					self.set_space_was_down(True)
-				if keys_down[K_a] and not self.get_is_sliding():
-					move = -self.get_ms() * delta
+				if keys_down[K_a] and not self.get_is_sliding() and self.get_can_double_jump():
+					move = -self.get_ms()
 					if not self.get_is_grounded():
 						move *= .5
 					self.get_vec_move().set_x(move)
-				if keys_down[K_d] and not self.get_is_sliding():
-					move = self.get_ms() * delta
+				if keys_down[K_d] and not self.get_is_sliding() and self.get_can_double_jump():
+					move = self.get_ms()
 					if not self.get_is_grounded():
 						move *= .5
 					self.get_vec_move().set_x(move)
@@ -312,7 +312,7 @@ class Player(AdvancedHitbox): # p
 					self.get_vec_move().set_x(self.get_vec_move().get_x() + .01)
 				else:
 					self.get_vec_move().set_x(0)
-
+		# print(self.get_can_double_jump())
 		# print(self.get_is_sliding())
 		p_temp = copy.deepcopy(self)
 		# print(p_temp)
@@ -340,10 +340,10 @@ class Player(AdvancedHitbox): # p
 					# self.get_vec_move().set_x(0)
 					is_grounded = True
 					if self.get_is_sliding():
-						friction_reduction = wall.get_friction() * 1.04
+						friction_reduction = wall.get_friction() * 102 * delta
 						# print(friction_reduction)
 					else:
-						friction_reduction = wall.get_friction()
+						friction_reduction = wall.get_friction() * 100 * delta
 					self.get_vec_move().set_x(self.get_vec_move().get_x() * friction_reduction)
 					# print(self.sget_vec_move())
 					if abs(self.get_vec_move().get_x()) < .15:
