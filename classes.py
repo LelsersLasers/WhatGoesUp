@@ -356,7 +356,7 @@ class Player(AdvancedHitbox): # p
 					# self.get_vec_move().set_x(0)
 					is_grounded = True
 					if self.get_is_sliding():
-						friction_reduction = wall.get_friction() * 101.5 * delta
+						friction_reduction = wall.get_friction() * 108 * delta
 						# print(friction_reduction)
 					else:
 						friction_reduction = wall.get_friction() * 100 * delta

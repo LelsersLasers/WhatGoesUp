@@ -165,7 +165,7 @@ def main():
 		# clock.tick_busy_loop(60)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
 		# print(delta)
-		print("FPS: %4.2f" % (1/delta))
+		# print("FPS: %4.2f" % (1/delta))
 
 
 main()
