@@ -8,7 +8,7 @@ from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player, Surface 
 
 def calc_average(lst: list[float]) -> float:
 	if len(lst) == 0:
-		return 1
+		return 1/100
 	return sum(lst)/len(lst)
 
 def set_delta(time_0: float, time_1: float, deltas: list[float], frame: int) -> tuple[float, float, float, int]:
@@ -74,8 +74,6 @@ def load_level(level: int) -> list[Surface]:
 		return [
 			# Surface(Vector(,), , , ),
 			Surface(Vector(0, 800), 1920, 580, .9),
-			Surface(Vector(0, 0), 10, 1080, .9),
-			Surface(Vector(1910, 0), 10, 1080, .9),
 			Surface(Vector(180, 780), 80, 20, .9),
 			Surface(Vector(290, 700), 80, 20, .9),
 			Surface(Vector(410, 670), 80, 20, .9),
@@ -94,15 +92,29 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(1700, 190), 100, 20, .9),
 			Surface(Vector(1700, 100), 10, 90, .9),
 			Surface(Vector(1845, 290), 20, 20, .9),
-			Surface(Vector(1815, 300), 30, 10, .7, "#ff00ff"),
+			Surface(Vector(1815, 300), 30, 10, .7),
 			Surface(Vector(1800, 110), 20, 100, .9),
-			# Surface(Vector(1440, 460), 60, 20, .9),
-			# Surface(Vector(1540, 375), 40, 200, .9),
-			# Surface(Vector(1540, 150), 40, 150, .9),
-			# Surface(Vector(1560, 300), 20, 75, .9),
-			# Surface(Vector(1480, 300), 20, 20, .9),
-			# Surface(Vector(1270, 200), 50, 20, .9),
-			# Surface(Vector(1245, 180), 30, 40, .9),
+			Surface(Vector(1400, 110), 200, 20, .9),
+			Surface(Vector(1500, 20), 10, 63, .9),
+			Surface(Vector(1400, 0), 520, 20, .9),
+			Surface(Vector(600, 0), 120, 20, .7),
+			Surface(Vector(400, 0), 100, 20, .9),
+			Surface(Vector(150, 0), 150, 20, .9),
+			Surface(Vector(100, -100), 100, 20, .9),
+			Surface(Vector(180, -300), 20, 200, .9),
+			Surface(Vector(0, -200), 50, 20, .9),
+			Surface(Vector(0, -400), 200, 20, .9),
+			Surface(Vector(0, -600), 200, 200, .9),
+			Surface(Vector(0, -400), 20, 400, .9),
+			Surface(Vector(350, -450), 40, 20, .9),
+			Surface(Vector(1600, -450), 100, 20, .85),
+			Surface(Vector(1620, -560), 80, 20, .9),
+			Surface(Vector(1740, -745), 40, 200, .9),
+			Surface(Vector(1740, -1000), 40, 200, .9),
+			Surface(Vector(1760, -800), 20, 85, .9),
+			Surface(Vector(1650, -840), 20, 20, .9),
+			# Surface(Vector(1470, 200), 50, 20, .9),
+			# Surface(Vector(1445, 180), 30, 40, .9),
 			# Surface(Vector(1005, 175), 90, 20, .9),
 			# Surface(Vector(0, 0), 700, 40, .9),
 			# Surface(Vector(800, 0), 1120, 40, .9),
@@ -110,10 +122,10 @@ def load_level(level: int) -> list[Surface]:
 			# Surface(Vector(800, 0), 100, 75, .9),
 			# Surface(Vector(720, 150), 30, 20, .9),
 			# end of first section (no slid jumps yet)
-			Surface(Vector(680, -500), 20, 400, .9),
-			Surface(Vector(680, -40), 20, 40, .9),
-			Surface(Vector(0, -500), 20, 500, .9),
-			Surface(Vector(1900, -500), 20, 500, .9),
+			# Surface(Vector(680, -500), 20, 400, .9),
+			# Surface(Vector(680, -40), 20, 40, .9),
+			Surface(Vector(0, -2000), 10, 3080, .9),
+			Surface(Vector(1910, -2000), 10, 3080, .9),
 		]
 	else:
 		return []
@@ -152,6 +164,7 @@ def main():
 
 		# clock.tick_busy_loop(60)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
+		# print(delta)
 		# print("FPS: %4.2f" % (1/delta))
 
 
