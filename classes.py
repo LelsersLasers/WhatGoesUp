@@ -292,12 +292,12 @@ class Player(AdvancedHitbox): # p
 				if keys_down[K_a] and not self.get_is_sliding():
 					move = -self.get_ms() * delta
 					if not self.get_is_grounded():
-						move *= .5
+						move *= .4
 					self.get_vec_move().set_x(move)
 				if keys_down[K_d] and not self.get_is_sliding():
 					move = self.get_ms() * delta
 					if not self.get_is_grounded():
-						move *= .5
+						move *= .4
 					self.get_vec_move().set_x(move)
 				if keys_down[K_a] and self.get_is_sliding() and self.get_is_stuck():
 					self.set_is_sliding(False, walls, delta)
@@ -354,12 +354,15 @@ class Player(AdvancedHitbox): # p
 					# print("Yes")
 					# self.get_vec_move().set_x(0)
 					is_grounded = True
-					# if self.get_is_sliding():
-					# 	friction_reduction = wall.get_friction() * 108 * delta
-					# 	# print(friction_reduction)
-					# else:
-					# 	friction_reduction = wall.get_friction() * 100 * delta
-					# self.get_vec_move().set_x(self.get_vec_move().get_x() * friction_reduction)
+					if self.get_is_sliding():
+						friction_reduction = self.get_vec_move().get_x() * wall.get_friction() * 100 * delta
+						# print(friction_reduction)
+					else:
+						friction_reduction = self.get_vec_move().get_x() * wall.get_friction() * 100 * delta
+					if self.get_vec_move().get_x() < 0:
+						self.get_vec_move().set_x(self.get_vec_move().get_x() + friction_reduction)
+					elif self.get_vec_move().get_x() > 0:
+						self.get_vec_move().set_x(self.get_vec_move().get_x() - friction_reduction)
 					# print(self.sget_vec_move())
 					if abs(self.get_vec_move().get_x()) < .08:
 						# print("Yes?")
