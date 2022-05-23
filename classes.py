@@ -369,8 +369,10 @@ class Player(AdvancedHitbox): # p
 		self.set_is_grounded(is_grounded)
 		if is_grounded:
 			self.set_can_double_jump(True)
-		elif is_grounded and self.get_is_sliding():
+		elif not is_grounded and self.get_is_sliding():
 			self.get_vec_move().set_x(self.get_vec_move().get_x() * 100 * delta)
+		elif not is_grounded:
+			self.get_vec_move().set_x(self.get_vec_move().get_x() * .9 * 100 * delta)
 		print(self.get_vec_move())
 
 		self.get_pt().set_x(self.get_pt().get_x() + self.get_vec_move().get_x())
