@@ -235,7 +235,7 @@ class Player(AdvancedHitbox): # p
 					can_slide = False
 			if can_slide:
 				self.change_dimensions()
-				self.get_vec_move().set_x(self.get_vec_move().get_x() * 5.85)
+				self.get_vec_move().set_x(self.get_vec_move().get_x() * 585 * delta)
 			self._is_sliding = can_slide
 		elif self._is_sliding and not is_sliding:
 			p_temp.change_dimensions()
@@ -287,26 +287,20 @@ class Player(AdvancedHitbox): # p
 				elif not keys_down[K_SPACE] and not self.get_space_was_down():
 					self.set_space_was_down(True)
 				if keys_down[K_a] and not self.get_is_sliding():
-					move = -self.get_ms()
+					move = -self.get_ms() * 100 * delta
 					if not self.get_is_grounded():
 						move *= .5
 					self.get_vec_move().set_x(move)
 				if keys_down[K_d] and not self.get_is_sliding():
-					move = self.get_ms()
-					if not self.get_is_grounded():
-						move *= .5
+					move = self.get_ms() * 100 * delta
 					self.get_vec_move().set_x(move)
 				if keys_down[K_a] and self.get_is_sliding() and self.get_is_stuck():
 					self.set_is_sliding(False, walls, delta)
-					move = -self.get_ms()
-					if not self.get_is_grounded():
-						move *= .5
+					move = -self.get_ms() * 100 * delta
 					self.get_vec_move().set_x(move)
 				if keys_down[K_d] and self.get_is_sliding() and self.get_is_stuck():
 					self.set_is_sliding(False, walls, delta)
-					move = self.get_ms()
-					if not self.get_is_grounded():
-						move *= .5
+					move = self.get_ms() * 100 * delta
 					self.get_vec_move().set_x(move)
 				if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
 					self.set_is_sliding(True, walls, delta)
@@ -332,6 +326,8 @@ class Player(AdvancedHitbox): # p
 		# print(self.get_vec_move())
 		p_temp = copy.deepcopy(self)
 		# print(p_temp)
+		if p_temp.get_is_grounded():
+			self.get_vec_move().set_x(self.get_vec_move().get_x())
 		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x())
 		p_temp.update_hbps()
 		for wall in walls:
@@ -373,7 +369,11 @@ class Player(AdvancedHitbox): # p
 		self.set_is_grounded(is_grounded)
 		if is_grounded:
 			self.set_can_double_jump(True)
-		self.get_pt().set_x(self.get_pt().get_x() + self.get_vec_move().get_x() * 100 * delta)
+		elif is_grounded and self.get_is_sliding():
+			self.get_vec_move().set_x(self.get_vec_move().get_x() * 100 * delta)
+		print(self.get_vec_move())
+
+		self.get_pt().set_x(self.get_pt().get_x() + self.get_vec_move().get_x())
 		# print(self.get_vec_move())
 		for wall in walls:
 			wall.get_pt().set_y(wall.get_pt().get_y() - self.get_vec_move().get_y())
