@@ -86,7 +86,7 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(1240, 600), 60, 20, .85),
 			Surface(Vector(1340, 560), 60, 20, .85),
 			Surface(Vector(1450, 410), 60, 20, .9),
-			Surface(Vector(1450, 290), 80, 20, .9),
+			Surface(Vector(1450, 290), 100, 20, .9),
 			Surface(Vector(1700, 290), 60, 20, .9),
 			Surface(Vector(1800, 190), 10, 60, .9),
 			Surface(Vector(1700, 190), 100, 20, .9),
@@ -166,7 +166,7 @@ def main():
 		# clock.tick_busy_loop(60)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
 		# print(delta)
-		print("FPS: %4.2f" % (1/delta))
+		# print("FPS: %4.2f" % (1/delta))
 
 
 main()
