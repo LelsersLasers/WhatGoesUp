@@ -108,9 +108,9 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(0, -400), 20, 400, -.1),
 			Surface(Vector(325, -450), 40, 20, -.1),
 			Surface(Vector(1600, -450), 100, 20, -.15),
-			Surface(Vector(1580, -350), 100, 20, .8),
-			Surface(Vector(1620, -560), 80, 20, -.1),
-			Surface(Vector(800, -580), 80, 20, -.1),
+			Surface(Vector(1560, -350), 140, 20, -.2),
+			Surface(Vector(1640, -560), 60, 20, -.1),
+			Surface(Vector(900, -580), 80, 20, .1),
 			Surface(Vector(1740, -745), 40, 200, -.1),
 			Surface(Vector(1740, -1000), 40, 200, -.1),
 			Surface(Vector(1760, -800), 20, 85, -.1),
@@ -164,10 +164,10 @@ def main():
 		pygame.display.flip()
 
 
-		clock.tick_busy_loop(60)
+		# clock.tick_busy_loop(60)
 		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
 		# print(delta)
-		print("FPS: %4.2f" % (1/delta))
+		# print("FPS: %4.2f" % (1/delta))
 
 
 main()
