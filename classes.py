@@ -333,16 +333,6 @@ class Player(AdvancedHitbox): # p
 		# print(self.get_vec_move())
 		p_temp = copy.deepcopy(self)
 		# print(p_temp)
-		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x() * delta)
-		p_temp.update_hbps()
-		for wall in walls:
-			if p_temp.check_collisions(wall):
-				p_temp.get_pt().set_x(p_temp.get_pt().get_x() - p_temp.get_vec_move().get_x())
-				if p_temp.get_is_sliding() and not p_temp.get_is_grounded():
-					self.get_vec_move().set_x(-self.get_vec_move().get_x() * .3)
-				else:
-					self.get_vec_move().set_x(0)
-				break
 
 		p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
 		# print(p_temp.get_pt())
@@ -351,7 +341,7 @@ class Player(AdvancedHitbox): # p
 		for wall in walls:
 			if p_temp.check_collisions(wall):
 				# print("Yes")
-				p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
+				p_temp.get_pt().set_y(p_temp.get_pt().get_y() - p_temp.get_vec_move().get_y())
 				if self.get_vec_move().get_y() > 0:
 					# print("Yes")
 					# self.get_vec_move().set_x(0)
@@ -370,13 +360,24 @@ class Player(AdvancedHitbox): # p
 						self.set_jumped_while_sliding(False)
 				self.get_vec_move().set_y(0)
 				break
+		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x() * delta)
+		p_temp.update_hbps()
+		for wall in walls:
+			if p_temp.check_collisions(wall):
+				p_temp.get_pt().set_x(p_temp.get_pt().get_x() - p_temp.get_vec_move().get_x())
+				if p_temp.get_is_sliding() and not p_temp.get_is_grounded():
+					self.get_vec_move().set_x(-self.get_vec_move().get_x() * .3)
+				else:
+					self.get_vec_move().set_x(0)
+				break
 		# print("B", self.get_vec_move(), self.get_is_grounded())
 		# print(self.get_vec_move(), "Delta:", delta, "FPS:", (1/delta))
 		self.set_is_grounded(is_grounded)
 		if is_grounded:
 			self.set_can_double_jump(True)
 
-		self.get_pt().set_x(self.get_pt().get_x() + self.get_vec_move().get_x() * delta)
+		self.get_pt().set_x(self.get_pt().get_x() + (self.get_vec_move().get_x() * delta))
+		# print("X * delta^2:", self.get_vec_move().get_x() * 100 * (delta ** 2), "Delta:", delta, "FPS:", (1/delta))
 		# print(self.get_vec_move())
 		for wall in walls:
 			wall.get_pt().set_y(wall.get_pt().get_y() - self.get_vec_move().get_y())
