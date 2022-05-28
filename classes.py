@@ -177,6 +177,7 @@ class Player(AdvancedHitbox): # p
 
 
 		self._ms: float = 200
+		self._terminal_vel: float = 250
 		self._vec_move: Vector = Vector(0, 0)
 		self._is_grounded = False
 		self._is_sliding = False
@@ -189,8 +190,10 @@ class Player(AdvancedHitbox): # p
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
 
-	def set_ms(self, mass: float) -> None:
-		self._mass = mass
+	def set_terminal_vel(self, terminal_vel: float) -> None:
+		self._terminal_vel = terminal_vel
+	def get_terminal_vel(self) -> float:
+		return self._terminal_vel
 	def get_ms(self) -> float:
 		return self._ms
 	def set_ms(self, ms: float) -> None:
@@ -225,7 +228,7 @@ class Player(AdvancedHitbox): # p
 		self._is_stuck = is_stuck
 	def get_is_sliding(self) -> bool:
 		return self._is_sliding
-	def set_is_sliding(self, is_sliding: bool, walls: list[Surface], delta) -> None:
+	def set_is_sliding(self, is_sliding: bool, walls: list[Surface], delta, keys_down: list[bool]) -> None:
 		p_temp = copy.deepcopy(self)
 		if not self._is_sliding and is_sliding:
 			p_temp.change_dimensions()
@@ -235,15 +238,15 @@ class Player(AdvancedHitbox): # p
 					can_slide = False
 			if can_slide:
 				self.change_dimensions()
-				if self.get_vec_move().get_x() > 0:
+				if keys_down[K_d]:
 					self.get_vec_move().set_x(800)
-				elif self.get_vec_move().get_x() < 0:
-					self.get_vec_move().set_x(-1 * 800)
+				elif keys_down[K_a]:
+					self.get_vec_move().set_x(-800)
 				# print(self.get_pt().get_x())
 			self._is_sliding = can_slide
 		elif self._is_sliding and not is_sliding:
 			if self.get_vec_move().get_x() < 0:
-				print(self.get_pt().get_x())
+				print("\n\n\n\n",self.get_pt().get_x(), "\n\n\n\n")
 				p_temp.get_pt().set_x(p_temp.get_pt().get_x() + (p_temp.get_w() - self.get_h()))
 				hb = p_temp.get_hbps()[0]
 				hb.get_pt().set_x(hb.get_pt().get_x() + (hb.get_w() - self.get_h()))
@@ -263,7 +266,7 @@ class Player(AdvancedHitbox): # p
 				self.set_is_stuck(False)
 			else:
 				self.set_is_stuck(True)
-			# print(self.get_pt().get_x())
+			# print("\n\n\n\n",self.get_pt().get_x(), "\n\n\n\n")
 			self._is_sliding = not can_stand
 
 	def change_dimensions(self) -> None:
@@ -281,6 +284,8 @@ class Player(AdvancedHitbox): # p
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		if not self.get_can_fly():
 			self.get_vec_move().set_y(self.get_vec_move().get_y() + 1000 * (delta ** 2))
+			if self.get_vec_move().get_y() > self.get_terminal_vel():
+				self.get_vec_move().set_y(self.get_terminal_vel())
 		# print(self.get_space_was_down())
 			if keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
@@ -313,15 +318,15 @@ class Player(AdvancedHitbox): # p
 						move *= .45
 					self.get_vec_move().set_x(move)
 				if keys_down[K_a] and self.get_is_sliding() and self.get_is_stuck():
-					self.set_is_sliding(False, walls, delta)
+					self.set_is_sliding(False, walls, delta, keys_down)
 					move = -self.get_ms()
 					self.get_vec_move().set_x(move)
 				if keys_down[K_d] and self.get_is_sliding() and self.get_is_stuck():
-					self.set_is_sliding(False, walls, delta)
+					self.set_is_sliding(False, walls, delta, keys_down)
 					move = self.get_ms()
 					self.get_vec_move().set_x(move)
 				if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
-					self.set_is_sliding(True, walls, delta)
+					self.set_is_sliding(True, walls, delta, keys_down)
 		else:
 			if keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
@@ -366,7 +371,7 @@ class Player(AdvancedHitbox): # p
 					# print(self.sget_vec_move())
 					if abs(self.get_vec_move().get_x()) < .08:
 						# print("Yes?")
-						self.set_is_sliding(False, walls, delta)
+						self.set_is_sliding(False, walls, delta, keys_down)
 						self.get_vec_move().set_x(0)
 						self.set_jumped_while_sliding(False)
 				self.get_vec_move().set_y(0)
