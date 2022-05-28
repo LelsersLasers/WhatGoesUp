@@ -25,7 +25,7 @@ git# Player stats
 	- Length: 40 screens ish
 	- Difficulty: Easy
 
-# Map ideas
+# Map ideas (numbers are the ideas that they were originally thought of, the order is the order in which we make them)
 - Map 1: Basic Map
 	- Name: Base Camp
 	- is literally the base map, nothing is special or changes
@@ -33,9 +33,6 @@ git# Player stats
 	- Removes sliding and double jump from player movement
 	- Player has an in air dash
 	- Player can stick to more surfaces
-- Map 3: Horizontal
-	- Player has all basic movement, but map is horizontal
-	- Special thing like the map is trying to pull the player towards the starting point (idk)
 - Map 4: Ice
 	- Player once starts moving, they cannot stop (properties of ice surface) until they run out of momentum I guess
 	- sliding gains lots of speed
@@ -45,6 +42,13 @@ git# Player stats
 	- is the same keybind as jumping, but it is less powerful
 	- it can be re-cast as many times as it has charge
 	- recharges when standing on a flat surface, not when sticking to a wall or something
+- Map 11: Glitched
+	- Free content for Youtubers
+	- Free map that has the pay to play logo on it, but when you click on it, you can play it
+	- Starts off as if it were a map that was being designed and not done yet, but as you get further up, it becomes clear that this was intentional? (story line behind map)
+	- Special thing is the constantly changing graphics, and that your player will rift or teleport uncontrollably, but in a way that is helpful
+		- 90 percent of the time at the lower stages of the map
+		- 75 percent of the time at the later stages of the map
 - Map 6:
 	- there are like, 3 paths up that all get to the same spot and all are equally difficult
 	- the paths all start at different places
@@ -57,3 +61,13 @@ git# Player stats
 	- When player goes into other screen, it changes to the other screen
 - Map 8:
 	- Cannot stop jumping (just trying to be really annoying)
+- Map 9: Volcano
+	- Lava timed to flow from a certain place
+		- if lava is flowing down, you have to time it so u dont hit lava.
+- Map 10: Underwater
+	- Sharks going back and forth that you have to dodge
+	- jump on moving fish
+	- all in loop
+- Map 3: Horizontal
+	- Player has all basic movement, but map is horizontal
+	- Special thing like the map is trying to pull the player towards the starting point (idk)
