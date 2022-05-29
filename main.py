@@ -78,10 +78,17 @@ def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mous
 	hb_mouse.draw(win)
 
 def draw_dead(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float) -> None:
+	win.fill("#fdf6e3")
+	# use pygame.Surface.scroll for when background is an image
+	for wall in walls:
+		wall.draw(win)
+	player.draw(win)
+
+	hb_mouse.draw(win)
 	# Work on making it opaque when player dies. Or just add a different screen. The rest of the code works though?
-	# rect = pygame.Surface((win.get_width(), win.get_height()), pygame.SRCALPHA)
-	# rect.fill((158,157,155, 50))           # this fills the entire surface
-	# win.blit(rect, (0,0))    # (0,0) are the top-left coordinates
+	rect = pygame.Surface((win.get_width(), win.get_height()), pygame.SRCALPHA)
+	rect.fill((158,157,155, 128))           # this fills the entire surface
+	win.blit(rect, (0,0))    # (0,0) are the top-left coordinates
 	font = pygame.font.SysFont('Monospace', 60)
 	surf_text = font.render("YOU HAVE DIED", True, "#ffffff")
 	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 100))
