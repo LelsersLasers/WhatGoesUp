@@ -187,10 +187,15 @@ class Player(AdvancedHitbox): # p
 		self._jumped_while_sliding = False
 		self._can_fly = False
 		self._is_alive = True
+		self._is_finished = False
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
 
+	def get_is_finished(self) -> bool:
+		return self._is_finished
+	def set_is_finished(self, is_finished: bool) -> None:
+		self._is_finished = is_finished
 	def set_terminal_vel(self, terminal_vel: float) -> None:
 		self._terminal_vel = terminal_vel
 	def get_terminal_vel(self) -> float:
@@ -251,7 +256,7 @@ class Player(AdvancedHitbox): # p
 			self._is_sliding = can_slide
 		elif self._is_sliding and not is_sliding:
 			if self.get_vec_move().get_x() < 0:
-				print("\n\n\n\n",self.get_pt().get_x(), "\n\n\n\n")
+				# print("\n\n\n\n",self.get_pt().get_x(), "\n\n\n\n")
 				p_temp.get_pt().set_x(p_temp.get_pt().get_x() + (p_temp.get_w() - self.get_h()))
 				hb = p_temp.get_hbps()[0]
 				hb.get_pt().set_x(hb.get_pt().get_x() + (hb.get_w() - self.get_h()))
@@ -364,6 +369,9 @@ class Player(AdvancedHitbox): # p
 				if wall.get_can_kill():
 					self.set_is_alive(False)
 					break
+				if wall.get_is_finish():
+					self.set_is_finished(True)
+					break
 				# print("Yes")
 				p_temp.get_pt().set_y(p_temp.get_pt().get_y() - p_temp.get_vec_move().get_y())
 				if self.get_vec_move().get_y() > 0:
@@ -386,11 +394,14 @@ class Player(AdvancedHitbox): # p
 				break
 		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x() * delta)
 		p_temp.update_hbps()
-		if self.get_is_alive():
+		if self.get_is_alive() or self.get_is_finished():
 			for wall in walls:
 				if p_temp.check_collisions(wall):
 					if wall.get_can_kill():
 						self.set_is_alive(False)
+						break
+					if wall.get_is_finish():
+						self.set_is_finished(True)
 						break
 					p_temp.get_pt().set_x(p_temp.get_pt().get_x() - p_temp.get_vec_move().get_x())
 					if p_temp.get_is_sliding() and not p_temp.get_is_grounded():
@@ -415,10 +426,11 @@ class Player(AdvancedHitbox): # p
 		super().draw(win)
 
 class Surface(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#000000", can_kill: bool = False):
+	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#000000", can_kill: bool = False, is_finish: bool = False):
 		super().__init__(pt, w, h, color)
 		self._friction = friction
 		self._can_kill = can_kill
+		self._is_finish = is_finish
 
 	def get_friction(self) -> float:
 		return self._friction
@@ -428,3 +440,7 @@ class Surface(Hitbox):
 		return self._can_kill
 	def set_can_kill(self, can_kill: bool) -> None:
 		self._can_kill = can_kill
+	def get_is_finish(self) -> bool:
+		return self._is_finish
+	def set_is_finish(self, is_finish: bool) -> None:
+		self._is_finish = is_finish

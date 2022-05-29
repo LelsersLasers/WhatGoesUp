@@ -46,6 +46,8 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls) -> s
 		return "dead"
 	elif screen == "game":
 		player.handle_keys(keys_down, hb_mouse, delta, walls)
+		if player.get_is_finished():
+			return "finished"
 	elif screen == "dead" and keys_down[K_RETURN]:
 		return "game"
 	return screen
@@ -87,10 +89,17 @@ def draw_dead(win: pygame.Surface, player: Player, walls: list[Surface], hb_mous
 	hb_mouse.draw(win)
 	# Work on making it opaque when player dies. Or just add a different screen. The rest of the code works though?
 	rect = pygame.Surface((win.get_width(), win.get_height()), pygame.SRCALPHA)
-	rect.fill((158,157,155, 128))           # this fills the entire surface
+	rect.fill((0,0,0, 128))           # this fills the entire surface
 	win.blit(rect, (0,0))    # (0,0) are the top-left coordinates
 	font = pygame.font.SysFont('Monospace', 60)
 	surf_text = font.render("YOU HAVE DIED", True, "#ffffff")
+	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 100))
+	hb_mouse.draw(win)
+
+def draw_finished(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float) -> None:
+	win.fill("#fdf6e3")
+	font = pygame.font.SysFont('Monospace', 60)
+	surf_text = font.render("YOU FINISHED", True, "#999900")
 	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 100))
 	hb_mouse.draw(win)
 
@@ -192,9 +201,31 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(1280, -3310), 30, 180, -.15, "#ff0000", True),
 			Surface(Vector(1380, -3200), 20, 100, -.15, "#ff0000", True),
 			Surface(Vector(1440, -3220), 20, 10, -.15),
+			Surface(Vector(380, -3360), 120, 20, -.2),
+			Surface(Vector(0, -3460), 100, 20, -.15),
+			Surface(Vector(380, -3560), 120, 20, -.2),
+			Surface(Vector(600, -3700), 120, 20, -.15),
+			Surface(Vector(1400, -3750), 150, 20, -.15),
+			Surface(Vector(1600, -3850), 10, 25, -.15),
+			Surface(Vector(1700, -4000), 10, 25, -.15),
+			Surface(Vector(1800, -4150), 10, 25, -.15),
+			Surface(Vector(1700, -4250), 10, 25, -.15),
+			Surface(Vector(1550, -4350), 10, 25, -.15),
+			Surface(Vector(1550, -4500), 10, 25, -.15),
+			Surface(Vector(1450, -4550), 10, 25, -.15),
+			Surface(Vector(1300, -4600), 10, 25, -.1),
+			Surface(Vector(1200, -4700), 10, 25, -.1),
+			Surface(Vector(1000, -4550), 10, 25, -.1),
+			Surface(Vector(900, -4600), 10, 25, -.1),
+			Surface(Vector(900, -4750), 10, 25, -.1),
+			Surface(Vector(900, -4900), 10, 25, -.1),
+			Surface(Vector(1050, -4900), 400, 30, -.15),
+			Surface(Vector(1200, -5025), 30, 125, -.15, "#ff0000", True),
 			# Side walls
-			Surface(Vector(0, -4000), 10, 5080, -.1),
-			Surface(Vector(1910, -4000), 10, 5080, -.1),
+			Surface(Vector(0, -5500), 10, 6580, -.1),
+			Surface(Vector(1910, -5500), 10, 6580, -.1),
+			Surface(Vector(0, -6000), 1920, 500, -.1),
+			Surface(Vector(1650, -5050), 50, 50, -.15, "#888800", False, True),
 		]
 	else:
 		return []
@@ -239,6 +270,8 @@ def main():
 			draw_welcome(win, hb_mouse)
 		elif screen == "dead":
 			draw_dead(win, player, walls, hb_mouse, delta)
+		elif screen == "finished":
+			draw_finished(win, player, walls, hb_mouse, delta)
 		pygame.display.flip()
 
 
