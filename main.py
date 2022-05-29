@@ -24,6 +24,9 @@ def create_window() -> pygame.Surface:
 	win = pygame.display.set_mode((1920, 1080), pygame.SCALED | pygame.FULLSCREEN)
 	pygame.display.set_caption("TempName: v-0.94")
 	return win
+	# s.set_alpha(128)                # alpha level
+	# s.fill((255,255,255))           # this fills the entire surface
+	# windowSurface.blit(s, (0,0))    # (0,0) are the top-left coordinates
 
 
 def handle_events() -> None:
@@ -39,8 +42,12 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls) -> s
 		quit()
 	elif screen == "welcome" and keys_down[K_RETURN]:
 		return "game"
+	elif screen == "game" and not player.get_is_alive():
+		return "dead"
 	elif screen == "game":
 		player.handle_keys(keys_down, hb_mouse, delta, walls)
+	elif screen == "dead" and keys_down[K_RETURN]:
+		return "game"
 	return screen
 
 def handle_mouse(screen: str, hb_mouse: Hitbox) -> str:
@@ -48,7 +55,7 @@ def handle_mouse(screen: str, hb_mouse: Hitbox) -> str:
 	mouse_buttons_down = pygame.mouse.get_pressed()
 	if mouse_buttons_down[0]:
 		hb_mouse.set_color("#ff0000")
-		if screen == "welcome":
+		if screen == "welcome" or screen == "dead":
 			return "game"
 	else:
 		hb_mouse.set_color("#ff00ff")
@@ -63,10 +70,21 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox) -> None:
 
 def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float) -> None:
 	win.fill("#fdf6e3")
+	# use pygame.Surface.scroll for when background is an image
 	for wall in walls:
 		wall.draw(win)
 	player.draw(win)
 
+	hb_mouse.draw(win)
+
+def draw_dead(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float) -> None:
+	# Work on making it opaque when player dies. Or just add a different screen. The rest of the code works though?
+	# rect = pygame.Surface((win.get_width(), win.get_height()), pygame.SRCALPHA)
+	# rect.fill((158,157,155, 50))           # this fills the entire surface
+	# win.blit(rect, (0,0))    # (0,0) are the top-left coordinates
+	font = pygame.font.SysFont('Monospace', 60)
+	surf_text = font.render("YOU HAVE DIED", True, "#ffffff")
+	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 100))
 	hb_mouse.draw(win)
 
 def load_level(level: int) -> list[Surface]:
@@ -162,10 +180,11 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(1210, -2980), 10, 20, -.15),
 			Surface(Vector(1110, -2980), 10, 20, -.15),
 			Surface(Vector(1000, -2980), 10, 20, -.15),
-			Surface(Vector(1050, -3300), 430, 20, -.15),
+			Surface(Vector(1050, -3300), 400, 20, -.15),
 			Surface(Vector(1080, -3200), 10, 100, -.15, "#ff0000", True),
 			Surface(Vector(1280, -3310), 30, 180, -.15, "#ff0000", True),
 			Surface(Vector(1380, -3200), 20, 100, -.15, "#ff0000", True),
+			Surface(Vector(1440, -3220), 20, 10, -.15),
 			# Side walls
 			Surface(Vector(0, -4000), 10, 5080, -.1),
 			Surface(Vector(1910, -4000), 10, 5080, -.1),
@@ -193,20 +212,26 @@ def main():
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 
 	while game_status:
-		if not player.get_is_alive():
-			player = Player()
-			walls = load_level(1)
 			# essentially reset the game
 			# Add a death screen
+		if screen == "dead":
+			can_respawn = True
+		else:
+			can_respawn = False
 		handle_events()
 		screen = handle_keys(screen, player, hb_mouse, delta, walls)
 		screen = handle_mouse(screen, hb_mouse)
 
 		win.fill("#fdf6e3")
 		if screen == "game":
+			if can_respawn:
+				player = Player()
+				walls = load_level(1)
 			draw_game(win, player, walls, hb_mouse, delta)
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse)
+		elif screen == "dead":
+			draw_dead(win, player, walls, hb_mouse, delta)
 		pygame.display.flip()
 
 
