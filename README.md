@@ -1,5 +1,5 @@
 # What Goes Up...
-a game, in python?
+- A rage game in python that is a vertical platformer. Make sure you have a few extra keyboards
 
 # Done with:
 1) Make player movement
