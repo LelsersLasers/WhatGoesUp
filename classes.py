@@ -186,6 +186,7 @@ class Player(AdvancedHitbox): # p
 		self._space_was_down = False # space bar was down
 		self._jumped_while_sliding = False
 		self._can_fly = False
+		self._is_alive = True
 
 	def __str__(self) -> str:
 		return "Player: %s" % super().__str__()
@@ -198,6 +199,10 @@ class Player(AdvancedHitbox): # p
 		return self._ms
 	def set_ms(self, ms: float) -> None:
 		self._ms = ms
+	def get_is_alive(self) -> float:
+		return self._is_alive
+	def set_is_alive(self, is_alive: float) -> None:
+		self._is_alive = is_alive
 	def get_vec_move(self) -> Vector:
 		return self._vec_move
 	def set_vec_move(self, vec_move: Vector) -> None:
@@ -356,6 +361,9 @@ class Player(AdvancedHitbox): # p
 		is_grounded = False
 		for wall in walls:
 			if p_temp.check_collisions(wall):
+				if wall.get_can_kill():
+					self.set_is_alive(False)
+					break
 				# print("Yes")
 				p_temp.get_pt().set_y(p_temp.get_pt().get_y() - p_temp.get_vec_move().get_y())
 				if self.get_vec_move().get_y() > 0:
@@ -378,14 +386,18 @@ class Player(AdvancedHitbox): # p
 				break
 		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x() * delta)
 		p_temp.update_hbps()
-		for wall in walls:
-			if p_temp.check_collisions(wall):
-				p_temp.get_pt().set_x(p_temp.get_pt().get_x() - p_temp.get_vec_move().get_x())
-				if p_temp.get_is_sliding() and not p_temp.get_is_grounded():
-					self.get_vec_move().set_x(-self.get_vec_move().get_x() * .3)
-				else:
-					self.get_vec_move().set_x(0)
-				break
+		if self.get_is_alive():
+			for wall in walls:
+				if p_temp.check_collisions(wall):
+					if wall.get_can_kill():
+						self.set_is_alive(False)
+						break
+					p_temp.get_pt().set_x(p_temp.get_pt().get_x() - p_temp.get_vec_move().get_x())
+					if p_temp.get_is_sliding() and not p_temp.get_is_grounded():
+						self.get_vec_move().set_x(-self.get_vec_move().get_x() * .3)
+					else:
+						self.get_vec_move().set_x(0)
+					break
 		# print("B", self.get_vec_move(), self.get_is_grounded())
 		# print(self.get_vec_move(), "Delta:", delta, "FPS:", (1/delta))
 		self.set_is_grounded(is_grounded)
@@ -403,11 +415,16 @@ class Player(AdvancedHitbox): # p
 		super().draw(win)
 
 class Surface(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#000000"):
+	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#000000", can_kill: bool = False):
 		super().__init__(pt, w, h, color)
 		self._friction = friction
+		self._can_kill = can_kill
 
 	def get_friction(self) -> float:
 		return self._friction
 	def set_friction(self, friction: float) -> None:
 		self._friction = friction
+	def get_can_kill(self) -> bool:
+		return self._can_kill
+	def set_can_kill(self, can_kill: bool) -> None:
+		self._can_kill = can_kill

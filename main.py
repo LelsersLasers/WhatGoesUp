@@ -110,7 +110,7 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(1600, -450), 100, 20, -.35),
 			Surface(Vector(1560, -350), 140, 20, -.25),
 			Surface(Vector(1640, -560), 60, 20, -.2),
-			Surface(Vector(900, -580), 80, 20, .15),
+			Surface(Vector(900, -580), 80, 20, .15, "#00ffff"),
 			Surface(Vector(1740, -725), 40, 200, -.15),
 			Surface(Vector(1740, -1000), 40, 200, -.15),
 			Surface(Vector(1760, -800), 20, 105, -.15),
@@ -145,10 +145,30 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(350, -2220), 50, 20, -.15),
 			Surface(Vector(100, -2320), 10, 15, -.15),
 			Surface(Vector(0, -2420), 50, 20, -.15),
-
+			Surface(Vector(350, -2460), 50, 20, -.15),
+			Surface(Vector(300, -2570), 10, 15, -.15),
+			Surface(Vector(175, -2720), 50, 15, -.15),
+			Surface(Vector(330, -2850), 90, 50, -.15),
+			Surface(Vector(950, -2560), 300, 20, .11, "#00ffff"),
+			Surface(Vector(1650, -2580), 130, 20, -.15),
+			Surface(Vector(1650, -2880), 20, 250, -.15),
+			Surface(Vector(1650, -2680), 40, 20, -.15),
+			Surface(Vector(1750, -2780), 40, 20, -.15),
+			Surface(Vector(1410, -2980), 100, 20, -.15),
+			Surface(Vector(1250, -2977), 100, 20, -.15),
+			Surface(Vector(1050, -3100), 470, 20, -.15),
+			Surface(Vector(1380, -3100), 30, 85, -.15),
+			Surface(Vector(1500, -3300), 20, 200, -.15),
+			Surface(Vector(1210, -2980), 10, 20, -.15),
+			Surface(Vector(1110, -2980), 10, 20, -.15),
+			Surface(Vector(1000, -2980), 10, 20, -.15),
+			Surface(Vector(1050, -3300), 430, 20, -.15),
+			Surface(Vector(1080, -3200), 10, 100, -.15, "#ff0000", True),
+			Surface(Vector(1280, -3310), 30, 180, -.15, "#ff0000", True),
+			Surface(Vector(1380, -3200), 20, 100, -.15, "#ff0000", True),
 			# Side walls
-			Surface(Vector(0, -3000), 10, 4080, -.1),
-			Surface(Vector(1910, -3000), 10, 4080, -.1),
+			Surface(Vector(0, -4000), 10, 5080, -.1),
+			Surface(Vector(1910, -4000), 10, 5080, -.1),
 		]
 	else:
 		return []
@@ -173,6 +193,11 @@ def main():
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 
 	while game_status:
+		if not player.get_is_alive():
+			player = Player()
+			walls = load_level(1)
+			# essentially reset the game
+			# Add a death screen
 		handle_events()
 		screen = handle_keys(screen, player, hb_mouse, delta, walls)
 		screen = handle_mouse(screen, hb_mouse)
