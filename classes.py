@@ -401,9 +401,8 @@ class Player(AdvancedHitbox): # p
 		self.get_pt().set_x(self.get_pt().get_x() + (self.get_vec_move().get_x() * delta))
 
 		map.add_vert_offset(self.get_vec_move().get_y())
-		offset = map.get_vert_offset()
 		for section in map.get_sections():
-			section.apply_vert_offset(offset)
+			section.apply_vert_offset(self.get_vec_move().get_y())
 		self.update_hbps()
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
@@ -486,19 +485,24 @@ class Map():
 		walls += self.get_boundaries()
 		if self.get_section(self.get_sec_current()).get_min_h() < self.get_vert_offset() < self.get_section(self.get_sec_current()).get_max_h():
 			walls += self.get_section(self.get_sec_current()).get_walls()
+			print("load 1")
 		else:
 			if self.get_vert_offset() > self.get_section(self.get_sec_current()).get_max_h():
+				print("load 2")
 				for i in range(len(self.get_sections()[self.get_sec_current():]) - 1):
 					if self.get_section(i).get_min_h() < self.get_vert_offset() < self.get_section(i).get_max_h():
 						self.set_sec_current(i)
 						walls += self.get_section(self.get_sec_current()).get_walls()
 			else:
 				for i in range(len(self.get_sections()[:self.get_sec_current()]) - 1):
+					print("load 3")
 					if self.get_section(i).get_min_h() < self.get_vert_offset() < self.get_section(i).get_max_h():
 						self.set_sec_current(i)
 						walls += self.get_section(self.get_sec_current()).get_walls()
 		if self.get_sec_current() != 0 and self.get_vert_offset() - self.get_section(self.get_sec_current() - 1).get_max_h() < 420:
 			walls += self.get_section(self.get_sec_current() - 1).get_walls()
+			print("load 4")
 		elif self.get_sec_current() != len(self.get_sections()) - 1 and self.get_vert_offset() - self.get_section(self.get_sec_current() + 1).get_min_h() < 860:
 			walls += self.get_section(self.get_sec_current() + 1).get_walls()
+			print("load 5")
 		return walls
