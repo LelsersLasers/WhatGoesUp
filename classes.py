@@ -403,6 +403,8 @@ class Player(AdvancedHitbox): # p
 		map.add_vert_offset(self.get_vec_move().get_y())
 		for section in map.get_sections():
 			section.apply_vert_offset(self.get_vec_move().get_y())
+		for wall in map.get_boundaries():
+			wall.get_pt().set_y(wall.get_pt().get_y() - self.get_vec_move().get_y())
 		self.update_hbps()
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
