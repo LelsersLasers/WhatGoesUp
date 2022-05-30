@@ -339,9 +339,9 @@ class Player(AdvancedHitbox): # p
 				self.set_can_fly(not self.get_can_fly())
 			else:
 				if keys_down[K_SPACE]:
-					self.get_vec_move().set_y(self.get_vec_move().get_y() - 100 * delta)
+					self.get_vec_move().set_y(self.get_vec_move().get_y() - 10 * delta)
 				elif keys_down[K_LCTRL]:
-					self.get_vec_move().set_y(self.get_vec_move().get_y() + 100 * delta)
+					self.get_vec_move().set_y(self.get_vec_move().get_y() + 10 * delta)
 				else:
 					self.get_vec_move().set_y(0)
 				if keys_down[K_a]:
@@ -399,8 +399,8 @@ class Player(AdvancedHitbox): # p
 			self.set_can_double_jump(True)
 
 		self.get_pt().set_x(self.get_pt().get_x() + (self.get_vec_move().get_x() * delta))
-
-		map.add_vert_offset(self.get_vec_move().get_y())
+		# print(self.get_vec_move())
+		map.add_vert_offset(-self.get_vec_move().get_y())
 		for section in map.get_sections():
 			section.apply_vert_offset(self.get_vec_move().get_y())
 		for wall in map.get_boundaries():
@@ -485,26 +485,27 @@ class Map():
 	def load_section(self) -> list[Surface]:
 		walls = []
 		walls += self.get_boundaries()
+		# print(self.get_section(self.get_sec_current()).get_min_h() < self.get_vert_offset() < self.get_section(self.get_sec_current()).get_max_h())
 		if self.get_section(self.get_sec_current()).get_min_h() < self.get_vert_offset() < self.get_section(self.get_sec_current()).get_max_h():
 			walls += self.get_section(self.get_sec_current()).get_walls()
-			print("load 1")
+			# print("load 1")
+			if self.get_sec_current() != 0 and self.get_vert_offset() - self.get_section(self.get_sec_current() - 1).get_max_h() < 420:
+				walls += self.get_section(self.get_sec_current() - 1).get_walls()
+				# print("load 4")
+			if self.get_sec_current() != len(self.get_sections()) - 1 and self.get_vert_offset() - self.get_section(self.get_sec_current() + 1).get_min_h() < 860:
+				# print("load 6")
+				walls += self.get_section(self.get_sec_current() + 1).get_walls()
 		else:
 			if self.get_vert_offset() > self.get_section(self.get_sec_current()).get_max_h():
-				print("load 2")
+				# print("load 2")
 				for i in range(len(self.get_sections()[self.get_sec_current():]) - 1):
 					if self.get_section(i).get_min_h() < self.get_vert_offset() < self.get_section(i).get_max_h():
 						self.set_sec_current(i)
-						walls += self.get_section(self.get_sec_current()).get_walls()
+						walls += self.load_section()
 			else:
 				for i in range(len(self.get_sections()[:self.get_sec_current()]) - 1):
-					print("load 3")
+					# print("load 3")
 					if self.get_section(i).get_min_h() < self.get_vert_offset() < self.get_section(i).get_max_h():
 						self.set_sec_current(i)
-						walls += self.get_section(self.get_sec_current()).get_walls()
-		if self.get_sec_current() != 0 and self.get_vert_offset() - self.get_section(self.get_sec_current() - 1).get_max_h() < 420:
-			walls += self.get_section(self.get_sec_current() - 1).get_walls()
-			print("load 4")
-		elif self.get_sec_current() != len(self.get_sections()) - 1 and self.get_vert_offset() - self.get_section(self.get_sec_current() + 1).get_min_h() < 860:
-			walls += self.get_section(self.get_sec_current() + 1).get_walls()
-			print("load 5")
+						walls += self.load_section()
 		return walls

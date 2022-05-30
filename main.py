@@ -389,7 +389,7 @@ def main():
 
 	player = Player()
 	boundaries, sec_1, sec_2, sec_3, sec_4, sec_5, sec_6 = load_map()
-	map = Map([Section(sec_1, 1080, 0), Section(sec_2, 0, -1120), Section(sec_3, -1120, -2020), Section(sec_4, -2020, -3300), Section(sec_5, -3100, -4000), Section(sec_6, -4000, -4150)], boundaries)
+	map = Map([Section(sec_1, -400, 1080), Section(sec_2, 1250, 3000), Section(sec_3, 2200, 4000), Section(sec_4, 3500, 5000), Section(sec_5, 4380, 5280), Section(sec_6, 5280, 6500)], boundaries)
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 	walls = map.load_section()
 	while game_status:
@@ -408,8 +408,6 @@ def main():
 				player = Player()
 				map = Map([Section(sec_1, 1080, 0), Section(sec_2, 0, -1120), Section(sec_3, -1120, -2020), Section(sec_4, -2020, -3300), Section(sec_5, -3100, -4000), Section(sec_6, -4000, -4150)], boundaries)
 				walls = map.load_section()
-			for wall in walls:
-				print(wall.get_pt().get_y())
 			print(player.get_pt().get_y(), map.get_vert_offset())
 			draw_game(win, player, walls, hb_mouse, delta)
 		elif screen == "welcome":
