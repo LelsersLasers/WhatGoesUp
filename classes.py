@@ -291,16 +291,19 @@ class Player(AdvancedHitbox): # p
 			hb.set_w(temp)
 			hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()))
 
-	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface], map: Map) -> None:
+	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		if not self.get_can_fly():
 			self.get_vec_move().set_y(self.get_vec_move().get_y() + 1000 * (delta ** 2))
 			if self.get_vec_move().get_y() > self.get_terminal_vel():
 				self.get_vec_move().set_y(self.get_terminal_vel())
+		# print(self.get_space_was_down())
 			if keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
 			else:
 				if keys_down[K_SPACE] and self.get_is_grounded() and not self.get_jumped_while_sliding():
+					# print(self.get_is_grounded())
 					self.get_vec_move().set_y(self.get_vec_move().get_y() - 500 * delta)
+					# print(self.get_space_was_down(), "aaaaaaaa")
 					self.set_is_grounded(False)
 					self.set_space_was_down(False)
 					if self.get_is_sliding():
@@ -353,9 +356,12 @@ class Player(AdvancedHitbox): # p
 					self.get_vec_move().set_x(self.get_vec_move().get_x() + 100 * delta)
 				else:
 					self.get_vec_move().set_x(0)
+		# print(self.get_vec_move())
 		p_temp = copy.deepcopy(self)
+		# print(p_temp)
 
 		p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
+		# print(p_temp.get_pt())
 		p_temp.update_hbps()
 		is_grounded = False
 		for wall in walls:
@@ -366,11 +372,21 @@ class Player(AdvancedHitbox): # p
 				if wall.get_is_finish():
 					self.set_is_finished(True)
 					break
+				# print("Yes")
 				p_temp.get_pt().set_y(p_temp.get_pt().get_y() - p_temp.get_vec_move().get_y())
 				if self.get_vec_move().get_y() > 0:
+					# print("Yes")
+					# self.get_vec_move().set_x(0)
 					is_grounded = True
+					# if self.get_is_sliding():
+					# 	friction_reduction = abs(self.get_vec_move().get_x()) - (abs(self.get_vec_move().get_x()) * wall.get_friction() * 108 * delta)
+					# 	# print(friction_reduction)
+					# else:
+					# 	friction_reduction = abs(self.get_vec_move().get_x()) - (abs(self.get_vec_move().get_x()) * wall.get_friction() * 100 * delta)
 					self.get_vec_move().set_x(self.get_vec_move().get_x() + (self.get_vec_move().get_x() * wall.get_friction()) * 60 * delta)
+					# print(self.sget_vec_move())
 					if abs(self.get_vec_move().get_x()) < .08:
+						# print("Yes?")
 						self.set_is_sliding(False, walls, delta, keys_down)
 						self.get_vec_move().set_x(0)
 						self.set_jumped_while_sliding(False)
@@ -393,17 +409,17 @@ class Player(AdvancedHitbox): # p
 					else:
 						self.get_vec_move().set_x(0)
 					break
-
+		# print("B", self.get_vec_move(), self.get_is_grounded())
+		# print(self.get_vec_move(), "Delta:", delta, "FPS:", (1/delta))
 		self.set_is_grounded(is_grounded)
 		if is_grounded:
 			self.set_can_double_jump(True)
 
 		self.get_pt().set_x(self.get_pt().get_x() + (self.get_vec_move().get_x() * delta))
-
-		map.add_vert_offset(self.get_vec_move().get_y())
-		offset = map.get_vert_offset()
-		for section in map.get_sections():
-			section.apply_vert_offset(offset)
+		# print("X * delta^2:", self.get_vec_move().get_x() * 100 * (delta ** 2), "Delta:", delta, "FPS:", (1/delta))
+		# print(self.get_vec_move())
+		for wall in walls:
+			wall.get_pt().set_y(wall.get_pt().get_y() - self.get_vec_move().get_y())
 		self.update_hbps()
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
@@ -428,77 +444,3 @@ class Surface(Hitbox):
 		return self._is_finish
 	def set_is_finish(self, is_finish: bool) -> None:
 		self._is_finish = is_finish
-
-class Section():
-	def __init__(self, walls: list[Surface], min_h: float, max_h: float):
-		self._walls = walls
-		self._min_h = min_h
-		self._max_h = max_h
-
-	def get_walls(self) -> list[Surface]:
-		return self._walls
-	def set_walls(self, walls: list[Surface]) -> None:
-		self._walls = walls
-	def get_min_h(self) -> float:
-		return self._min_h
-	def set_min_h(self, min_h: float) -> None:
-		self._min_h = min_h
-	def get_max_h(self) -> float:
-		return self._max_h
-	def set_max_h(self, max_h: float) -> None:
-		self._max_h = max_h
-	def apply_vert_offset(self, vert_offset: float) -> None:
-		for wall in self.get_walls():
-			wall.get_pt().set_y(wall.get_pt().get_y() - vert_offset)
-
-class Map():
-	def __init__(self, sections: list[Section], boundaries: list[Surface]):
-		self._sections = sections
-		self._boundaries = boundaries
-		self._vert_offset = 0
-		self._sec_current = 0
-
-	def get_sections(self) -> list[Section]:
-		return self._sections
-	def set_sections(self, sections: list[Section]) -> None:
-		self._sections = sections
-	def get_section(self, pos: int) -> Section:
-		return self._sections[pos]
-	def set_section(self, pos: int, section: Section) -> None:
-		self._sections[pos] = section
-	def get_boundaries(self) -> list[Section]:
-		return self._boundaries
-	def set_boundaries(self, boundaries: list[Section]) -> None:
-		self._boundaries = boundaries
-	def get_vert_offset(self) -> float:
-		return self._vert_offset
-	def set_vert_offset(self, vert_offset: float) -> None:
-		self._vert_offset = vert_offset
-	def add_vert_offset(self, vert_offset: float) -> None:
-		self._vert_offset += vert_offset
-	def get_sec_current(self) -> int:
-		return self._sec_current
-	def set_sec_current(self, sec_current: int) -> None:
-		self._sec_current = sec_current
-
-	def load_section(self) -> list[Surface]:
-		walls = []
-		walls += self.get_boundaries()
-		if self.get_section(self.get_sec_current()).get_min_h() < self.get_vert_offset() < self.get_section(self.get_sec_current()).get_max_h():
-			walls += self.get_section(self.get_sec_current()).get_walls()
-		else:
-			if self.get_vert_offset() > self.get_section(self.get_sec_current()).get_max_h():
-				for i in range(len(self.get_sections()[self.get_sec_current():]) - 1):
-					if self.get_section(i).get_min_h() < self.get_vert_offset() < self.get_section(i).get_max_h():
-						self.set_sec_current(i)
-						walls += self.get_section(self.get_sec_current()).get_walls()
-			else:
-				for i in range(len(self.get_sections()[:self.get_sec_current()]) - 1):
-					if self.get_section(i).get_min_h() < self.get_vert_offset() < self.get_section(i).get_max_h():
-						self.set_sec_current(i)
-						walls += self.get_section(self.get_sec_current()).get_walls()
-		if self.get_sec_current() != 0 and self.get_vert_offset() - self.get_section(self.get_sec_current() - 1).get_max_h() < 420:
-			walls += self.get_section(self.get_sec_current() - 1).get_walls()
-		elif self.get_sec_current() != len(self.get_sections()) - 1 and self.get_vert_offset() - self.get_section(self.get_sec_current() + 1).get_min_h() < 860:
-			walls += self.get_section(self.get_sec_current() + 1).get_walls()
-		return walls

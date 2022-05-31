@@ -3,7 +3,7 @@ import pygame # graphics library
 from pygame.locals import * # for keyboard input (ex: 'K_w')
 import time # for fps/delta
 
-from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player, Surface, Section, Map # our classes
+from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player, Surface # our classes
 
 
 def calc_average(lst: list[float]) -> float:
@@ -35,7 +35,7 @@ def handle_events() -> None:
 			pygame.quit()
 			quit()
 
-def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls, map: Map) -> str:
+def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls) -> str:
 	keys_down = pygame.key.get_pressed()
 	if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_q]:
 		pygame.quit()
@@ -45,7 +45,7 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls, map:
 	elif screen == "game" and not player.get_is_alive():
 		return "dead"
 	elif screen == "game":
-		player.handle_keys(keys_down, hb_mouse, delta, walls, map)
+		player.handle_keys(keys_down, hb_mouse, delta, walls)
 		if player.get_is_finished():
 			return "finished"
 	elif screen == "dead" and keys_down[K_RETURN]:
@@ -107,6 +107,7 @@ def load_level(level: int) -> list[Surface]:
 	if level == 1:
 		return [
 			# Surface(Vector(,), , , ),
+			Surface(Vector(0, 800), 1920, 580, -.15),
 			Surface(Vector(180, 780), 80, 20, -.15),
 			Surface(Vector(290, 700), 80, 20, -.15),
 			Surface(Vector(410, 670), 80, 20, -.15),
@@ -181,7 +182,7 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(350, -2460), 50, 20, -.15),
 			Surface(Vector(300, -2570), 10, 15, -.15),
 			Surface(Vector(175, -2720), 50, 15, -.15),
-			Surface(Vector(330, -2850), 90, 50, -.15, "#40ff40"),
+			Surface(Vector(330, -2850), 90, 50, -.15),
 			Surface(Vector(950, -2560), 300, 20, .11, "#00ffff"),
 			Surface(Vector(1650, -2580), 130, 20, -.15),
 			Surface(Vector(1650, -2880), 20, 250, -.15),
@@ -220,157 +221,14 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(900, -4900), 10, 25, -.1),
 			Surface(Vector(1050, -4900), 400, 30, -.15),
 			Surface(Vector(1200, -5025), 30, 125, -.15, "#ff0000", True),
-			Surface(Vector(1650, -5050), 50, 50, -.15, "#888800", False, True),
 			# Side walls
 			Surface(Vector(0, -5500), 10, 6580, -.1),
 			Surface(Vector(1910, -5500), 10, 6580, -.1),
 			Surface(Vector(0, -6000), 1920, 500, -.1),
 			Surface(Vector(1650, -5050), 50, 50, -.15, "#888800", False, True),
-			Surface(Vector(0, 800), 1920, 580, -.15),
 		]
 	else:
 		return []
-
-def load_map():
-	boundaries = [
-		Surface(Vector(0, -5500), 10, 6580, -.1),
-		Surface(Vector(1910, -5500), 10, 6580, -.1),
-		Surface(Vector(0, -6000), 1920, 500, -.1),
-		Surface(Vector(0, 800), 1920, 580, -.15),
-	]
-	section_1 = [
-		Surface(Vector(180, 780), 80, 20, -.15),
-		Surface(Vector(290, 700), 80, 20, -.15),
-		Surface(Vector(410, 670), 80, 20, -.15),
-		Surface(Vector(510, 640), 80, 20, -.15),
-		Surface(Vector(620, 610), 80, 20, -.15),
-		Surface(Vector(730, 520), 80, 20, -.15),
-		Surface(Vector(840, 470), 80, 20, -.15),
-		Surface(Vector(1145, 570), 65, 20, -.2),
-		Surface(Vector(1220, 480), 10, 40, -.2),
-		Surface(Vector(1240, 600), 60, 20, -.2),
-		Surface(Vector(1340, 560), 60, 20, -.2),
-		Surface(Vector(1450, 410), 60, 20, -.15),
-		Surface(Vector(1450, 290), 100, 20, -.15),
-		Surface(Vector(1700, 290), 60, 20, -.15),
-		Surface(Vector(1800, 190), 10, 60, -.15),
-		Surface(Vector(1700, 190), 100, 20, -.15),
-		Surface(Vector(1700, 100), 10, 90, -.15),
-		Surface(Vector(1845, 290), 20, 20, -.15),
-		Surface(Vector(1815, 300), 30, 10, -.3),
-		Surface(Vector(1800, 110), 20, 100, -.15),
-		Surface(Vector(1400, 110), 200, 20, -.15),
-		Surface(Vector(1500, 20), 10, 63, -.15),
-		Surface(Vector(1400, 0), 520, 20, -.15),
-		Surface(Vector(600, 0), 120, 20, -.3),
-		Surface(Vector(400, 0), 100, 20, -.15),
-		Surface(Vector(150, 0), 150, 20, -.15),
-	]
-	section_2 = [
-		Surface(Vector(100, -100), 100, 20, -.15),
-		Surface(Vector(180, -300), 20, 200, -.15),
-		Surface(Vector(0, -200), 50, 20, -.15),
-		Surface(Vector(0, -400), 200, 20, -.15),
-		Surface(Vector(0, -600), 200, 200, -.15),
-		Surface(Vector(0, -400), 20, 400, -.15),
-		Surface(Vector(320, -450), 40, 20, -.15),
-		Surface(Vector(1600, -450), 100, 20, -.35),
-		Surface(Vector(1560, -350), 140, 20, -.25),
-		Surface(Vector(1640, -560), 60, 20, -.2),
-		Surface(Vector(900, -580), 80, 20, .15, "#00ffff"),
-		Surface(Vector(1740, -725), 40, 200, -.15),
-		Surface(Vector(1740, -1000), 40, 200, -.15),
-		Surface(Vector(1760, -800), 20, 105, -.15),
-		Surface(Vector(1650, -830), 20, 20, -.15),
-		Surface(Vector(1430, -930), 50, 20, -.15),
-		Surface(Vector(1400, -950), 30, 40, -.15),
-		Surface(Vector(1005, -970), 90, 20, -.15),
-		Surface(Vector(800, -1120), 700, 40, -.15),
-		Surface(Vector(1200, -970), 70, 20, -.15),
-		Surface(Vector(800, -970), 100, 75, -.15),
-		Surface(Vector(800, -1100), 100, 75, -.15),
-		Surface(Vector(720, -970), 30, 20, -.15),
-	]
-	section_3 = [
-		Surface(Vector(1480, -1220), 20, 100, -.15),
-		Surface(Vector(1530, -1300), 20, 40, -.15),
-		Surface(Vector(1590, -1400), 20, 40, -.15),
-		Surface(Vector(1590, -1800), 20, 40, -.15),
-		Surface(Vector(1650, -1500), 20, 40, -.15),
-		Surface(Vector(1650, -1700), 20, 40, -.15),
-		Surface(Vector(1750, -1600), 20, 40, -.15),
-		Surface(Vector(1370, -1500), 20, 40, -.15),
-		Surface(Vector(1200, -1340), 60, 20, -.15),
-		Surface(Vector(400, -1340), 120, 20, -.15),
-		Surface(Vector(300, -1500), 15, 40, -.15),
-		Surface(Vector(200, -1700), 15, 40, -.15),
-		Surface(Vector(200, -1800), 15, 40, -.15),
-		Surface(Vector(300, -1600), 15, 40, -.15),
-		Surface(Vector(195, -1970), 10, 25, -.15),
-		Surface(Vector(350, -2020), 50, 20, -.15),
-	]
-	section_4 = [
-		Surface(Vector(300, -2170), 10, 15, -.15),
-		Surface(Vector(0, -2220), 50, 20, -.15),
-		Surface(Vector(350, -2220), 50, 20, -.15),
-		Surface(Vector(100, -2320), 10, 15, -.15),
-		Surface(Vector(0, -2420), 50, 20, -.15),
-		Surface(Vector(350, -2460), 50, 20, -.15),
-		Surface(Vector(300, -2570), 10, 15, -.15),
-		Surface(Vector(175, -2720), 50, 15, -.15),
-		Surface(Vector(330, -2850), 90, 50, -.15),
-		Surface(Vector(950, -2560), 300, 20, .11, "#00ffff"),
-		Surface(Vector(1650, -2580), 130, 20, -.15),
-		Surface(Vector(1650, -2880), 20, 250, -.15),
-		Surface(Vector(1650, -2680), 40, 20, -.15),
-		Surface(Vector(1750, -2780), 40, 20, -.15),
-		Surface(Vector(400, -2800), 20, 900, -.15),
-		Surface(Vector(1410, -2980), 100, 20, -.15),
-		Surface(Vector(1250, -2977), 100, 20, -.15),
-		Surface(Vector(1050, -3100), 470, 20, -.15),
-		Surface(Vector(1380, -3100), 30, 85, -.15),
-		Surface(Vector(1500, -3300), 20, 200, -.15),
-		Surface(Vector(1210, -2980), 10, 20, -.15),
-		Surface(Vector(1110, -2980), 10, 20, -.15),
-		Surface(Vector(1000, -2980), 10, 20, -.15),
-	]
-	section_5 = [
-		Surface(Vector(1050, -3100), 470, 20, -.15),
-		Surface(Vector(1380, -3100), 30, 85, -.15),
-		Surface(Vector(1500, -3300), 20, 200, -.15),
-		Surface(Vector(1210, -2980), 10, 20, -.15),
-		Surface(Vector(1110, -2980), 10, 20, -.15),
-		Surface(Vector(1000, -2980), 10, 20, -.15),
-		Surface(Vector(1050, -3300), 400, 20, -.15),
-		Surface(Vector(1080, -3200), 10, 100, -.15, "#ff0000", True),
-		Surface(Vector(1280, -3310), 30, 180, -.15, "#ff0000", True),
-		Surface(Vector(1380, -3200), 20, 100, -.15, "#ff0000", True),
-		Surface(Vector(1440, -3220), 20, 10, -.15),
-		Surface(Vector(380, -3360), 120, 20, -.2),
-		Surface(Vector(0, -3460), 100, 20, -.15),
-		Surface(Vector(380, -3560), 120, 20, -.2),
-		Surface(Vector(600, -3700), 120, 20, -.15),
-		Surface(Vector(1400, -3750), 150, 20, -.15),
-		Surface(Vector(1600, -3850), 10, 25, -.15),
-		Surface(Vector(1700, -4000), 10, 25, -.15),
-	]
-	section_6 = [
-		Surface(Vector(1800, -4150), 10, 25, -.15),
-		Surface(Vector(1700, -4250), 10, 25, -.15),
-		Surface(Vector(1550, -4350), 10, 25, -.15),
-		Surface(Vector(1550, -4500), 10, 25, -.15),
-		Surface(Vector(1450, -4550), 10, 25, -.15),
-		Surface(Vector(1300, -4600), 10, 25, -.1),
-		Surface(Vector(1200, -4700), 10, 25, -.1),
-		Surface(Vector(1000, -4550), 10, 25, -.1),
-		Surface(Vector(900, -4600), 10, 25, -.1),
-		Surface(Vector(900, -4750), 10, 25, -.1),
-		Surface(Vector(900, -4900), 10, 25, -.1),
-		Surface(Vector(1050, -4900), 400, 30, -.15),
-		Surface(Vector(1200, -5025), 30, 125, -.15, "#ff0000", True),
-		Surface(Vector(1650, -5050), 50, 50, -.15, "#888800", False, True),
-	]
-	return boundaries, section_1, section_2, section_3, section_4, section_5, section_6
 
 def main():
 
@@ -388,29 +246,25 @@ def main():
 	win = create_window()
 
 	player = Player()
-	boundaries, sec_1, sec_2, sec_3, sec_4, sec_5, sec_6 = load_map()
-	map = Map([Section(sec_1, 1080, 0), Section(sec_2, 0, -1120), Section(sec_3, -1120, -2020), Section(sec_4, -2020, -3300), Section(sec_5, -3100, -4000), Section(sec_6, -4000, -4150)], boundaries)
+	walls = load_level(1)
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
-	walls = map.load_section()
+
 	while game_status:
-		walls = map.load_section()
+			# essentially reset the game
+			# Add a death screen
 		if screen == "dead":
 			can_respawn = True
 		else:
 			can_respawn = False
 		handle_events()
-		screen = handle_keys(screen, player, hb_mouse, delta, walls, map)
+		screen = handle_keys(screen, player, hb_mouse, delta, walls)
 		screen = handle_mouse(screen, hb_mouse)
 
 		win.fill("#fdf6e3")
 		if screen == "game":
 			if can_respawn:
 				player = Player()
-				map = Map([Section(sec_1, 1080, 0), Section(sec_2, 0, -1120), Section(sec_3, -1120, -2020), Section(sec_4, -2020, -3300), Section(sec_5, -3100, -4000), Section(sec_6, -4000, -4150)], boundaries)
-				walls = map.load_section()
-			for wall in walls:
-				print(wall.get_pt().get_y())
-			print(player.get_pt().get_y(), map.get_vert_offset())
+				walls = load_level(1)
 			draw_game(win, player, walls, hb_mouse, delta)
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse)
