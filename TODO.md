@@ -30,6 +30,8 @@
 6) menus
 7) go back and make everything good
 8) saving
+	- not saving checkpoints like in Neocrosser, that defeats the purpose.
+	- It is just saving and loading the map so we don't have giant lists in the main file
 9) art
 10) sound effects
 11) multiplayer?
