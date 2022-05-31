@@ -49,13 +49,19 @@ git# Player stats
 	- Special thing is the constantly changing graphics, and that your player will rift or teleport uncontrollably, but in a way that is helpful
 		- 90 percent of the time at the lower stages of the map
 		- 75 percent of the time at the later stages of the map
-- Map 6:
+- Map 6: Leap of Faith
 	- there are like, 3 paths up that all get to the same spot and all are equally difficult
-	- the paths all start at different places
+	- only one of the paths is able to make it to the end. (randomly decided before)
+		- however to say that it is not an rng map, there will be one slight difference in the art down near the bottom before the map splits into three parts.
+			- Like, one very small thing
+		- At the end of each path, there will be a wall there, however, on two of them, it will just be the artwork and an actual wall
+	- There will be a path up to the start of each path.
+	 	- makes it harder when after realizing on path is not real, that u have to change paths and risk falling more
+	<!-- (Previos 3 path idea. scraped for now)- the paths all start at different places
 		- have to get up some of each path to get to the start point of the next path
 		- but it is basically a checkpoint
 	- The first path goes straight up to the thing
-	- the second path goes up the first path for a bit, then goes a bit higher then the end point and has to go horizontally back towards the first path, falling would mean that you are put back onto the first path
+	- the second path goes up the first path for a bit, then goes a bit higher then the end point and has to go horizontally back towards the first path, falling would mean that you are put back onto the first path -->
 - Map 7:
 	- Camera doesn't follow player, it is based on screens
 	- When player goes into other screen, it changes to the other screen
