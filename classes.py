@@ -446,7 +446,7 @@ class Surface(Hitbox):
 		self._is_finish = is_finish
 
 class Button(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, text: String, has_border: bool, color: str = "#ffffff"):
+	def __init__(self, pt: Vector, w: float, h: float, text: String, has_border: bool, color: str = "#ff0000"):
 		super().__init__(pt, w, h, color)
 		self._text = text
 		self._has_border = has_border
