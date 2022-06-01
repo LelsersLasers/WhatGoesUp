@@ -1,4 +1,4 @@
-git# Player stats
+# Player stats
 - size:
 - speed:
 - Movement Capabilities (Basic):

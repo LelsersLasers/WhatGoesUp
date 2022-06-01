@@ -4,14 +4,6 @@
 
 
 # Cleaning
-- USE DOWNPRESS CLASS
-- Rework private variable system
-	- Remove "private" variables?
-- Rework physics systems
-	- Sliding
-	- Movement
-	- Jumping
-	- Use "correct" physics (f=ma, e=fd)
 
 # Bottom Up
 1) Make player movement
