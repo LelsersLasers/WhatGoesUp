@@ -444,3 +444,23 @@ class Surface(Hitbox):
 		return self._is_finish
 	def set_is_finish(self, is_finish: bool) -> None:
 		self._is_finish = is_finish
+
+class Button(Hitbox):
+	def __init__(self, pt: Vector, w: float, h: float, text: String, has_border: bool, color: str = "#ffffff"):
+		super().__init__(pt, w, h, color)
+		self._text = text
+		self._has_border = has_border
+
+	def get_text(self) -> String:
+		return self._text
+	def set_text(self, text: String) -> None:
+		self._text = text
+	def get_border(self):
+		return self._has_border
+	def set_border(self, has_border):
+		self._has_border = has_border
+
+	def draw(self, win: pygame.Surface):
+		font = pygame.font.SysFont('Monospace', 40)
+		surf_text = font.render(self.get_text(), True, self.get_color())
+		win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, self.get_pt().get_y()))
