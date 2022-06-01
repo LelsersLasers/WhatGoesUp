@@ -42,6 +42,8 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls) -> s
 		quit()
 	elif screen == "welcome" and keys_down[K_RETURN]:
 		return "game"
+	elif (screen == "game" or screen == "dead") and keys_down[K_ESCAPE]:
+		return "pause"
 	elif screen == "game" and not player.get_is_alive():
 		return "dead"
 	elif screen == "game":
@@ -61,10 +63,9 @@ def handle_mouse(screen: str, hb_mouse: Hitbox, buttons: list[Button]) -> str:
 			print(button)
 			if hb_mouse.check_collide(button):
 				print("collide")
-				if button.get_text() == "PLAY" or button.get_text() == "PLAY AGAIN":
-					print("play button")
+				if button.get_text() == "PLAY" or button.get_text() == "PLAY AGAIN" or button.get_text() == "RETURN":
 					return "game"
-				elif button.get_text() == "BACK TO MAIN MENU":
+				elif button.get_text() == "BACK TO MAIN MENU" or button.get_text() == "MAIN MENU":
 					return "welcome"
 	else:
 		hb_mouse.set_color("#ff00ff")
@@ -89,7 +90,7 @@ def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mous
 
 	hb_mouse.draw(win)
 
-def draw_dead(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float) -> None:
+def draw_dead(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float, buttons: list[Button]) -> None:
 	win.fill("#fdf6e3")
 	# use pygame.Surface.scroll for when background is an image
 	for wall in walls:
@@ -104,6 +105,27 @@ def draw_dead(win: pygame.Surface, player: Player, walls: list[Surface], hb_mous
 	font = pygame.font.SysFont('Monospace', 60)
 	surf_text = font.render("YOU HAVE DIED", True, "#ffffff")
 	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 100))
+	for button in buttons:
+		button.draw(win)
+	hb_mouse.draw(win)
+
+def draw_pause(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float, buttons: list[Button]) -> None:
+	win.fill("#fdf6e3")
+	# use pygame.Surface.scroll for when background is an image
+	for wall in walls:
+		wall.draw(win)
+	player.draw(win)
+
+	hb_mouse.draw(win)
+	# Work on making it opaque when player dies. Or just add a different screen. The rest of the code works though?
+	rect = pygame.Surface((win.get_width(), win.get_height()), pygame.SRCALPHA)
+	rect.fill((0,0,0, 128))           # this fills the entire surface
+	win.blit(rect, (0,0))    # (0,0) are the top-left coordinates
+	font = pygame.font.SysFont('Monospace', 60)
+	surf_text = font.render("OPTIONS", True, "#ffffff")
+	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 100))
+	for button in buttons:
+		button.draw(win)
 	hb_mouse.draw(win)
 
 def draw_finished(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float, buttons: list[Button]) -> None:
@@ -264,18 +286,29 @@ def main():
 	font = pygame.font.SysFont('Monospace', 40)
 	surf_text = font.render("PLAY", True, "#000000")
 	play_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.35), surf_text.get_width(), surf_text.get_height(), "PLAY", False)
-	welc_buttons = [play_button]
+	dead_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.35), surf_text.get_width(), surf_text.get_height(), "PLAY", False, "#ffffff")
 	surf_text = font.render("PLAY AGAIN", True, "#000000")
 	f_play_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.35), surf_text.get_width(), surf_text.get_height(), "PLAY AGAIN", False)
 	surf_text = font.render("BACK TO MAIN MENU", True, "#000000")
 	menu_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.6), surf_text.get_width(), surf_text.get_height(), "BACK TO MAIN MENU", False)
+	d_menu_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.6), surf_text.get_width(), surf_text.get_height(), "BACK TO MAIN MENU", False, "#ffffff")
+	surf_text = font.render("RETURN", True, "#000000")
+	return_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.35), surf_text.get_width(), surf_text.get_height(), "RETURN", False, "#ffffff")
+	surf_text = font.render("MAIN MENU", True, "#000000")
+	p_menu_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.65), surf_text.get_width(), surf_text.get_height(), "MAIN MENU", False, "#ffffff")
+	surf_text = font.render("SETTINGS", True, "#000000")
+	settings_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.5), surf_text.get_width(), surf_text.get_height(), "SETTINGS", False, "#ffffff")
+
+	welc_buttons = [play_button]
 	fin_buttons = [f_play_button, menu_button]
+	dead_buttons = [dead_button, d_menu_button]
+	pause_buttons = [return_button, p_menu_button, settings_button]
 	buttons = []
 
 	while game_status:
 			# essentially reset the game
 			# Add a death screen
-		if screen == "game":
+		if screen == "game" or screen == "pause":
 			can_respawn = False
 		else:
 			can_respawn = True
@@ -285,7 +318,13 @@ def main():
 			screen = handle_mouse(screen, hb_mouse, welc_buttons)
 		elif screen == "finished":
 			screen = handle_mouse(screen, hb_mouse, fin_buttons)
-		screen = handle_mouse(screen, hb_mouse, buttons)
+		elif screen == "dead":
+			screen = handle_mouse(screen, hb_mouse, dead_buttons)
+		elif screen == "pause":
+			print("yes")
+			screen = handle_mouse(screen, hb_mouse, pause_buttons)
+		else:
+			screen = handle_mouse(screen, hb_mouse, buttons)
 
 		if screen == "game":
 			if can_respawn:
@@ -295,7 +334,9 @@ def main():
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse, welc_buttons)
 		elif screen == "dead":
-			draw_dead(win, player, walls, hb_mouse, delta)
+			draw_dead(win, player, walls, hb_mouse, delta, dead_buttons)
+		elif screen == "pause":
+			draw_pause(win, player, walls, hb_mouse, delta, pause_buttons)
 		elif screen == "finished":
 			draw_finished(win, player, walls, hb_mouse, delta, fin_buttons)
 		pygame.display.flip()
