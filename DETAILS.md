@@ -1,6 +1,6 @@
 # Player stats
-- size:
-- speed:
+- size: 40px x 25px
+- speed: 5 units/s (? idk if this is right)
 - Movement Capabilities (Basic):
 	- move left/right
 	- falling
@@ -14,6 +14,7 @@
 - size: 1920x1080 (scale)
 - frame rate: unlimited
 - delta (time between frames in seconds)
+- Game optimized for 100 frames/sec to 250 frames/sec
 
 # Maps Done
 
@@ -22,8 +23,11 @@
 
 # Map Stats
 - Map 1:
-	- Length: 40 screens ish
+	- Length: 6080 units
 	- Difficulty: Easy
+	- Basic walls
+	- Death walls
+	- All mechanics of basic movement
 
 # Map ideas (numbers are the ideas that they were originally thought of, the order is the order in which we make them)
 - Map 1: Basic Map
