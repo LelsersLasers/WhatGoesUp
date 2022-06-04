@@ -272,23 +272,30 @@ def load_level(level: int) -> list[Surface]:
 	else:
 		return []
 
-def save_map(walls):
+def save_map(walls: list[Surface]) -> None:
 	f_name = input("File Name: ")
-	name = input("Name: ")
-	size = input("Size: ")
-	difficulty = input("Difficulty: ")
-	description = input("Description: ")
-	f = open(f_name, 'a')
-	f.write("Name=%s\n" % name)
-	f.write("size=%s\n" % size)
-	f.write("difficulty=%s\n" % difficulty)
-	f.write("description=%s\n" % description)
-	f.write("walls:\n")
 	for wall in walls:
 		pos = "{},{},{},{},{},{},{}\n"
 		f.write(pos.format(wall.get_pt().get_x(), wall.get_pt().get_y(), wall.get_w(), wall.get_h(), wall.get_friction(), wall.get_can_kill(), wall.get_is_finish()))
 	f.close()
 
+def load_map(map_num: int) -> list[Surface]:
+	if map_num == 0:
+		f = open("map_saves/map_1", "r")
+		walls = []
+		for line in f:
+			line.strip()
+			stats = line.split(",")
+			print(stats)
+			if stats[5]:
+				color = "#ff0000"
+			elif stats[6]:
+				color = "#999900"
+			else:
+				color = "#000000"
+			wall = Surface(Vector(stats[0], stats[1]), stats[2], stats[3], stats[4], color, stats[5], stats[6])
+			walls.append(wall)
+	return walls
 def create_buttons(win: pygame.Surface):
 	font = pygame.font.SysFont('Monospace', 40)
 	surf_text = font.render("PLAY", True, "#000000")
@@ -318,8 +325,8 @@ def main():
 
 	deltas = []
 	delta = 0.017 # second since last frame
-	current_frame = time.perf_counter()
-	last_frame = time.perf_counter()
+	current_frame = time.time()
+	last_frame = time.time()
 
 	screen = "welcome"
 	game_status = True
@@ -329,17 +336,17 @@ def main():
 	time_1 = time.perf_counter()
 	start_time = datetime.datetime.now()
 
-	# win = create_window()
+	win = create_window()
 
 	player = Player()
-	walls = load_level(1)
-	save_map(walls)
+	walls = load_map(0)
+	# save_map(walls)
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 	buttons, welc_buttons, fin_buttons, dead_buttons, pause_buttons = create_buttons(win)
 
 	while game_status:
-		current_frame = time.perf_counter()
-		delta = current_frame - last_frame
+		delta = time.time() - last_frame
+		last_frame = time.time()
 		if screen == "game" or screen == "pause":
 			can_respawn = False
 		else:
@@ -378,9 +385,9 @@ def main():
 		pygame.display.flip()
 
 
-		# clock.tick_busy_loop(60)
+		# clock.tick_busy_loop(300)
 		# delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
-		last_frame = current_frame
+
 		print(delta)
 		print("FPS: %4.2f" % (1/delta))
 
