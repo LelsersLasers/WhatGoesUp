@@ -357,6 +357,7 @@ class Player(AdvancedHitbox): # p
 				else:
 					self.get_vec_move().set_x(0)
 		# print(self.get_vec_move())
+		# force = (keys_down[K_d] * self.get_ms() + keys_down[K_a] * -1 * self.get_ms())
 		p_temp = copy.deepcopy(self)
 		# print(p_temp)
 

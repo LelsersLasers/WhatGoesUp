@@ -2,6 +2,7 @@ from __future__ import annotations # for type hints
 import pygame # graphics library
 from pygame.locals import * # for keyboard input (ex: 'K_w')
 import time # for fps/delta
+import datetime # for timer
 
 from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player, Surface, Button # our classes
 
@@ -17,7 +18,7 @@ def set_delta(time_0: float, time_1: float, deltas: list[float], frame: int) -> 
 		deltas.append(time_1 - time_0)
 	frame += 1
 	time_0 = time.perf_counter()
-	return calc_average(deltas), time_0, time_1, frame
+	return time_1 - time_0, time_0, time_1, frame
 
 def create_window() -> pygame.Surface:
 	pygame.init()
@@ -81,12 +82,18 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox, buttons: list[Button]) -
 		button.draw(win)
 	hb_mouse.draw(win)
 
-def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float) -> None:
+def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float, elapsed_time: time) -> None:
 	win.fill("#fdf6e3")
 	# use pygame.Surface.scroll for when background is an image
 	for wall in walls:
 		wall.draw(win)
 	player.draw(win)
+
+	font = pygame.font.SysFont('Monospace', 20)
+	time = str(elapsed_time).split(".")
+	surf_text = font.render(str(time[0]), True, "#ffffff")
+	pygame.draw.rect(win, "#000000", (0, 0, surf_text.get_width() + win.get_width() * .05, surf_text.get_height() + 20))
+	win.blit(surf_text, ((win.get_width() * 0.025, 10)))
 
 	hb_mouse.draw(win)
 
@@ -265,24 +272,24 @@ def load_level(level: int) -> list[Surface]:
 	else:
 		return []
 
-def main():
+def save_map(walls):
+	f_name = input("File Name: ")
+	name = input("Name: ")
+	size = input("Size: ")
+	difficulty = input("Difficulty: ")
+	description = input("Description: ")
+	f = open(f_name, 'a')
+	f.write("Name=%s\n" % name)
+	f.write("size=%s\n" % size)
+	f.write("difficulty=%s\n" % difficulty)
+	f.write("description=%s\n" % description)
+	f.write("walls:\n")
+	for wall in walls:
+		pos = "{},{},{},{},{},{},{}\n"
+		f.write(pos.format(wall.get_pt().get_x(), wall.get_pt().get_y(), wall.get_w(), wall.get_h(), wall.get_friction(), wall.get_can_kill(), wall.get_is_finish()))
+	f.close()
 
-	deltas = []
-	delta = 0.017 # second since last frame
-	frame = 0
-
-	screen = "welcome"
-	game_status = True
-
-	clock = pygame.time.Clock()
-	time_0 = time.perf_counter()
-	time_1 = time.perf_counter()
-
-	win = create_window()
-
-	player = Player()
-	walls = load_level(1)
-	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
+def create_buttons(win: pygame.Surface):
 	font = pygame.font.SysFont('Monospace', 40)
 	surf_text = font.render("PLAY", True, "#000000")
 	play_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.35), surf_text.get_width(), surf_text.get_height(), "PLAY", False)
@@ -305,9 +312,34 @@ def main():
 	pause_buttons = [return_button, p_menu_button, settings_button]
 	buttons = []
 
+	return buttons, welc_buttons, fin_buttons, dead_buttons, pause_buttons
+
+def main():
+
+	deltas = []
+	delta = 0.017 # second since last frame
+	current_frame = time.perf_counter()
+	last_frame = time.perf_counter()
+
+	screen = "welcome"
+	game_status = True
+
+	clock = pygame.time.Clock()
+	time_0 = time.perf_counter()
+	time_1 = time.perf_counter()
+	start_time = datetime.datetime.now()
+
+	# win = create_window()
+
+	player = Player()
+	walls = load_level(1)
+	save_map(walls)
+	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
+	buttons, welc_buttons, fin_buttons, dead_buttons, pause_buttons = create_buttons(win)
+
 	while game_status:
-			# essentially reset the game
-			# Add a death screen
+		current_frame = time.perf_counter()
+		delta = current_frame - last_frame
 		if screen == "game" or screen == "pause":
 			can_respawn = False
 		else:
@@ -321,7 +353,7 @@ def main():
 		elif screen == "dead":
 			screen = handle_mouse(screen, hb_mouse, dead_buttons)
 		elif screen == "pause":
-			print("yes")
+			# print("yes")
 			screen = handle_mouse(screen, hb_mouse, pause_buttons)
 		else:
 			screen = handle_mouse(screen, hb_mouse, buttons)
@@ -330,12 +362,16 @@ def main():
 			if can_respawn:
 				player = Player()
 				walls = load_level(1)
-			draw_game(win, player, walls, hb_mouse, delta)
+			elapsed_time = datetime.datetime.now() - start_time
+			# print(datetime.datetime.now())
+			draw_game(win, player, walls, hb_mouse, delta, elapsed_time)
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse, welc_buttons)
 		elif screen == "dead":
+			start_time = datetime.datetime.now() - elapsed_time
 			draw_dead(win, player, walls, hb_mouse, delta, dead_buttons)
 		elif screen == "pause":
+			start_time = datetime.datetime.now() - elapsed_time
 			draw_pause(win, player, walls, hb_mouse, delta, pause_buttons)
 		elif screen == "finished":
 			draw_finished(win, player, walls, hb_mouse, delta, fin_buttons)
@@ -343,8 +379,9 @@ def main():
 
 
 		# clock.tick_busy_loop(60)
-		delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
-		# print(delta)
+		# delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
+		last_frame = current_frame
+		print(delta)
 		print("FPS: %4.2f" % (1/delta))
 
 
