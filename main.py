@@ -4,7 +4,7 @@ from pygame.locals import * # for keyboard input (ex: 'K_w')
 import time # for fps/delta
 import datetime # for timer
 
-from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player, Surface, Button # our classes
+from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player, Surface, Button
 
 
 def calc_average(lst: list[float]) -> float:
