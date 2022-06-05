@@ -12,14 +12,6 @@ def calc_average(lst: list[float]) -> float:
 		return 1/100
 	return sum(lst)/len(lst)
 
-def set_delta(time_0: float, time_1: float, deltas: list[float], frame: int) -> tuple[float, float, float, int]:
-	time_1 = time.perf_counter()
-	if (frame > 20):
-		deltas.append(time_1 - time_0)
-	frame += 1
-	time_0 = time.perf_counter()
-	return time_1 - time_0, time_0, time_1, frame
-
 def create_window() -> pygame.Surface:
 	pygame.init()
 	win = pygame.display.set_mode((1920, 1080), pygame.SCALED | pygame.FULLSCREEN)
@@ -89,11 +81,24 @@ def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mous
 		wall.draw(win)
 	player.draw(win)
 
-	font = pygame.font.SysFont('Monospace', 20)
+	# Elapsed time
+	font = pygame.font.SysFont('Monospace', 20) # is it bad to always re-create the font?
 	time = str(elapsed_time).split(".")
-	surf_text = font.render(str(time[0]), True, "#ffffff")
-	pygame.draw.rect(win, "#000000", (0, 0, surf_text.get_width() + win.get_width() * .05, surf_text.get_height() + 20))
-	win.blit(surf_text, ((win.get_width() * 0.025, 10)))
+	surf_time_text = font.render(str(time[0]), True, "#ffffff")
+	font_rect = (0, 0, surf_time_text.get_width() + win.get_width() * .05, surf_time_text.get_height() + 20)
+	pygame.draw.rect(win, "#000000", font_rect)
+	win.blit(surf_time_text, ((win.get_width() * 0.025, 10)))
+
+	# Delta flutter visualization
+	max_width_ratio = font_rect[2]/(1/200)
+	delta_rec = (0, font_rect[3], delta * max_width_ratio, font_rect[3] * 0.5)
+	pygame.draw.rect(win, "#00ff00", delta_rec)
+	pygame.draw.rect(win, "#ffffff", delta_rec, 2)
+
+	font = pygame.font.SysFont('Monospace', 12) # is it bad to always re-create the font?
+	surf_delta_text = font.render("Delta: %.3f" % delta, True, "#000000")
+	win.blit(surf_delta_text, ((win.get_width() * 0.005, 46)))
+	
 
 	hb_mouse.draw(win)
 
@@ -323,17 +328,13 @@ def create_buttons(win: pygame.Surface):
 
 def main():
 
-	deltas = []
 	delta = 0.017 # second since last frame
-	current_frame = time.time()
 	last_frame = time.time()
 
 	screen = "welcome"
 	game_status = True
 
-	clock = pygame.time.Clock()
-	time_0 = time.perf_counter()
-	time_1 = time.perf_counter()
+	# clock = pygame.time.Clock()
 	start_time = datetime.datetime.now()
 
 	win = create_window()
@@ -386,10 +387,8 @@ def main():
 
 
 		# clock.tick_busy_loop(300)
-		# delta, time_0, time_1, frame = set_delta(time_0, time_1, deltas, frame)
 
-		print(delta)
-		print("FPS: %4.2f" % (1/delta))
+		print("Delta: %1.3f\tFPS: %4.2f" % (delta, 1/delta))
 
 
 main()
