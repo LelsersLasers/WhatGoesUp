@@ -98,7 +98,7 @@ def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mous
 	font = pygame.font.SysFont('Monospace', 12) # is it bad to always re-create the font?
 	surf_delta_text = font.render("Delta: %.3f" % delta, True, "#000000")
 	win.blit(surf_delta_text, ((win.get_width() * 0.005, 46)))
-	
+
 
 	hb_mouse.draw(win)
 
@@ -291,7 +291,7 @@ def load_map(map_num: int) -> list[Surface]:
 		for line in f:
 			line.strip()
 			stats = line.split(",")
-			print(stats)
+			# print(stats)
 			if stats[5]:
 				color = "#ff0000"
 			elif stats[6]:
