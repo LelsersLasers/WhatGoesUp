@@ -293,7 +293,8 @@ class Player(AdvancedHitbox): # p
 
 	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
 		if not self.get_can_fly():
-			self.get_vec_move().set_y(self.get_vec_move().get_y() + 1000 * (delta ** 2))
+			# self.get_vec_move().set_y(self.get_vec_move().get_y() + 200 * delta)
+			print(self.get_vec_move())
 			if self.get_vec_move().get_y() > self.get_terminal_vel():
 				self.get_vec_move().set_y(self.get_terminal_vel())
 		# print(self.get_space_was_down())
@@ -302,7 +303,7 @@ class Player(AdvancedHitbox): # p
 			else:
 				if keys_down[K_SPACE] and self.get_is_grounded() and not self.get_jumped_while_sliding():
 					# print(self.get_is_grounded())
-					self.get_vec_move().set_y(self.get_vec_move().get_y() - 500 * delta)
+					self.get_vec_move().set_y(-1000)
 					# print(self.get_space_was_down(), "aaaaaaaa")
 					self.set_is_grounded(False)
 					self.set_space_was_down(False)
@@ -310,7 +311,7 @@ class Player(AdvancedHitbox): # p
 						self.set_jumped_while_sliding(True)
 				elif keys_down[K_SPACE] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down() and not self.get_jumped_while_sliding():
 					self.get_vec_move().set_y(0)
-					self.get_vec_move().set_y(self.get_vec_move().get_y() - 350 * delta)
+					self.get_vec_move().set_y(-750)
 					self.set_can_double_jump(False)
 					self.set_space_was_down(False)
 					if self.get_is_sliding():
@@ -356,12 +357,15 @@ class Player(AdvancedHitbox): # p
 					self.get_vec_move().set_x(self.get_vec_move().get_x() + 100 * delta)
 				else:
 					self.get_vec_move().set_x(0)
-		# print(self.get_vec_move())
 		# force = (keys_down[K_d] * self.get_ms() + keys_down[K_a] * -1 * self.get_ms())
+
+		print(self.get_vec_move())
+		self.get_vec_move().set_y(self.get_vec_move().get_y() * delta)
+		print(self.get_vec_move())
 		p_temp = copy.deepcopy(self)
 		# print(p_temp)
 
-		p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y())
+		p_temp.get_pt().set_y(p_temp.get_pt().get_y() + p_temp.get_vec_move().get_y() * delta + (.5 * 1000) * (delta ** delta))
 		# print(p_temp.get_pt())
 		p_temp.update_hbps()
 		is_grounded = False
@@ -416,12 +420,15 @@ class Player(AdvancedHitbox): # p
 		if is_grounded:
 			self.set_can_double_jump(True)
 
-		self.get_pt().set_x(self.get_pt().get_x() + (self.get_vec_move().get_x() * delta))
+		self.get_pt().set_x(self.get_pt().get_x() + self.get_vec_move().get_x() * delta)
 		# print("X * delta^2:", self.get_vec_move().get_x() * 100 * (delta ** 2), "Delta:", delta, "FPS:", (1/delta))
+		grav = not self.get_is_grounded()
 		# print(self.get_vec_move())
 		for wall in walls:
-			wall.get_pt().set_y(wall.get_pt().get_y() - self.get_vec_move().get_y())
+			print(wall.get_pt())
+			wall.get_pt().set_y(wall.get_pt().get_y() - (self.get_vec_move().get_y() * delta + (1000 * grav) * (delta ** delta)))
 		self.update_hbps()
+
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 		super().draw(win)

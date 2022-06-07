@@ -37,6 +37,7 @@
 	- Removes sliding and double jump from player movement
 	- Player has an in air dash
 	- Player can stick to more surfaces
+	- If player stands on tiles for too long, it disappears (not the floor tho)
 - Map 4: Ice
 	- Player once starts moving, they cannot stop (properties of ice surface) until they run out of momentum I guess
 	- sliding gains lots of speed
