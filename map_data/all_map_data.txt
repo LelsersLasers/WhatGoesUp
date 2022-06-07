@@ -1,0 +1,6 @@
+Name=Tutorial
+size=Small
+difficulty=Easy
+description=This will teach you the basic movement, jumping, sliding, and more.
+break
+end
