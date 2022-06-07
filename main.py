@@ -4,7 +4,7 @@ from pygame.locals import * # for keyboard input (ex: 'K_w')
 import time # for fps/delta
 import datetime # for timer
 
-from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player, Surface, Button
+from classes import Vector, Hitbox, HitboxPart, AdvancedHitbox, Player, Surface, Button, Map
 
 
 def calc_average(lst: list[float]) -> float:
@@ -56,10 +56,12 @@ def handle_mouse(screen: str, hb_mouse: Hitbox, buttons: list[Button]) -> str:
 			print(button)
 			if hb_mouse.check_collide(button):
 				print("collide")
-				if button.get_text() == "PLAY" or button.get_text() == "PLAY AGAIN" or button.get_text() == "RETURN":
+				if button.get_text() == "START" or button.get_text() == "PLAY AGAIN" or button.get_text() == "RETURN":
 					return "game"
 				elif button.get_text() == "BACK TO MAIN MENU" or button.get_text() == "MAIN MENU":
 					return "welcome"
+				elif button.get_text() == "PLAY":
+					return "selection"
 	else:
 		hb_mouse.set_color("#ff00ff")
 	return screen
@@ -73,6 +75,33 @@ def draw_welcome(win: pygame.Surface, hb_mouse: Hitbox, buttons: list[Button]) -
 	for button in buttons:
 		button.draw(win)
 	hb_mouse.draw(win)
+
+def draw_selection(win: pygame.Surface, hb_mouse: Hitbox, buttons: list[Button], maps: list[Map], index: int) -> None:
+	win.fill("#fdf6e3")
+	font = pygame.font.SysFont('Monospace', 50)
+	surf_text = font.render(maps[index].get_name(), True, "#000000")
+	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 200))
+	font = pygame.font.SysFont('Monospace', 25)
+
+	surf_text = font.render(maps[index].get_size(), True, "#000000")
+	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 800))
+
+	if maps[index].get_difficulty() == "easy":
+		color = "#00ff00"
+	elif maps[index].get_difficulty() == "normal":
+		color = "#f2df50"
+	elif maps[index].get_difficulty() == "difficult":
+		color = "#ffa82e"
+	else:
+		color = "#ad0000"
+		color = maps[index].get_difficulty() == "normal"
+	surf_text = font.render(maps[index].get_difficulty(), True, color)
+	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 1000))
+
+	for button in buttons:
+		button.draw(win)
+	hb_mouse.draw(win)
+
 
 def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float, elapsed_time: time) -> None:
 	win.fill("#fdf6e3")
@@ -286,10 +315,10 @@ def save_map(walls: list[Surface]) -> None:
 
 def load_map(map_num: int) -> list[Surface]:
 	if map_num == 0:
-		f = open("map_saves/map_1", "r")
+		f = open("map_data/map_1.txt", "r")
 		walls = []
 		for line in f:
-			line.strip()
+			line = line.strip()
 			stats = line.split(",")
 			# print(stats)
 			if stats[5]:
@@ -300,7 +329,30 @@ def load_map(map_num: int) -> list[Surface]:
 				color = "#000000"
 			wall = Surface(Vector(stats[0], stats[1]), stats[2], stats[3], stats[4], color, stats[5], stats[6])
 			walls.append(wall)
+		f.close()
 	return walls
+
+def load_map_data() -> list:
+	f = open("map_data/all_map_data.txt", "r")
+	maps = []
+	map_data = []
+	for line in f:
+		line = line.strip()
+		print(line)
+		if line == "break":
+			print("Break")
+			map = Map(map_data[0], map_data[1], map_data[2], map_data[3])
+			maps.append(map)
+			map_data = []
+		elif line == "end":
+			print("end")
+			break
+		else:
+			stats = line.split("=")
+			map_data.append(stats[1])
+	f.close()
+	return maps
+
 def create_buttons(win: pygame.Surface):
 	font = pygame.font.SysFont('Monospace', 40)
 	surf_text = font.render("PLAY", True, "#000000")
@@ -317,14 +369,20 @@ def create_buttons(win: pygame.Surface):
 	p_menu_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.65), surf_text.get_width(), surf_text.get_height(), "MAIN MENU", False, "#ffffff")
 	surf_text = font.render("SETTINGS", True, "#000000")
 	settings_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, win.get_height() * 0.5), surf_text.get_width(), surf_text.get_height(), "SETTINGS", False, "#ffffff")
+	surf_text = font.render("BACK", True, "#000000")
+	back_button = Button(Vector(100, win.get_height() * 0.05), surf_text.get_width(), surf_text.get_height(), "BACK", False)
+	surf_text = font.render("START", True, "#000000")
+	s_play_button = Button(Vector(win.get_width() / 2 - surf_text.get_width()/2, 600), surf_text.get_width(), surf_text.get_height(), "START", False)
+
 
 	welc_buttons = [play_button]
+	selc_buttons = [back_button, s_play_button]
 	fin_buttons = [f_play_button, menu_button]
 	dead_buttons = [dead_button, d_menu_button]
 	pause_buttons = [return_button, p_menu_button, settings_button]
 	buttons = []
 
-	return buttons, welc_buttons, fin_buttons, dead_buttons, pause_buttons
+	return buttons, welc_buttons, selc_buttons, fin_buttons, dead_buttons, pause_buttons
 
 def main():
 
@@ -343,7 +401,8 @@ def main():
 	walls = load_map(0)
 	# save_map(walls)
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
-	buttons, welc_buttons, fin_buttons, dead_buttons, pause_buttons = create_buttons(win)
+	buttons, welc_buttons, selc_buttons, fin_buttons, dead_buttons, pause_buttons = create_buttons(win)
+	maps = load_map_data()
 
 	while game_status:
 		delta = time.time() - last_frame
@@ -356,12 +415,13 @@ def main():
 		screen = handle_keys(screen, player, hb_mouse, delta, walls)
 		if screen == "welcome":
 			screen = handle_mouse(screen, hb_mouse, welc_buttons)
+		elif screen == "selection":
+			screen = handle_mouse(screen, hb_mouse, selc_buttons)
 		elif screen == "finished":
 			screen = handle_mouse(screen, hb_mouse, fin_buttons)
 		elif screen == "dead":
 			screen = handle_mouse(screen, hb_mouse, dead_buttons)
 		elif screen == "pause":
-			# print("yes")
 			screen = handle_mouse(screen, hb_mouse, pause_buttons)
 		else:
 			screen = handle_mouse(screen, hb_mouse, buttons)
@@ -375,6 +435,8 @@ def main():
 			draw_game(win, player, walls, hb_mouse, delta, elapsed_time)
 		elif screen == "welcome":
 			draw_welcome(win, hb_mouse, welc_buttons)
+		elif screen == "selection":
+			draw_selection(win, hb_mouse, selc_buttons, maps, 0)
 		elif screen == "dead":
 			start_time = datetime.datetime.now() - elapsed_time
 			draw_dead(win, player, walls, hb_mouse, delta, dead_buttons)

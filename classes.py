@@ -466,3 +466,34 @@ class Button(Hitbox):
 		font = pygame.font.SysFont('Monospace', 40)
 		surf_text = font.render(self.get_text(), True, self.get_color())
 		win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, self.get_pt().get_y()))
+
+class Map():
+	def __init__(self, name: String, size: String, difficultly: String, description: String):
+		self._vert_offset = 0
+		self._name = name
+		self._size = size
+		self._difficulty = difficultly
+		self._description = description
+
+	def get_name(self) -> String:
+		return self._name
+	def set_name(self, name: String) -> None:
+		self._name = name
+	def get_size(self) -> String:
+		return self._size
+	def set_size(self, size: String) -> None:
+		self._size = size
+	def get_difficulty(self) -> String:
+		return self._difficulty
+	def set_difficulty(self, difficulty: String) -> None:
+		self._difficulty = difficulty
+	def get_description(self) -> String:
+		return self._description
+	def set_description(self, description: String) -> None:
+		self._description = description
+	def get_vert_offset(self) -> float:
+		return self._vert_offset
+	def set_vert_offset(self, vert_offset: float) -> None:
+		self._vert_offset = vert_offset
+	def add_vert_offset(self, vert_offset: float) -> None:
+		self._vert_offset += vert_offset
