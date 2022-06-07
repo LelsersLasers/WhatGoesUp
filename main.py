@@ -334,7 +334,7 @@ def main():
 	screen = "welcome"
 	game_status = True
 
-	# clock = pygame.time.Clock()
+	clock = pygame.time.Clock()
 	start_time = datetime.datetime.now()
 
 	win = create_window()
@@ -386,7 +386,7 @@ def main():
 		pygame.display.flip()
 
 
-		# clock.tick_busy_loop(300)
+		clock.tick_busy_loop(200)
 
 		print("Delta: %1.3f\tFPS: %4.2f" % (delta, 1/delta))
 
