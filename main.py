@@ -113,20 +113,14 @@ def draw_game(win: pygame.Surface, player: Player, walls: list[Surface], hb_mous
 	# Elapsed time
 	font = pygame.font.SysFont('Monospace', 20) # is it bad to always re-create the font?
 	time = str(elapsed_time).split(".")
-	surf_time_text = font.render(str(time[0]), True, "#ffffff")
-	font_rect = (0, 0, surf_time_text.get_width() + win.get_width() * .05, surf_time_text.get_height() + 20)
+	surf_time_text = font.render("Time: " + str(time[0]), True, "#ffffff")
+	fps = 1/delta
+	surf_fps_text = font.render("FPS: %4.0f" % fps, True, "#ffffff")
+	height = surf_time_text.get_height() + surf_fps_text.get_height() + 20
+	font_rect = (0, 0, surf_time_text.get_width() + win.get_width() * .075, height)
 	pygame.draw.rect(win, "#000000", font_rect)
-	win.blit(surf_time_text, ((win.get_width() * 0.025, 10)))
-
-	# Delta flutter visualization
-	max_width_ratio = font_rect[2]/(1/200)
-	delta_rec = (0, font_rect[3], delta * max_width_ratio, font_rect[3] * 0.5)
-	pygame.draw.rect(win, "#00ff00", delta_rec)
-	pygame.draw.rect(win, "#ffffff", delta_rec, 2)
-
-	font = pygame.font.SysFont('Monospace', 12) # is it bad to always re-create the font?
-	surf_delta_text = font.render("Delta: %.3f" % delta, True, "#000000")
-	win.blit(surf_delta_text, ((win.get_width() * 0.005, 46)))
+	win.blit(surf_time_text, ((win.get_width() * 0.0375, 10)))
+	win.blit(surf_fps_text, ((win.get_width() * 0.0375, 30)))
 
 
 	hb_mouse.draw(win)
@@ -392,7 +386,7 @@ def main():
 	screen = "welcome"
 	game_status = True
 
-	clock = pygame.time.Clock()
+	# clock = pygame.time.Clock()
 	start_time = datetime.datetime.now()
 
 	win = create_window()
@@ -448,7 +442,7 @@ def main():
 		pygame.display.flip()
 
 
-		clock.tick_busy_loop(200)
+		# clock.tick_busy_loop(200)
 
 		print("Delta: %1.3f\tFPS: %4.2f" % (delta, 1/delta))
 
