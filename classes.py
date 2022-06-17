@@ -170,8 +170,8 @@ class AdvancedHitbox(Hitbox): # ahb
 
 class Player(AdvancedHitbox): # p
 	def __init__(self):
-		super().__init__(Vector(50, 760), 25, 40, "#00ff00")
-		self.add_hbp(HitboxPart(Vector(50, 760), Vector(0, 0), 25, 40))
+		super().__init__(Vector(100, 760), 25, 40, "#00ff00")
+		self.add_hbp(HitboxPart(Vector(100, 760), Vector(0, 0), 25, 40))
 		# self.add_hbp(HitboxPart(Vector(150, 855), Vector(0, 10), 25, 25))
 		# self.add_hbp(HitboxPart(Vector(150, 875), Vector(2.5, 35), 20, 10))
 
@@ -291,7 +291,7 @@ class Player(AdvancedHitbox): # p
 			hb.set_w(temp)
 			hb.get_pt().set_y(hb.get_pt().get_y() + (hb.get_w() - hb.get_h()))
 
-	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface]) -> None:
+	def handle_keys(self, keys_down: list[bool], hb_mouse: Hitbox, delta: float, walls: list[Surface], teleporters: list[Teleporter]) -> None:
 		if not self.get_can_fly():
 			self.get_vec_move().set_y(self.get_vec_move().get_y() + 1000 * delta)
 			# if self.get_vec_move().get_y() > self.get_terminal_vel():
@@ -304,6 +304,7 @@ class Player(AdvancedHitbox): # p
 					# print(self.get_is_grounded())
 					# print(self.get_vec_move().get_y() - 500)
 					self.get_vec_move().set_y(self.get_vec_move().get_y() - 500)
+					# print(self.get_vec_move().get_y(), self.get_vec_move().get_y() - 500)
 					# print(self.get_space_was_down(), "aaaaaaaa")
 					self.set_is_grounded(False)
 					self.set_space_was_down(False)
@@ -368,10 +369,31 @@ class Player(AdvancedHitbox): # p
 		is_grounded = False
 		for wall in walls:
 			if p_temp.check_collisions(wall):
-				if wall.get_can_kill():
+				if wall.get_is_teleport():
+					if wall.get_is_active():
+						if wall.get_next_tp() != wall:
+							wall.teleport(self, walls)
+					elif wall.get_num() != 0 and not teleporters[0].get_is_active():
+						wall.set_is_active(True)
+						teleporters[0].set_is_active(True)
+						for tp in teleporters:
+							if tp.get_is_active():
+								tp.set_next_tp(wall)
+					elif wall.get_num() != 0:
+						wall.set_is_active(True)
+						# print(wall.get_num(), teleporters[0].get_next_tp().get_num())
+						if wall.get_num() > teleporters[0].get_next_tp().get_num():
+							for tp in teleporters:
+								if tp.get_is_active():
+									tp.set_next_tp(wall)
+						else:
+							wall.set_next_tp(teleporters[0].get_next_tp())
+
+				# print(type(wall))
+				elif wall.get_can_kill():
 					self.set_is_alive(False)
 					break
-				if wall.get_is_finish():
+				elif wall.get_is_finish():
 					self.set_is_finished(True)
 					break
 				# print("Yes")
@@ -385,6 +407,7 @@ class Player(AdvancedHitbox): # p
 					# 	# print(friction_reduction)
 					# else:
 					# 	friction_reduction = abs(self.get_vec_move().get_x()) - (abs(self.get_vec_move().get_x()) * wall.get_friction() * 100 * delta)
+					# print(wall.get_friction())
 					self.get_vec_move().set_x(self.get_vec_move().get_x() + (self.get_vec_move().get_x() * wall.get_friction()) * 60 * delta)
 					# print(self.sget_vec_move())
 					if abs(self.get_vec_move().get_x()) < .08:
@@ -392,6 +415,9 @@ class Player(AdvancedHitbox): # p
 						self.set_is_sliding(False, walls, delta, keys_down)
 						self.get_vec_move().set_x(0)
 						self.set_jumped_while_sliding(False)
+					# print(self.get_vec_move().get_y())
+					if self.get_vec_move().get_y() > 1000:
+						print("Splat sfx")
 				self.get_vec_move().set_y(0)
 				break
 		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x() * delta)
@@ -422,17 +448,21 @@ class Player(AdvancedHitbox): # p
 		# print(self.get_vec_move().get_y() * delta, "What")
 		for wall in walls:
 			wall.get_pt().set_y(wall.get_pt().get_y() - self.get_vec_move().get_y() * delta)
+		# print(self.get_vec_move())
+		# print(self.get_vec_move().get_y() * delta)
+		# print(self.get_pt())
 		self.update_hbps()
 
 	def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:
 		super().draw(win)
 
 class Surface(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#000000", can_kill: bool = False, is_finish: bool = False):
+	def __init__(self, pt: Vector, w: float, h: float, friction: float, color: str = "#000000", can_kill: bool = False, is_finish: bool = False, is_teleport: bool = False):
 		super().__init__(pt, w, h, color)
 		self._friction = friction
 		self._can_kill = can_kill
 		self._is_finish = is_finish
+		self._is_teleport = is_teleport
 
 	def get_friction(self) -> float:
 		return self._friction
@@ -446,12 +476,56 @@ class Surface(Hitbox):
 		return self._is_finish
 	def set_is_finish(self, is_finish: bool) -> None:
 		self._is_finish = is_finish
+	def get_is_teleport(self) -> bool:
+		return self._is_teleport
+	def set_is_finish(self, is_teleport: bool) -> None:
+		self._is_teleport = is_teleport
+
+class Teleporter(Surface):
+	def __init__(self, pt: Vector, w: float, h: float, next_tp: Teleporter, num: int, friction: float = -.15, color: str = "#7c7c7c"):
+		super().__init__(pt, w, h, friction, color, False, False, True)
+		self._next_tp = next_tp
+		self._is_active = False
+		self._num = num
+		self._not_active_color = "#7c7c7c"
+		self._active_color = "#990099"
+
+	def get_next_tp(self) -> Teleporter:
+		return self._next_tp
+	def set_next_tp(self, tp: Teleporter) -> None:
+		self._next_tp = tp
+	def get_is_active(self) -> bool:
+		return self._is_active
+	def set_is_active(self, is_active: bool) -> None:
+		self._is_active = is_active
+		self.set_color(self._active_color)
+	def get_num(self) -> int:
+		return self._num
+	def set_num(self, num: int) -> None:
+		self._num = num
+
+	def calc_height(self) -> float:
+		dis = self.get_next_tp().get_pt().get_y() - self.get_pt().get_y()
+		return dis
+
+	def teleport(self, player: Player, walls: list[Surface]) -> None:
+		player.get_pt().set_x(self.get_next_tp().get_pt().get_x() + (self.get_next_tp().get_w() / 2) - (player.get_w() / 2))
+		player.get_vec_move().set_x(0)
+		player.get_vec_move().set_y(0)
+		dif = self.calc_height()
+		print("teleport sfx")
+		for wall in walls:
+			wall.get_pt().set_y(wall.get_pt().get_y() - dif)
+
+
 
 class Button(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, text: String, has_border: bool, color: str = "#ff0000"):
+	def __init__(self, pt: Vector, w: float, h: float, text: String, has_border: bool, location: String, font: pygame.font, color: str = "#ff0000"):
 		super().__init__(pt, w, h, color)
 		self._text = text
 		self._has_border = has_border
+		self._next_loc = location
+		self._font = font
 
 	def get_text(self) -> String:
 		return self._text
@@ -461,11 +535,21 @@ class Button(Hitbox):
 		return self._has_border
 	def set_border(self, has_border):
 		self._has_border = has_border
+	def get_next_loc(self) -> String:
+		return self._next_loc
+	def set_next_loc(self, loc: String) -> None:
+		self._next_loc = loc
+	def get_font(self) -> pygame.font:
+		return self._font
+	def set_font(self, font: pygame.font) -> None:
+		self._font = font
 
 	def draw(self, win: pygame.Surface):
-		font = pygame.font.SysFont('Monospace', 40)
+		# super().draw(win)
+		# 40 font
+		font = self.get_font()
 		surf_text = font.render(self.get_text(), True, self.get_color())
-		win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, self.get_pt().get_y()))
+		win.blit(surf_text, ((self.get_pt().get_x(), self.get_pt().get_y())))
 
 class Map():
 	def __init__(self, name: String, size: String, difficultly: String, description: String):
