@@ -1,6 +1,3 @@
-CHANGE TO OBJECT ORIENTED PROGRAMMING
-
-
 # Basically Everything
 
 # Bugs

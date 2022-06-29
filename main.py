@@ -42,7 +42,7 @@ def handle_events() -> None:
 			pygame.quit()
 			quit()
 
-def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls, teleporters, elapsed_time, maps, current_map) -> str:
+def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls, teleporters, elapsed_time, times: list[datetime.datetime]) -> str:
 	keys_down = pygame.key.get_pressed()
 	if (keys_down[K_RCTRL] or keys_down[K_LCTRL]) and keys_down[K_q]:
 		pygame.quit()
@@ -56,13 +56,8 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls, tele
 	elif screen == "game":
 		player.handle_keys(keys_down, hb_mouse, delta, walls, teleporters)
 		if player.get_is_finished():
-			print(elapsed_time)
-			if elapsed_time < maps[current_map].best_time:
-				print("aaaaaaaa")
-				maps[current_map].best_time = elapsed_time
-			elif maps[current_map].best_time < 0:
-				print("bbbbbbbb")
-				maps[current_map].best_time = elapsed_time
+			if elapsed_time < times[0]:
+				times.insert(0, elapsed_time)
 			return "finished"
 	elif screen == "dead" and keys_down[K_RETURN]:
 		return "game"
@@ -103,22 +98,16 @@ def draw_selection(win: pygame.Surface, font: pygame.font, hb_mouse: Hitbox, but
 		button.draw(win)
 	# hb_mouse.draw(win)
 
-def draw_challenge(win: pygame.Surface, font: pygame.font, hb_mouse: Hitbox, buttons: list[Button], maps) -> None:
+def draw_challenge(win: pygame.Surface, font: pygame.font, hb_mouse: Hitbox, buttons: list[Button], times) -> None:
 	win.fill("#fdf6e3")
 	surf_text = font.render("challenge", True, "#000000")
 	win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, 200))
 
-	map_counter = 0
-	# print(len(maps))
 	for button in buttons:
 		button.draw(win)
-		play = button.get_text().split(" ")
-		# print(play[0])
-		if play[0] == "PLAY" and maps[map_counter].best_time > 0:
-			print(map_counter)
-			surf_text = font.render(str(times[0]), True, "#000000")
-			win.blit(surf_text, ((button.get_pt().get_x() + 100, button.get_pt().get_y())))
-			map_counter += 1
+		if 
+		surf_text = font.render("")
+
 def draw_game(win: pygame.Surface, font: pygame.font, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float, elapsed_time: time) -> None:
 	# 30 font
 	win.fill("#fdf6e3")
@@ -129,9 +118,8 @@ def draw_game(win: pygame.Surface, font: pygame.font, player: Player, walls: lis
 	player.draw(win)
 
 	# Elapsed time
-	# time = str(elapsed_time).split(".")
-	time = "%.4f" % elapsed_time
-	surf_time_text = font.render("Time: " + str(time), True, "#ffffff")
+	time = str(elapsed_time).split(".")
+	surf_time_text = font.render("Time: " + str(time[0]), True, "#ffffff")
 	fps = 1/delta
 	surf_fps_text = font.render("FPS: %4.0f" % fps, True, "#ffffff")
 	height = surf_time_text.get_height() + surf_fps_text.get_height() + 30
@@ -254,7 +242,7 @@ def load_map_data() -> list:
 		# print(line)
 		if line == "break":
 			# print("Break")
-			map = Map(map_data[0], map_data[1], map_data[2], map_data[3], -1)
+			map = Map(map_data[0], map_data[1], map_data[2], map_data[3])
 			maps.append(map)
 			map_data = []
 		elif line == "end":
@@ -655,10 +643,12 @@ def main():
 	game_status = True
 
 	# clock = pygame.time.Clock()
-	elapsed_time = -1
+	start_time = datetime.datetime.now()
 
 	win = create_window()
 	fonts = create_fonts()
+
+	times = []
 
 	player = Player()
 	# walls = load_map(0)
@@ -676,11 +666,11 @@ def main():
 		delta = time.time() - last_frame
 		last_frame = time.time()
 		handle_events()
-		# if :
-		# 	time_taken = 0
-		# else:
-		# 	time_taken = elapsed_time
-		screen = handle_keys(screen, player, hb_mouse, delta, walls, teleporters, elapsed_time, maps, current_map)
+		if elapsed_time == None:
+			time = 0
+		else:
+			time = elapsed_time
+		screen = handle_keys(screen, player, hb_mouse, delta, walls, teleporters, time, times)
 		# print(screen)
 		if screen == "welcome":
 			screen, was_down = handle_mouse(screen, hb_mouse, welc_buttons, was_down)
@@ -704,70 +694,70 @@ def main():
 
 		# print(screen)
 		if screen == "train":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_map(0)
 			player = Player()
 			current_map = "train"
 			screen = "game"
 			in_challenge = False
 		elif screen == "ice":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_level(8)
 			player = Player()
 			current_map = "ice"
 			screen = "game"
 			in_challenge = False
 		elif screen == "continue":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			current_map += 1
 			walls, teleporters = load_level(current_map)
 			player = Player()
 			screen = "game"
 			in_challenge = True
 		elif screen == "1":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_level(1)
 			player = Player()
 			current_map = 1
 			screen = "game"
 			in_challenge = True
 		elif screen == "2":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_level(2)
 			player = Player()
 			current_map = 2
 			screen = "game"
 			in_challenge = True
 		elif screen == "3":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_level(3)
 			player = Player()
 			current_map = 3
 			screen = "game"
 			in_challenge = True
 		elif screen == "4":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_level(4)
 			player = Player()
 			current_map = 4
 			screen = "game"
 			in_challenge = True
 		elif screen == "5":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_level(5)
 			player = Player()
 			current_map = 5
 			screen = "game"
 			in_challenge = True
 		elif screen == "6":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_level(6)
 			player = Player()
 			current_map = 6
 			screen = "game"
 			in_challenge = True
 		elif screen == "7":
-			elapsed_time = 0
+			start_time = datetime.datetime.now()
 			walls, teleporters = load_level(7)
 			player = Player()
 			current_map = 7
@@ -798,7 +788,7 @@ def main():
 				teleporters[i].set_next_tp(teleporters[active_tps[len(active_tps) - 1]])
 			screen = "game"
 		if screen == "game":
-			elapsed_time += delta
+			elapsed_time = datetime.datetime.now() - start_time
 			# print(datetime.datetime.now())
 			# print(win)
 			draw_game(win, fonts[1], player, walls, hb_mouse, delta, elapsed_time)
@@ -807,12 +797,12 @@ def main():
 		elif screen == "selection":
 			draw_selection(win, fonts[0], hb_mouse, selc_buttons)
 		elif screen == "challenge":
-			draw_challenge(win, fonts[0], hb_mouse, challenge_buttons, maps)
+			draw_challenge(win, fonts[0], hb_mouse, challenge_buttons)
 		elif screen == "dead":
-			elapsed_time = 0 - elapsed_time
+			start_time = datetime.datetime.now() - elapsed_time
 			draw_dead(win, fonts[0], player, walls, hb_mouse, delta, dead_buttons)
 		elif screen == "pause":
-			elapsed_time = 0 - elapsed_time
+			start_time = datetime.datetime.now() - elapsed_time
 			draw_pause(win, fonts[0], player, walls, hb_mouse, delta, pause_buttons)
 		elif screen == "finished":
 			if in_challenge and current_map != 7:

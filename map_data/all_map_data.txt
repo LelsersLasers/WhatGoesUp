@@ -1,38 +1,3 @@
-Name=1
-size=Small
-difficulty=easy
-description=This will teach you the basic movement, jumping, sliding, and more.
-break
-Name=2
-size=Small
-difficulty=easy
-description=This will teach you the basic movement, jumping, sliding, and more.
-break
-Name==3
-size=Small
-difficulty=easy
-description=This will teach you the basic movement, jumping, sliding, and more.
-break
-Name=4
-size=Small
-difficulty=easy
-description=This will teach you the basic movement, jumping, sliding, and more.
-break
-Name=5
-size=Small
-difficulty=easy
-description=This will teach you the basic movement, jumping, sliding, and more.
-break
-Name=6
-size=Small
-difficulty=easy
-description=This will teach you the basic movement, jumping, sliding, and more.
-break
-Name=7
-size=Small
-difficulty=easy
-description=This will teach you the basic movement, jumping, sliding, and more.
-break
 Name=Tutorial
 size=Small
 difficulty=easy

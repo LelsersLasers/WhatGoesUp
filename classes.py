@@ -552,13 +552,12 @@ class Button(Hitbox):
 		win.blit(surf_text, ((self.get_pt().get_x(), self.get_pt().get_y())))
 
 class Map():
-	def __init__(self, name: String, size: String, difficultly: String, description: String, best_time):
+	def __init__(self, name: String, size: String, difficultly: String, description: String):
 		self._vert_offset = 0
 		self._name = name
 		self._size = size
 		self._difficulty = difficultly
 		self._description = description
-		self.best_time = best_time
 
 	def get_name(self) -> String:
 		return self._name
