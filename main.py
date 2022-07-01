@@ -51,11 +51,11 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls, tele
 	# 	return "game"
 	elif keys_down[K_ESCAPE] and (screen == "game" or screen == "dead"):
 		return "pause"
-	elif screen == "game" and not player.get_is_alive():
+	elif screen == "game" and not player.alive:
 		return "dead"
 	elif screen == "game":
 		player.handle_keys(keys_down, hb_mouse, delta, walls, teleporters)
-		if player.get_is_finished():
+		if player.is_finished:
 			if elapsed_time < times[0]:
 				times.insert(0, elapsed_time)
 			return "finished"
@@ -64,16 +64,14 @@ def handle_keys(screen: str, player: Player, hb_mouse, delta: float, walls, tele
 	return screen
 
 def handle_mouse(screen: str, hb_mouse: Hitbox, buttons: list[Button], was_down: bool) -> str:
-	hb_mouse.set_pt(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5))
+	hb_mouse.pt = Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5)
 	mouse_buttons_down = pygame.mouse.get_pressed()
 	if mouse_buttons_down[0]:
 		# hb_mouse.set_color("#ff0000")
 		for button in buttons:
-			# print(button)
 			if hb_mouse.check_collide(button) and not was_down:
 				was_down = True
-				# print("collide", button, button.get_text(), button.get_next_loc())
-				return button.get_next_loc(), was_down
+				return button.next_loc, was_down
 	else:
 		was_down = False
 	# 	hb_mouse.set_color("#ff00ff")
@@ -105,7 +103,7 @@ def draw_challenge(win: pygame.Surface, font: pygame.font, hb_mouse: Hitbox, but
 
 	for button in buttons:
 		button.draw(win)
-		if 
+		# if 
 		surf_text = font.render("")
 
 def draw_game(win: pygame.Surface, font: pygame.font, player: Player, walls: list[Surface], hb_mouse: Hitbox, delta: float, elapsed_time: time) -> None:
@@ -113,7 +111,6 @@ def draw_game(win: pygame.Surface, font: pygame.font, player: Player, walls: lis
 	win.fill("#fdf6e3")
 	# use pygame.Surface.scroll for when background is an image
 	for wall in walls:
-		# print(wall)
 		wall.draw(win)
 	player.draw(win)
 
@@ -184,12 +181,12 @@ def save_map(walls: list[Surface]) -> None:
 	f_name = input("File Name: ")
 	f = open(f_name, "w")
 	for wall in walls:
-		if wall.get_is_teleport():
+		if wall.is_teleport:
 			pos = "{},{},{},{},{},{},{}\n"
-			f.write(pos.format(int(wall.get_is_teleport()), wall.get_pt().get_x(), wall.get_pt().get_y(), wall.get_w(), wall.get_h(), float(wall.get_friction()), wall.get_num()))
+			f.write(pos.format(int(wall.is_teleport), wall.pt.x, wall.pt.y, wall.w, wall.h, float(wall.friction), wall.num))
 		else:
 			pos = "{},{},{},{},{},{},{},{}\n"
-			f.write(pos.format(int(wall.get_is_teleport()), wall.get_pt().get_x(), wall.get_pt().get_y(), wall.get_w(), wall.get_h(), float(wall.get_friction()), int(wall.get_can_kill()), int(wall.get_is_finish())))
+			f.write(pos.format(int(wall.is_teleport), wall.pt.x, wall.pt.y, wall.w, wall.h, float(wall.friction), int(wall.can_kill), int(wall.is_finish)))
 	f.close()
 
 def load_map(map_num: int) -> list[Surface]:
@@ -199,38 +196,29 @@ def load_map(map_num: int) -> list[Surface]:
 		for line in f:
 			line = line.strip()
 			stats = line.split(",")
-			# print(stats[5], stats[6])
-			# print(stats[5] == 1)
 			if int(stats[0]) == 1:
-				# print(stats[6])
 				wall = Teleporter(Vector(int(stats[1]), int(stats[2])), int(stats[3]), int(stats[4]), None, int(stats[6]), float(stats[5]))
-				# print(wall.get_num())
 			else:
 				if float(stats[5]) > 0:
 					color = "#22ab7d"
 				elif int(stats[6]) == 1:
-					# print("aaaaaa")
 					color = "#ff0000"
 					kill = True
 				elif int(stats[7]) == 1:
-					# print("bbbbbb")
 					color = "#999900"
 					end = True
 				else:
-					# print("ccccc")
 					color = "#000000"
 					kill = False
 					end = False
 				wall = Surface(Vector(int(stats[1]), int(stats[2])), int(stats[3]), int(stats[4]), float(stats[5]), color, kill, end, False)
-			# print(wall.get_can_kill(), wall.get_is_finish())
 			walls.append(wall)
 		f.close()
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
-	# print(teleporters)
 	return walls, teleporters
 
 def load_map_data() -> list:
@@ -239,14 +227,11 @@ def load_map_data() -> list:
 	map_data = []
 	for line in f:
 		line = line.strip()
-		# print(line)
 		if line == "break":
-			# print("Break")
 			map = Map(map_data[0], map_data[1], map_data[2], map_data[3])
 			maps.append(map)
 			map_data = []
 		elif line == "end":
-			# print("end")
 			break
 		else:
 			stats = line.split("=")
@@ -275,25 +260,25 @@ def create_buttons(win: pygame.Surface, font: pygame.font,):
 	surf_text = font.render("PLAY TRAINING COURSE", True, "#000000")
 	s_train_button = Button(Vector(win.get_width() / 20, 600), surf_text.get_width(), surf_text.get_height(), "PLAY TRAINING COURSE", False, "train", font)
 	surf_text = font.render("PLAY ICE MAP", True, "#000000")
-	s_ice_button = Button(Vector(win.get_width() / 20, s_train_button.get_pt().get_y() + s_train_button.get_h() + 20), surf_text.get_width(), surf_text.get_height(), "PLAY ICE MAP", False, "ice", font)
+	s_ice_button = Button(Vector(win.get_width() / 20, s_train_button.pt.y + s_train_button.h + 20), surf_text.get_width(), surf_text.get_height(), "PLAY ICE MAP", False, "ice", font)
 	surf_text = font.render("PLAY challenge", True, "#000000")
-	s_tut_button = Button(Vector(win.get_width() / 20, s_train_button.get_pt().get_y() - 20 - surf_text.get_height()), surf_text.get_width(), surf_text.get_height(), "PLAY challenge", False, "challenge", font)
+	s_tut_button = Button(Vector(win.get_width() / 20, s_train_button.pt.y - 20 - surf_text.get_height()), surf_text.get_width(), surf_text.get_height(), "PLAY challenge", False, "challenge", font)
 	surf_text = font.render("BACK", True, "#000000")
 	t_back_button = Button(Vector(win.get_width() / 20, win.get_height() * 0.05), surf_text.get_width(), surf_text.get_height(), "BACK", False, "selection", font)
 	surf_text = font.render("PLAY JUMPING CHALLENGE", True, "#000000")
 	t_1 = Button(Vector(win.get_width() / 20, 400), surf_text.get_width(), surf_text.get_height(), "PLAY JUMPING CHALLENGE", False, "1", font)
 	surf_text = font.render("PLAY DOUBLE JUMPING CHALLENGE", True, "#000000")
-	t_2 = Button(Vector(win.get_width() / 20, t_1.get_pt().get_y() + t_1.get_h() + 20), surf_text.get_width(), surf_text.get_height(), "PLAY DOUBLE JUMPING CHALLENGE", False, "2", font)
+	t_2 = Button(Vector(win.get_width() / 20, t_1.pt.y + t_1.h + 20), surf_text.get_width(), surf_text.get_height(), "PLAY DOUBLE JUMPING CHALLENGE", False, "2", font)
 	surf_text = font.render("PLAY SLIDING CHALLENGE", True, "#000000")
-	t_3 = Button(Vector(win.get_width() / 20, t_2.get_pt().get_y() + t_2.get_h() + 20), surf_text.get_width(), surf_text.get_height(), "PLAY SLIDING CHALLENGE", False, "3", font)
+	t_3 = Button(Vector(win.get_width() / 20, t_2.pt.y + t_2.h + 20), surf_text.get_width(), surf_text.get_height(), "PLAY SLIDING CHALLENGE", False, "3", font)
 	surf_text = font.render("PLAY SLIDING JUMPING CHALLENGE", True, "#000000")
-	t_4 = Button(Vector(win.get_width() / 20, t_3.get_pt().get_y() + t_3.get_h() + 20), surf_text.get_width(), surf_text.get_height(), "PLAY SLIDING JUMPING CHALLENGE", False, "4", font)
+	t_4 = Button(Vector(win.get_width() / 20, t_3.pt.y + t_3.h + 20), surf_text.get_width(), surf_text.get_height(), "PLAY SLIDING JUMPING CHALLENGE", False, "4", font)
 	surf_text = font.render("PLAY WALL BOUNCE CHALLENGE", True, "#000000")
-	t_5 = Button(Vector(win.get_width() / 20, t_4.get_pt().get_y() + t_4.get_h() + 20), surf_text.get_width(), surf_text.get_height(), "PLAY WALL BOUNCE CHALLENGE", False, "5", font)
+	t_5 = Button(Vector(win.get_width() / 20, t_4.pt.y + t_4.h + 20), surf_text.get_width(), surf_text.get_height(), "PLAY WALL BOUNCE CHALLENGE", False, "5", font)
 	surf_text = font.render("PLAY DEATH CHALLENGE", True, "#000000")
-	t_6 = Button(Vector(win.get_width() / 20, t_5.get_pt().get_y() + t_5.get_h() + 20), surf_text.get_width(), surf_text.get_height(), "PLAY DEATH CHALLENGE", False, "6", font)
+	t_6 = Button(Vector(win.get_width() / 20, t_5.pt.y + t_5.h + 20), surf_text.get_width(), surf_text.get_height(), "PLAY DEATH CHALLENGE", False, "6", font)
 	surf_text = font.render("PLAY FINAL CHALLENGE", True, "#000000")
-	t_7 = Button(Vector(win.get_width() / 20, t_6.get_pt().get_y() + t_6.get_h() + 20), surf_text.get_width(), surf_text.get_height(), "PLAY FINAL CHALLENGE", False, "7", font)
+	t_7 = Button(Vector(win.get_width() / 20, t_6.pt.y + t_6.h + 20), surf_text.get_width(), surf_text.get_height(), "PLAY FINAL CHALLENGE", False, "7", font)
 	surf_text = font.render("NEXT LEVEL", True, "#000000")
 	continue_button = Button(Vector(win.get_width() / 2 - surf_text.get_width() / 2, win.get_height() * .475), surf_text.get_width(), surf_text.get_height(), "NEXT LEVEL", False, "continue", font)
 	surf_text = font.render("EXIT TO DESKTOP", True, "#000000")
@@ -479,8 +464,8 @@ def load_level(level: int) -> list[Surface]:
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	elif level == 1:
@@ -498,8 +483,8 @@ def load_level(level: int) -> list[Surface]:
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	elif level == 2:
@@ -515,12 +500,11 @@ def load_level(level: int) -> list[Surface]:
 			Surface(Vector(1000, 450), 460, 20, -.15),
 			Surface(Vector(1190, 300), 20, 150, -.15),
 			Surface(Vector(1400, 390), 60, 60, -.15, "#888800", False, True),
-
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	elif level == 3:
@@ -539,8 +523,8 @@ def load_level(level: int) -> list[Surface]:
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	elif level == 4:
@@ -558,8 +542,8 @@ def load_level(level: int) -> list[Surface]:
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	elif level == 5:
@@ -572,8 +556,8 @@ def load_level(level: int) -> list[Surface]:
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	elif level == 6:
@@ -585,8 +569,8 @@ def load_level(level: int) -> list[Surface]:
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	elif level == 7:
@@ -598,8 +582,8 @@ def load_level(level: int) -> list[Surface]:
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	elif level == 8:
@@ -625,8 +609,8 @@ def load_level(level: int) -> list[Surface]:
 		]
 		teleporters = []
 		for wall in walls:
-			if wall.get_is_teleport():
-				wall.set_next_tp(wall)
+			if wall.is_teleport:
+				wall.next_tp = wall
 				teleporters.append(wall)
 		return walls, teleporters
 	else:
@@ -657,7 +641,6 @@ def main():
 	hb_mouse = Hitbox(Vector(pygame.mouse.get_pos()[0] - 5, pygame.mouse.get_pos()[1] - 5), 10, 10, "#ff00ff")
 	buttons, welc_buttons, selc_buttons, challenge_buttons, challenge_fin_buttons, fin_buttons, dead_buttons, pause_buttons = create_buttons(win, fonts[2])
 	maps = load_map_data()
-	# print("..")
 	current_map = 0
 	was_down = False
 	in_challenge = False
@@ -671,14 +654,12 @@ def main():
 		else:
 			time = elapsed_time
 		screen = handle_keys(screen, player, hb_mouse, delta, walls, teleporters, time, times)
-		# print(screen)
 		if screen == "welcome":
 			screen, was_down = handle_mouse(screen, hb_mouse, welc_buttons, was_down)
 		elif screen == "selection":
 			screen, was_down = handle_mouse(screen, hb_mouse, selc_buttons, was_down)
 		elif screen == "challenge":
 			screen, was_down = handle_mouse(screen, hb_mouse, challenge_buttons, was_down)
-			# print(screen)
 		elif screen == "finished":
 			if in_challenge and current_map != 7:
 				f_buttons = challenge_fin_buttons
@@ -692,7 +673,6 @@ def main():
 		else:
 			screen, was_down = handle_mouse(screen, hb_mouse, buttons, was_down)
 
-		# print(screen)
 		if screen == "train":
 			start_time = datetime.datetime.now()
 			walls, teleporters = load_map(0)
@@ -763,17 +743,16 @@ def main():
 			current_map = 7
 			screen = "game"
 			in_challenge = True
-			# print(len(walls))
 			# for wall in walls:
 			# 	print(wall)
 		if screen == "respawn":
 			player = Player()
 			active_tps = []
 			if teleporters != []:
-				next_tp = teleporters[0].get_next_tp()
+				next_tp = teleporters[0].next_tp
 				for tp in teleporters:
-					if tp.get_is_active():
-						active_tps.append(tp.get_num())
+					if tp.is_active:
+						active_tps.append(tp.num)
 			if current_map == "train":
 				walls, teleporters = load_map(0)
 			elif current_map == "ice":
@@ -781,16 +760,13 @@ def main():
 			else:
 				walls, teleporters = load_level(current_map)
 			for i in active_tps:
-				teleporters[i].set_is_active(True)
-				# print(next_tp)
+				teleporters[i].is_active = True
 				# if teleporters[i] == next_tp:
 				# 	print("same")
-				teleporters[i].set_next_tp(teleporters[active_tps[len(active_tps) - 1]])
+				teleporters[i].next_tp = teleporters[active_tps[len(active_tps) - 1]]
 			screen = "game"
 		if screen == "game":
 			elapsed_time = datetime.datetime.now() - start_time
-			# print(datetime.datetime.now())
-			# print(win)
 			draw_game(win, fonts[1], player, walls, hb_mouse, delta, elapsed_time)
 		elif screen == "welcome":
 			draw_welcome(win, fonts[0], hb_mouse, welc_buttons)
