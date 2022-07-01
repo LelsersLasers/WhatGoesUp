@@ -5,25 +5,22 @@
 
 # Cleaning
 - REMOVE GET + SET
-- LOAD MAGIC NUMBERS FROM JSON FILE
-- REPLACE HITBOX/ADVANCED HITBOX COLLISIONS WITH PYGAME MASKS
-- USE TOGGLE CLASS
-- USE JSON OR SOMETHING ELSE FOR SAVING/LOADING RATHER THAN .TXT
-- IMPROVE VARIABLE NAMES
+- Remove get and set
+- Load "magic numbers" from JSON file
+- Replace collision boxes with masks
+	- Auto fit to art and animations
+- Use Toggle class
+	- Key presses, etc
+- Save/load from a more dynamic file type than .txt
+- Make all variable names the same format
 	- "is_sliding" -> "sliding"
 	- "can_fly" -> "flying"
-- RUN FORMATER
-- USE PYLINT
-- "if not self.is_sliding and is_sliding"
-	- ?????????????????????
-	- ???????????????????????
-- FIX BRANCHES
-	- DELETE OLD ONES
-	- MERGE ANY?
-	- SWITCH TO A DIFFERENT BRANCH SET UP
-		- "Main" would be only merges
-- MAKE SURE ALL VARIABLES HAVE A CLEAR TYPE
-	- PERFERABLE EXPLICT, BUT IMPLICT IS FINE
+- Run formatter (black?)
+- Use Pylint
+- Fix github stuff
+	- Clean branches
+	- Readme, etc
+- Make sure all variables have a type
 
 # Bottom Up
 1) Make player movement

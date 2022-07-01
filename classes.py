@@ -280,18 +280,19 @@ class Player(AdvancedHitbox):  # p
                 self.set_is_sliding(True, walls, delta, keys_down)
         else:
             if keys_down[K_SPACE]:
-                self.vec_move.y = self.vec_move.y - 100 * delta
+                self.vec_move.y = 100 * delta
             elif keys_down[K_LCTRL]:
-                self.vec_move.y = self.vec_move.y + 100 * delta
+                self.vec_move.y = 100 * delta
             else:
                 self.vec_move.y = 0
             if keys_down[K_a]:
-                self.vec_move.x = self.vec_move.x - 100 * delta
+                self.vec_move.x = -100 * delta
             elif keys_down[K_d]:
-                move = self.ms * delta
-                if not self.is_grounded:
-                    move *= 0.5
-                self.vec_move.x = self.vec_move.x + 100 * delta
+                # move = self.ms * delta
+                # if not self.is_grounded:
+                #     move *= 0.5
+                # self.vec_move.x = self.vec_move.x + 100 * delta
+                self.vec_move.x = 100 * delta
             else:
                 self.vec_move.x = 0
         # force = (keys_down[K_d] * self.get_ms() + keys_down[K_a] * -1 * self.get_ms())
@@ -367,9 +368,10 @@ class Player(AdvancedHitbox):  # p
         if is_grounded:
             self.can_double_jump = True
 
-        self.pt.x = self.pt.x + self.vec_move.x * delta
+        print(self.vec_move)
+        self.pt.x += self.vec_move.x * delta
         for wall in walls:
-            wall.pt.y = wall.pt.y - self.vec_move.y * delta
+            wall.pt.y -= self.vec_move.y * delta
         self.update_hbps()
 
     def draw(self, win: pygame.Surface, color: str = "#00ff00") -> None:

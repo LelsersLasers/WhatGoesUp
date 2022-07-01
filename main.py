@@ -7,8 +7,8 @@ import datetime  # for timer
 from classes import (
     Vector,
     Hitbox,
-    HitboxPart,
-    AdvancedHitbox,
+    # HitboxPart,
+    # AdvancedHitbox,
     Player,
     Surface,
     Teleporter,
@@ -28,9 +28,6 @@ def create_window() -> pygame.Surface:
     win = pygame.display.set_mode((1920, 1080), pygame.SCALED | pygame.FULLSCREEN)
     pygame.display.set_caption("TempName: v-0.94")
     return win
-    # s.set_alpha(128)                # alpha level
-    # s.fill((255,255,255))           # this fills the entire surface
-    # windowSurface.blit(s, (0,0))    # (0,0) are the top-left coordinates
 
 
 def create_fonts() -> list[pygame.Font]:
