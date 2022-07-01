@@ -22,6 +22,8 @@
 	- MERGE ANY?
 	- SWITCH TO A DIFFERENT BRANCH SET UP
 		- "Main" would be only merges
+- MAKE SURE ALL VARIABLES HAVE A CLEAR TYPE
+	- PERFERABLE EXPLICT, BUT IMPLICT IS FINE
 
 # Bottom Up
 1) Make player movement
