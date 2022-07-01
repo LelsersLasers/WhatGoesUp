@@ -448,14 +448,14 @@ class Surface(Hitbox):
 		self._is_finish = is_finish
 
 class Button(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, text: String, has_border: bool, color: str = "#ff0000"):
+	def __init__(self, pt: Vector, w: float, h: float, text: str, has_border: bool, color: str = "#ff0000"):
 		super().__init__(pt, w, h, color)
 		self._text = text
 		self._has_border = has_border
 
-	def get_text(self) -> String:
+	def get_text(self) -> str:
 		return self._text
-	def set_text(self, text: String) -> None:
+	def set_text(self, text: str) -> None:
 		self._text = text
 	def get_border(self):
 		return self._has_border
@@ -468,28 +468,28 @@ class Button(Hitbox):
 		win.blit(surf_text, ((win.get_width() - surf_text.get_width())/2, self.get_pt().get_y()))
 
 class Map():
-	def __init__(self, name: String, size: String, difficultly: String, description: String):
+	def __init__(self, name: str, size: str, difficultly: str, description: str):
 		self._vert_offset = 0
 		self._name = name
 		self._size = size
 		self._difficulty = difficultly
 		self._description = description
 
-	def get_name(self) -> String:
+	def get_name(self) -> str:
 		return self._name
-	def set_name(self, name: String) -> None:
+	def set_name(self, name: str) -> None:
 		self._name = name
-	def get_size(self) -> String:
+	def get_size(self) -> str:
 		return self._size
-	def set_size(self, size: String) -> None:
+	def set_size(self, size: str) -> None:
 		self._size = size
-	def get_difficulty(self) -> String:
+	def get_difficulty(self) -> str:
 		return self._difficulty
-	def set_difficulty(self, difficulty: String) -> None:
+	def set_difficulty(self, difficulty: str) -> None:
 		self._difficulty = difficulty
-	def get_description(self) -> String:
+	def get_description(self) -> str:
 		return self._description
-	def set_description(self, description: String) -> None:
+	def set_description(self, description: str) -> None:
 		self._description = description
 	def get_vert_offset(self) -> float:
 		return self._vert_offset
