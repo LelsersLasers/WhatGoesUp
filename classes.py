@@ -321,7 +321,7 @@ class Player(AdvancedHitbox):  # p
                                     tp.next_tp = wall
                         else:
                             wall.next_tp = teleporters[0].next_tp
-                elif wall.can_kill():
+                elif wall.can_kill:
                     self.is_alive = False
                     break
                 elif wall.is_finish:

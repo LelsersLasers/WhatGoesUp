@@ -73,7 +73,7 @@ def handle_keys(
     # 	return "game"
     elif keys_down[K_ESCAPE] and (screen == "game" or screen == "dead"):
         return "pause"
-    elif screen == "game" and not player.alive:
+    elif screen == "game" and not player.is_alive:
         return "dead"
     elif screen == "game":
         player.handle_keys(keys_down, hb_mouse, delta, walls, teleporters)
@@ -133,7 +133,7 @@ def draw_challenge(
     font: pygame.font,
     hb_mouse: Hitbox,
     buttons: list[Button],
-    times,
+    # times,
 ) -> None:
     win.fill("#fdf6e3")
     surf_text = font.render("challenge", True, "#000000")
@@ -152,7 +152,7 @@ def draw_game(
     walls: list[Surface],
     hb_mouse: Hitbox,
     delta: float,
-    elapsed_time: time,
+    elapsed_time,
 ) -> None:
     # 30 font
     win.fill("#fdf6e3")
@@ -162,8 +162,8 @@ def draw_game(
     player.draw(win)
 
     # Elapsed time
-    time = str(elapsed_time).split(".")
-    surf_time_text = font.render("Time: " + str(time[0]), True, "#ffffff")
+    t = str(elapsed_time).split(".")
+    surf_time_text = font.render("Time: " + str(t[0]), True, "#ffffff")
     fps = 1 / delta
     surf_fps_text = font.render("FPS: %4.0f" % fps, True, "#ffffff")
     height = surf_time_text.get_height() + surf_fps_text.get_height() + 30
@@ -996,12 +996,14 @@ def main():
         delta = time.time() - last_frame
         last_frame = time.time()
         handle_events()
+        elapsed_time = datetime.datetime.now() - start_time
+
         if elapsed_time == None:
-            time = 0
+            t = 0
         else:
-            time = elapsed_time
+            t = elapsed_time
         screen = handle_keys(
-            screen, player, hb_mouse, delta, walls, teleporters, time, times
+            screen, player, hb_mouse, delta, walls, teleporters, t, times
         )
         if screen == "welcome":
             screen, was_down = handle_mouse(screen, hb_mouse, welc_buttons, was_down)
@@ -1117,7 +1119,6 @@ def main():
                 teleporters[i].next_tp = teleporters[active_tps[len(active_tps) - 1]]
             screen = "game"
         if screen == "game":
-            elapsed_time = datetime.datetime.now() - start_time
             draw_game(win, fonts[1], player, walls, hb_mouse, delta, elapsed_time)
         elif screen == "welcome":
             draw_welcome(win, fonts[0], hb_mouse, welc_buttons)
