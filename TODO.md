@@ -4,6 +4,24 @@
 
 
 # Cleaning
+- REMOVE GET + SET
+- LOAD MAGIC NUMBERS FROM JSON FILE
+- REPLACE HITBOX/ADVANCED HITBOX COLLISIONS WITH PYGAME MASKS
+- USE TOGGLE CLASS
+- USE JSON OR SOMETHING ELSE FOR SAVING/LOADING RATHER THAN .TXT
+- IMPROVE VARIABLE NAMES
+	- "is_sliding" -> "sliding"
+	- "can_fly" -> "flying"
+- RUN FORMATER
+- USE PYLINT
+- "if not self.is_sliding and is_sliding"
+	- ?????????????????????
+	- ???????????????????????
+- FIX BRANCHES
+	- DELETE OLD ONES
+	- MERGE ANY?
+	- SWITCH TO A DIFFERENT BRANCH SET UP
+		- "Main" would be only merges
 
 # Bottom Up
 1) Make player movement
