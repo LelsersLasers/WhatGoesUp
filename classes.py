@@ -4,6 +4,27 @@ from pygame.locals import * # for keyboard input (ex: 'K_w')
 import math
 import copy
 
+class User():
+	def __init__(self, walk_left = K_a, walk_right = K_d, jump = K_SPACE, slide = K_LCTRL, music_on = True):
+		self.walk_left = walk_left
+		self.walk_right = walk_right
+		self.jump = jump
+		self.slide = slide
+		self.music_on = music_on
+		self.settings = [self.walk_left, self.walk_right, self.jump, self.slide, self.music_on]
+
+	def set_setting(self, i, val):
+		if i == 0:
+			self.walk_left = val
+		elif i == 1:
+			self.walk_right = val
+		elif i == 2:
+			self.jump = val
+		elif i == 3:
+			self.slide = val
+		elif i == 4:
+			self.music_on = val
+		self.settings = [self.walk_left, self.walk_right, self.jump, self.slide, self.music_on]
 
 class DownPress():
 	def __init__(self):
@@ -169,12 +190,13 @@ class AdvancedHitbox(Hitbox): # ahb
 	# 		hbp.draw(win)
 
 class Player(AdvancedHitbox): # p
-	def __init__(self):
+	def __init__(self, user):
 		super().__init__(Vector(100, 760), 25, 40, "#00ff00")
 		self.add_hbp(HitboxPart(Vector(100, 760), Vector(0, 0), 25, 40))
 		# self.add_hbp(HitboxPart(Vector(150, 855), Vector(0, 10), 25, 25))
 		# self.add_hbp(HitboxPart(Vector(150, 875), Vector(2.5, 35), 20, 10))
 
+		self.user = user
 
 		self._ms: float = 200
 		self._terminal_vel: float = 250
@@ -297,65 +319,59 @@ class Player(AdvancedHitbox): # p
 			# if self.get_vec_move().get_y() > self.get_terminal_vel():
 			# 	self.get_vec_move().set_y(self.get_terminal_vel())
 		# print(self.get_space_was_down())
-			if keys_down[K_p]:
-				self.set_can_fly(not self.get_can_fly())
-			else:
-				if keys_down[K_SPACE] and self.get_is_grounded() and not self.get_jumped_while_sliding():
-					# print(self.get_is_grounded())
-					# print(self.get_vec_move().get_y() - 500)
-					self.get_vec_move().set_y(self.get_vec_move().get_y() - 500)
-					# print(self.get_vec_move().get_y(), self.get_vec_move().get_y() - 500)
-					# print(self.get_space_was_down(), "aaaaaaaa")
-					self.set_is_grounded(False)
-					self.set_space_was_down(False)
-					if self.get_is_sliding():
-						self.set_jumped_while_sliding(True)
-				elif keys_down[K_SPACE] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down() and not self.get_jumped_while_sliding():
-					self.get_vec_move().set_y(0)
-					self.get_vec_move().set_y(self.get_vec_move().get_y() - 350)
-					self.set_can_double_jump(False)
-					self.set_space_was_down(False)
-					if self.get_is_sliding():
-						self.set_jumped_while_sliding(True)
-				elif not keys_down[K_SPACE] and not self.get_space_was_down():
-					self.set_space_was_down(True)
-				if keys_down[K_a] and not self.get_is_sliding():
-					move = -self.get_ms()
-					if not self.get_is_grounded():
-						move *= .45
-					self.get_vec_move().set_x(move)
-				if keys_down[K_d] and not self.get_is_sliding():
-					move = self.get_ms()
-					if not self.get_is_grounded():
-						move *= .45
-					self.get_vec_move().set_x(move)
-				if keys_down[K_a] and self.get_is_sliding() and self.get_is_stuck():
-					self.set_is_sliding(False, walls, delta, keys_down)
-					move = -self.get_ms()
-					self.get_vec_move().set_x(move)
-				if keys_down[K_d] and self.get_is_sliding() and self.get_is_stuck():
-					self.set_is_sliding(False, walls, delta, keys_down)
-					move = self.get_ms()
-					self.get_vec_move().set_x(move)
-				if keys_down[K_LCTRL] and self.get_is_grounded() and not self.get_is_sliding():
-					self.set_is_sliding(True, walls, delta, keys_down)
+			if keys_down[self.user.jump] and self.get_is_grounded() and not self.get_jumped_while_sliding():
+				# print(self.get_is_grounded())
+				# print(self.get_vec_move().get_y() - 500)
+				self.get_vec_move().set_y(self.get_vec_move().get_y() - 500)
+				# print(self.get_vec_move().get_y(), self.get_vec_move().get_y() - 500)
+				# print(self.get_space_was_down(), "aaaaaaaa")
+				self.set_is_grounded(False)
+				self.set_space_was_down(False)
+				if self.get_is_sliding():
+					self.set_jumped_while_sliding(True)
+			elif keys_down[self.user.jump] and not self.get_is_grounded() and self.get_can_double_jump() and self.get_space_was_down() and not self.get_jumped_while_sliding():
+				self.get_vec_move().set_y(0)
+				self.get_vec_move().set_y(self.get_vec_move().get_y() - 350)
+				self.set_can_double_jump(False)
+				self.set_space_was_down(False)
+				if self.get_is_sliding():
+					self.set_jumped_while_sliding(True)
+			elif not keys_down[self.user.jump] and not self.get_space_was_down():
+				self.set_space_was_down(True)
+			if keys_down[self.user.walk_left] and not self.get_is_sliding():
+				move = -self.get_ms()
+				if not self.get_is_grounded():
+					move *= .45
+				self.get_vec_move().set_x(move)
+			if keys_down[self.user.walk_right] and not self.get_is_sliding():
+				move = self.get_ms()
+				if not self.get_is_grounded():
+					move *= .45
+				self.get_vec_move().set_x(move)
+			if keys_down[self.user.walk_left] and self.get_is_sliding() and self.get_is_stuck():
+				self.set_is_sliding(False, walls, delta, keys_down)
+				move = -self.get_ms()
+				self.get_vec_move().set_x(move)
+			if keys_down[self.user.walk_right] and self.get_is_sliding() and self.get_is_stuck():
+				self.set_is_sliding(False, walls, delta, keys_down)
+				move = self.get_ms()
+				self.get_vec_move().set_x(move)
+			if keys_down[self.user.slide] and self.get_is_grounded() and not self.get_is_sliding():
+				self.set_is_sliding(True, walls, delta, keys_down)
 		else:
 			if keys_down[K_p]:
 				self.set_can_fly(not self.get_can_fly())
 			else:
 				if keys_down[K_SPACE]:
-					self.get_vec_move().set_y(self.get_vec_move().get_y() - 100 * delta)
+					self.get_vec_move().set_y(self.get_vec_move().get_y() - 10)
 				elif keys_down[K_LCTRL]:
-					self.get_vec_move().set_y(self.get_vec_move().get_y() + 100 * delta)
+					self.get_vec_move().set_y(self.get_vec_move().get_y() + 10)
 				else:
 					self.get_vec_move().set_y(0)
 				if keys_down[K_a]:
-					self.get_vec_move().set_x(self.get_vec_move().get_x() - 100 * delta)
+					self.get_vec_move().set_x(-self.get_ms())
 				elif keys_down[K_d]:
-					move = self.get_ms() * delta
-					if not self.get_is_grounded():
-						move *= .5
-					self.get_vec_move().set_x(self.get_vec_move().get_x() + 100 * delta)
+					self.get_vec_move().set_x(self.get_ms())
 				else:
 					self.get_vec_move().set_x(0)
 		# print(self.get_vec_move())
@@ -416,8 +432,8 @@ class Player(AdvancedHitbox): # p
 						self.get_vec_move().set_x(0)
 						self.set_jumped_while_sliding(False)
 					# print(self.get_vec_move().get_y())
-					if self.get_vec_move().get_y() > 1000:
-						print("Splat sfx")
+					# if self.get_vec_move().get_y() > 1000:
+					# 	print("Splat sfx")
 				self.get_vec_move().set_y(0)
 				break
 		p_temp.get_pt().set_x(p_temp.get_pt().get_x() + p_temp.get_vec_move().get_x() * delta)
@@ -513,19 +529,20 @@ class Teleporter(Surface):
 		player.get_vec_move().set_x(0)
 		player.get_vec_move().set_y(0)
 		dif = self.calc_height()
-		print("teleport sfx")
+		# print("teleport sfx")
 		for wall in walls:
 			wall.get_pt().set_y(wall.get_pt().get_y() - dif)
 
 
 
 class Button(Hitbox):
-	def __init__(self, pt: Vector, w: float, h: float, text: String, has_border: bool, location: String, font: pygame.font, color: str = "#ff0000"):
+	def __init__(self, pt: Vector, w: float, h: float, text: String, has_border: bool, location: String, font: pygame.font, color: str = "#ffffff"):
 		super().__init__(pt, w, h, color)
 		self._text = text
 		self._has_border = has_border
 		self._next_loc = location
 		self._font = font
+		self.toggle = False
 
 	def get_text(self) -> str:
 		return self._text
@@ -551,6 +568,23 @@ class Button(Hitbox):
 		surf_text = font.render(self.get_text(), True, self.get_color())
 		win.blit(surf_text, ((self.get_pt().get_x(), self.get_pt().get_y())))
 
+class ToggleButton(Button):
+	def __init__(self, pt: Vector, w: float, h: float, text, user, value: bool, has_border: bool, location: String, font: pygame.font, color: str = "#ff0000"):
+		super().__init__(pt, w, h, text, has_border, location, font, color)
+		self.on_color = "#00ff00"
+		self.off_color = "#ff0000"
+		self.value = value
+		self.toggle = True
+		self.setting = 4
+		self.user = user
+
+	def draw(self, win: pygame.Surface):
+		# super().draw(win)
+		# 40 font
+		font = self.get_font()
+		surf_text = font.render(self.get_text(), True, self.get_color())
+		win.blit(surf_text, ((self.get_pt().get_x(), self.get_pt().get_y())))
+
 class Map():
 	def __init__(self, name: str, size: str, difficultly: str, description: str):
 		self._vert_offset = 0
@@ -558,6 +592,8 @@ class Map():
 		self._size = size
 		self._difficulty = difficultly
 		self._description = description
+		self._best_times = []
+
 
 	def get_name(self) -> str:
 		return self._name
